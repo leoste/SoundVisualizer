@@ -12,6 +12,7 @@ using System.Windows.Forms.DataVisualization.Charting;
 using MathNet.Numerics;
 using MathNet.Numerics.IntegralTransforms;
 using NAudio.Wave;
+using ColorMine.ColorSpaces;
 
 namespace SoundVisualizer
 {    
@@ -19,6 +20,7 @@ namespace SoundVisualizer
     {
         private int samplerate = 0;
         private int channels = 0;
+        private int seconds = 0;
 
         public Form1()
         {
@@ -47,7 +49,7 @@ namespace SoundVisualizer
                 samplerate = provider.WaveFormat.SampleRate;
                 channels = provider.WaveFormat.Channels;
 
-                int seconds = (int)numericUpDown1.Value;
+                seconds = (int)numericUpDown1.Value;
                 int takes = (int)(reader.TotalTime.TotalSeconds / seconds);
                 int count = samplerate * seconds * channels;
                 int countp2 = count + 2; // bad variable name ik
@@ -75,22 +77,34 @@ namespace SoundVisualizer
         {            
             chart1.Series.Clear();
             chart1.Series.Add(numbers.GetHashCode().ToString());
-            System.Windows.Forms.DataVisualization.Charting.Series series = chart1.Series.FindByName(numbers.GetHashCode().ToString());
+            Series series = chart1.Series.FindByName(numbers.GetHashCode().ToString());
 
             //series.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline; // to get connected line            
 
-            int count = Math.Min(numbers.Length, 4000);
+            int count = Math.Min(numbers.Length, (int)numericUpDown2.Value);            
             for (int i = 0; i < count; i++)
             {
-                int index = series.Points.AddXY(i, Math.Abs(numbers[i]));
+                double number = 0;
+                for (int k = 0; k < seconds; k++)
+                {
+                    number += Math.Abs(numbers[i * seconds + k]);
+                }
+                number = number / seconds;
+                int index = series.Points.AddXY(i, number);
                 DataPoint point = series.Points.ElementAt(index);
+
+                Color c = Color.FromArgb(0);
 
                 double distance = 0;
                 if (i > 0) distance = GetNoteDistance(440, i);
                 double thingy = distance % 12 / 12;
-                if (thingy < 0) thingy = 1 + thingy;                
-                int value = (int)(256 * thingy);
-                point.Color = Color.FromArgb(value, 0, 0);
+                if (thingy < 0) thingy = 1 + thingy;
+                Hsv hsv = new Hsv();
+                hsv.S = 1;
+                hsv.V = 1;
+                hsv.H = 360 * thingy;
+                IRgb rgb = hsv.ToRgb();
+                point.Color = Color.FromArgb((int)rgb.R, (int)rgb.G, (int)rgb.B);
 
                 //series.Points.ElementAt(index).Color = Color.FromArgb(i % 256, 255 - i % 256, i * i % 256);
                 //series.Points.AddXY(i, men[i]); // this is pure wav file

@@ -13,13 +13,14 @@ using MathNet.Numerics;
 using MathNet.Numerics.IntegralTransforms;
 using NAudio.Wave;
 using ColorMine.ColorSpaces;
-using Splicer.Timeline;
-using Splicer.Renderer;
 using FFMediaToolkit;
 using FFMediaToolkit.Encoding;
 using FFMediaToolkit.Graphics;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
+using FFMpegCore;
+using FFMpegCore.Pipes;
+using FFMpegCore.Extend;
 
 namespace SoundVisualizer
 {    
@@ -165,77 +166,46 @@ namespace SoundVisualizer
 
             return result;
         }
-
-        private ImageData ToImageData(Bitmap bitmap)
+        IEnumerable<IVideoFrame> CreateFrames(Bitmap[] bitmaps)
         {
-            var bitmapData = bitmap.LockBits(new Rectangle(new Point(0, 0), bitmap.Size), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
-            var length = bitmapData.Stride * bitmapData.Height;
-            byte[] array = new byte[length];
-            Marshal.Copy(bitmapData.Scan0, array, 0, length);
-            bitmap.UnlockBits(bitmapData);
-
-            ImagePixelFormat pixelFormat = ImagePixelFormat.Rgb24;
-            Size imageSize = bitmap.Size;
-
-            ImageData data = ImageData.FromArray(array, pixelFormat, imageSize);            
-            return data;
+            for (int i = 0; i < bitmaps.Length; i++)
+            {
+                BitmapVideoFrameWrapper wrapper = new BitmapVideoFrameWrapper(bitmaps[i]);
+                yield return wrapper;
+            }
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
             if (saveFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                int width = 1280;
-                int height = 720;
-                int framerate = (int)numericUpDown1.Value;
-
-                FFmpegLoader.FFmpegPath = "E:\\program\\ffmpeg-3.4.1-win64-static\\bin";
-                var settings = new VideoEncoderSettings(width, height, framerate, VideoCodec.H264);
-                settings.EncoderPreset = EncoderPreset.Fast;
-                settings.CRF = 17; //for h264/h265
-
-                using (MediaOutput file = MediaBuilder.CreateContainer(@"D:\randomsound\test.mp4").WithVideo(settings).Create())
+                Task task = new Task(() =>
                 {
-                    foreach (float[] item in listBox1.Items)
+                    int width = 1280;
+                    int height = 720;
+                    int framerate = (int)numericUpDown1.Value;
+                    string filepath = saveFileDialog1.FileName;
+                    string audiopath = label1.Text;
+
+                    Bitmap[] bitmaps = new Bitmap[listBox1.Items.Count];
+                    for (int i = 0; i < listBox1.Items.Count; i++)
                     {
-                        //own stuff
-                        SetGraph(item);
+                        chart1.Invoke((MethodInvoker)delegate { SetGraph((float[])listBox1.Items[i]); });
                         Bitmap image = new Bitmap(width, height);
-                        chart1.DrawToBitmap(image, new Rectangle(0, 0, width, height));                        
-
-                        //renderer stuff
-                        ImageData frame = ToImageData(image);
-                        file.Video.AddFrame(frame);
-                    }                    
-                }
-
-                /*using (ITimeline timeline = new DefaultTimeline(framerate))
-                {
-                    IGroup group = timeline.AddVideoGroup(32, width, height);
-                    ITrack videoTrack = group.AddTrack();
-                    IGroup audio = timeline.AddAudioGroup();
-                    ITrack audioTrack = audio.AddTrack();
-
-                    int i = 0;
-                    double miniDuration = 1.0 / framerate;
-
-                    foreach (float[] item in listBox1.Items)
-                    {
-                        SetGraph(item);
-                        Bitmap image = new Bitmap(width, height);
-                        chart1.DrawToBitmap(image, new Rectangle(0, 0, width, height));
-
-                        videoTrack.AddImage(image, 0, i * miniDuration, (i + 1) * miniDuration);
-                        i++;
+                        chart1.Invoke((MethodInvoker)delegate { DrawToBitmap(image, new Rectangle(0, 0, width, height)); });
+                        bitmaps[i] = image;
                     }
 
-                    audioTrack.AddAudio(label1.Text, InsertPosition.Absolute, 0, 0, length);
-                    IRenderer renderer = new AviFileRenderer(
-                        timeline,
-                        saveFileDialog1.FileName
-                        );
-                    renderer.Render();
-                }*/
+                    var videoFramesSource = new RawVideoPipeSource(CreateFrames(bitmaps)) { FrameRate = framerate };
+                    FFMpegArguments
+                        .FromPipeInput(videoFramesSource)
+                        //.AddPipeInput(new StreamPipeSource(...)
+                        .AddFileInput(new FileInfo(audiopath))
+                        .OutputToFile(filepath)
+                        .NotifyOnProgress(new Action<TimeSpan>((TimeSpan t) => { label4.Invoke((MethodInvoker)delegate { label4.Text = t.ToString(); }); }))
+                        .ProcessSynchronously();
+                });
+                task.Start();
             }
         }
     }

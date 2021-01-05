@@ -15,8 +15,11 @@ using NAudio.Wave;
 using ColorMine.ColorSpaces;
 using Splicer.Timeline;
 using Splicer.Renderer;
-using Splicer.WindowsMedia;
-//using Accord.Video.FFMPEG;
+using FFMediaToolkit;
+using FFMediaToolkit.Encoding;
+using FFMediaToolkit.Graphics;
+using System.Drawing.Imaging;
+using System.Runtime.InteropServices;
 
 namespace SoundVisualizer
 {    
@@ -163,6 +166,21 @@ namespace SoundVisualizer
             return result;
         }
 
+        private ImageData ToImageData(Bitmap bitmap)
+        {
+            var bitmapData = bitmap.LockBits(new Rectangle(new Point(0, 0), bitmap.Size), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
+            var length = bitmapData.Stride * bitmapData.Height;
+            byte[] array = new byte[length];
+            Marshal.Copy(bitmapData.Scan0, array, 0, length);
+            bitmap.UnlockBits(bitmapData);
+
+            ImagePixelFormat pixelFormat = ImagePixelFormat.Rgb24;
+            Size imageSize = bitmap.Size;
+
+            ImageData data = ImageData.FromArray(array, pixelFormat, imageSize);            
+            return data;
+        }
+
         private void button2_Click(object sender, EventArgs e)
         {
             if (saveFileDialog1.ShowDialog() == DialogResult.OK)
@@ -171,7 +189,27 @@ namespace SoundVisualizer
                 int height = 720;
                 int framerate = (int)numericUpDown1.Value;
 
-                using (ITimeline timeline = new DefaultTimeline(framerate))
+                FFmpegLoader.FFmpegPath = "E:\\program\\ffmpeg-3.4.1-win64-static\\bin";
+                var settings = new VideoEncoderSettings(width, height, framerate, VideoCodec.H264);
+                settings.EncoderPreset = EncoderPreset.Fast;
+                settings.CRF = 17; //for h264/h265
+
+                using (MediaOutput file = MediaBuilder.CreateContainer(@"D:\randomsound\test.mp4").WithVideo(settings).Create())
+                {
+                    foreach (float[] item in listBox1.Items)
+                    {
+                        //own stuff
+                        SetGraph(item);
+                        Bitmap image = new Bitmap(width, height);
+                        chart1.DrawToBitmap(image, new Rectangle(0, 0, width, height));                        
+
+                        //renderer stuff
+                        ImageData frame = ToImageData(image);
+                        file.Video.AddFrame(frame);
+                    }                    
+                }
+
+                /*using (ITimeline timeline = new DefaultTimeline(framerate))
                 {
                     IGroup group = timeline.AddVideoGroup(32, width, height);
                     ITrack videoTrack = group.AddTrack();
@@ -187,30 +225,16 @@ namespace SoundVisualizer
                         Bitmap image = new Bitmap(width, height);
                         chart1.DrawToBitmap(image, new Rectangle(0, 0, width, height));
 
-                        videoTrack.AddImage(image, 0, i * miniDuration, (i + 1) * miniDuration);                        
+                        videoTrack.AddImage(image, 0, i * miniDuration, (i + 1) * miniDuration);
                         i++;
                     }
 
                     audioTrack.AddAudio(label1.Text, InsertPosition.Absolute, 0, 0, length);
-
-                    IRenderer renderer = new WindowsMediaRenderer(timeline, saveFileDialog1.FileName, WindowsMediaProfiles.HighQualityVideo);
+                    IRenderer renderer = new AviFileRenderer(
+                        timeline,
+                        saveFileDialog1.FileName
+                        );
                     renderer.Render();
-                }
-
-                /*using (var vFWriter = new VideoFileWriter())
-                {
-                    vFWriter.Open(saveFileDialog1.FileName, width, height, framerate, VideoCodec.Raw);
-
-                    foreach (float[] item in listBox1.Items)
-                    {
-                        SetGraph(item);
-                        Bitmap image = new Bitmap(width, height);
-                        chart1.DrawToBitmap(image, new Rectangle(0, 0, width, height));
-                        vFWriter.WriteVideoFrame(image);
-                        vFWriter.WriteAudioFrame(SpectrumToAudioFrames(item));                        
-                    }
-                                        
-                    vFWriter.Close();
                 }*/
             }
         }

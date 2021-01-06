@@ -12,19 +12,25 @@ namespace GreatVideoMaker
     class SoundAnalyzer : Processer
     {
         private static double baseFrequency = 440;
+        private static int lookAround = 0; //FUTURE. +past, take surrounding frames into consideration for generating a smoother visual. 0 = only current frame.
 
         private string filepath;
         private int framerate;
 
         private Frame[] frames;
         private float[] distances;
+        private NoteSpan[] noteLengths; // how many notes does each frequency cover
+        private float notesTotalLength;
+        private float minNote;
+        private float maxNote;
         private int samplerate;
         private int channels;
         private int count;
         private TimeSpan totalLength;
         private double frameLength;
-        private float minFreq;
-        private float maxFreq;
+        private float minAmplitude;
+        private float maxAmplitude;
+        private float frequencyFidelity; //how many frequencies share the same position
 
         public event EventHandler<ProgressEventArgs> OnProgress;
         public event EventHandler OnComplete;
@@ -34,8 +40,13 @@ namespace GreatVideoMaker
         public TimeSpan TotalLength { get { return totalLength; } }
         public string SourceFilePath { get { return filepath; } }
         public int FrameRate { get { return framerate; } }
-        public float MinimumFrequency { get { return minFreq; } }
-        public float MaximumFrequency { get { return maxFreq; } }
+        public float MinimumAmplitude { get { return minAmplitude; } }
+        public float MaximumAmplitude { get { return maxAmplitude; } }
+        public float FrequencyFidelity { get { return frequencyFidelity; } }
+        public float NotesTotalLength { get { return notesTotalLength; } }
+        public float MinimumNote { get { return minNote; } }
+        public float MaximumNote { get { return maxNote; } }
+        public NoteSpan[] NoteSpans { get { return noteLengths; } }
 
         public SoundAnalyzer(string audiopath, int framerate)
         {
@@ -47,8 +58,11 @@ namespace GreatVideoMaker
         {
             Task task = new Task(() =>
             {
-                minFreq = int.MaxValue;
-                maxFreq = int.MinValue;
+                minAmplitude = int.MaxValue;
+                maxAmplitude = int.MinValue;
+
+                int lookFactor = 1 + lookAround * 2;
+                frequencyFidelity = framerate / (float)lookFactor; //when considering nearby frames, more data can be made
 
                 using (WaveFileReader reader = new WaveFileReader(filepath))
                 {
@@ -65,18 +79,31 @@ namespace GreatVideoMaker
 
                     frames = new Frame[takes];
 
-                    distances = new float[bufferLength];
+                    // all note distance stuff
+                    distances = new float[count + 1];
                     distances[0] = GetNoteDistance(1); //hackfix cause cant calculate distance to 0 frequencies
-                    for (int i = 1; i < bufferLength; i++)
+                    for (int i = 1; i < distances.Length; i++)
                     {
-                        distances[i] = GetNoteDistance(i);
+                        distances[i] = GetNoteDistance((int)(i * frequencyFidelity));
                     }
-                    double distanceScale = (bufferLength - 1) / (distances[distances.Length - 1] - distances[0]);
-                    double distanceOffset = -distances[0];
+                    maxNote = distances[distances.Length - 1];
+                    minNote = distances[0];
+                    notesTotalLength = maxNote - minNote;
+                    float distanceScale = (bufferLength - 1) / notesTotalLength;
+                    float distanceOffset = -minNote;
+
+                    noteLengths = new NoteSpan[count];
+                    for (int i = 0; i < count; i++)
+                    {
+                        noteLengths[i].start = distances[i];
+                        noteLengths[i].end = distances[i + 1];
+                        noteLengths[i].length = noteLengths[i].end - noteLengths[i].start;
+                    }
 
                     for (int i = 0; i < takes; i++)
                     {
                         float[] buffer = new float[bufferLength];
+                        float[] frequencies = new float[count];                        
 
                         //read additional 2 floats for fft then scroll back a bit to not disturb reading
                         provider.Read(buffer, 0, countp2);
@@ -84,9 +111,22 @@ namespace GreatVideoMaker
 
                         Fourier.ForwardReal(buffer, count);
 
-                        float[] notes = new float[bufferLength];
+                        //buffer processing for next things
+                        for (int k = 0; k < count; k++)
+                        {
+                            float abs = Math.Abs(buffer[k]);
+                            if (abs > maxAmplitude) maxAmplitude = abs;
+                            if (abs < minAmplitude) minAmplitude = abs;
 
-                        for (int k = 0; k < buffer.Length; k++)
+                            frequencies[k] = abs; //frequencies are just the necessary bytes from the buffer (for now)
+                        }
+                        
+                        /*for (int k = 0; k < count; k++)
+                        {
+
+                        }*/
+
+                        /*for (int k = 0; k < buffer.Length; k++)
                         {
                             buffer[k] = Math.Abs(buffer[k]);
                             if (buffer[k] > maxFreq) maxFreq = buffer[k];
@@ -96,12 +136,10 @@ namespace GreatVideoMaker
                             notes[index] = buffer[k];
                         }
                         frames[i].frequencies = buffer;
-                        frames[i].notes = notes;
+                        frames[i].notes = notes;*/
 
-                        /*for (int k = 0; k < buffer.Length; k++) //calculate notes in the future
-                        {
-                            frames[i].notes
-                        }*/
+                        frames[i].buffer = buffer;
+                        frames[i].frequencies = frequencies;
 
                         if (OnProgress != null) OnProgress.Invoke(this, new ProgressEventArgs(i, takes));
                     }
@@ -123,10 +161,28 @@ namespace GreatVideoMaker
             return result;
         }
 
+        private int GetNoteFrequency(float noteDistance)
+        {
+            int result;
+
+            double divided = noteDistance / 12f;
+            double exponented = Math.Pow(divided, 2);
+            result = (int)(exponented * baseFrequency);
+
+            return result;
+        }
+
         public struct Frame
         {
+            public float[] buffer;
             public float[] frequencies;
-            public float[] notes;
+        }
+
+        public struct NoteSpan
+        {
+            public float start;
+            public float end;
+            public float length;
         }
     }
 }

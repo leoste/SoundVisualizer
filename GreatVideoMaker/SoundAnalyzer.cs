@@ -190,7 +190,7 @@ namespace GreatVideoMaker
                     {
                         float[] frequencies = new float[count];
 
-                        Fourier.ForwardReal(buffers[index], count);
+                        Fourier.ForwardReal(buffers[index], count, FourierOptions.NoScaling);
 
                         //buffer processing for next things
                         for (int k = 0; k < count; k++)

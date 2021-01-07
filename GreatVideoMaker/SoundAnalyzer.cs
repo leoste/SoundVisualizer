@@ -50,6 +50,7 @@ namespace GreatVideoMaker
         public float MaximumNote { get { return maxNote; } }
         public NoteSpan[] NoteSpans { get { return noteSpans; } }
         public int LookAround { get { return lookAround; } }
+        public int FrequencyCount { get { return count; } }
 
         public SoundAnalyzer(string audiopath, int framerate, int lookaround = 0)
         {
@@ -112,7 +113,8 @@ namespace GreatVideoMaker
 
                     //read additional 2 floats + lookaround for fft then scroll back a bit to not desync time
                     provider.Read(buffer, 0, countp2);
-                    reader.Seek(-(2 + precount * lookAround * 2) * reader.BlockAlign, SeekOrigin.Current);
+                    int backwardsCount = -(2 + precount * lookAround * 2);
+                    reader.Seek(backwardsCount * reader.BlockAlign, SeekOrigin.Current);
 
                     buffers[i] = buffer;
                 }

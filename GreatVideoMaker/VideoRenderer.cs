@@ -30,41 +30,50 @@ namespace GreatVideoMaker
         }
         
         IEnumerable<IVideoFrame> CreateFrames()
-        {          
+        {
+            float scalex = width / sound.NotesTotalLength;
             float scaley = height / (sound.MaximumAmplitude - sound.MinimumAmplitude);
+
+            //preparation for image calculation
+            SolidBrush[] brushes = new SolidBrush[sound.FrequencyCount];
+            float[] x = new float[sound.FrequencyCount];
+            float[] w = new float[sound.FrequencyCount];
+            Hsv hsv = new Hsv();
+            hsv.S = 1;
+            hsv.V = 1;
+            for (int i = 0; i < sound.FrequencyCount; i++)
+            {
+                //color
+                double thingy = sound.NoteSpans[i].start % 12 / 12;
+                if (thingy < 0) thingy = 1 + thingy;
+                hsv.H = 360 * thingy;
+                IRgb rgb = hsv.ToRgb();
+                Color c = Color.FromArgb(255, (int)rgb.R, (int)rgb.G, (int)rgb.B);
+                brushes[i] = new SolidBrush(c);
+
+                x[i] = (sound.NoteSpans[i].start - sound.MinimumNote) * scalex;
+                w[i] = sound.NoteSpans[i].length * scalex;
+            }
 
             //this is for note-based visualization
             for (int i = 0; i < sound.Frames.Length; i++)
             {
-                Bitmap bitmap = new Bitmap(width, height);
-
-                using (Graphics g = Graphics.FromImage(bitmap))
+                using (Bitmap bitmap = new Bitmap(width, height))
                 {
-                    g.Clear(Color.White);
-
-                    float scalex = width / sound.NotesTotalLength;
-                    for (int k = 0; k < sound.Frames[i].frequencies.Length; k++)
+                    using (Graphics g = Graphics.FromImage(bitmap))
                     {
-                        double thingy = sound.NoteSpans[k].start % 12 / 12;
-                        if (thingy < 0) thingy = 1 + thingy;
-                        Hsv hsv = new Hsv();
-                        hsv.S = 1;
-                        hsv.V = 1;
-                        hsv.H = 360 * thingy;
-                        IRgb rgb = hsv.ToRgb();
-                        Color c = Color.FromArgb(255, (int)rgb.R, (int)rgb.G, (int)rgb.B);
-                        Brush b = new SolidBrush(c);
+                        g.Clear(Color.White);
 
-                        float x = (sound.NoteSpans[k].start - sound.MinimumNote) * scalex;
-                        float w = sound.NoteSpans[k].length * scalex;
-                        float h = sound.Frames[i].frequencies[k] * scaley;
-                        float y = height - h;
-                        g.FillRectangle(b, x, y, w, h);
+                        for (int k = 0; k < sound.Frames[i].frequencies.Length; k++)
+                        {
+                            float h = sound.Frames[i].frequencies[k] * scaley;
+                            float y = height - h;
+                            g.FillRectangle(brushes[k], x[k], y, w[k], h);
+                        }
                     }
+                    BitmapVideoFrameWrapper wrapper = new BitmapVideoFrameWrapper(bitmap);
+                    yield return wrapper;
                 }
-
-                BitmapVideoFrameWrapper wrapper = new BitmapVideoFrameWrapper(bitmap);
-                yield return wrapper;
             }
         }
 

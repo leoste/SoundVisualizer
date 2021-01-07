@@ -107,6 +107,7 @@ namespace GreatVideoMaker
                 }
                 // the real frame reading. note we dont need after-processing although we needed pre-processing cause
                 // the stream can handle giving out less bytes in the end
+                int seekMultiplier = reader.BlockAlign / channels;
                 for (int i = lookAround; i < takes; i++)
                 {
                     float[] buffer = new float[bufferLength];
@@ -114,7 +115,7 @@ namespace GreatVideoMaker
                     //read additional 2 floats + lookaround for fft then scroll back a bit to not desync time
                     provider.Read(buffer, 0, countp2);
                     int backwardsCount = -(2 + precount * lookAround * 2);
-                    reader.Seek(backwardsCount * reader.BlockAlign, SeekOrigin.Current);
+                    reader.Seek(backwardsCount * seekMultiplier, SeekOrigin.Current);
 
                     buffers[i] = buffer;
                 }

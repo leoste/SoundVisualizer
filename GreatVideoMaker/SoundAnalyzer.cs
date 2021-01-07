@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -12,14 +13,14 @@ namespace GreatVideoMaker
     class SoundAnalyzer : Processer
     {
         private static double baseFrequency = 440;
-        private static int lookAround = 0; //FUTURE. +past, take surrounding frames into consideration for generating a smoother visual. 0 = only current frame.
+        private static int threadCount = 4;
 
         private string filepath;
         private int framerate;
 
         private Frame[] frames;
         private float[] distances;
-        private NoteSpan[] noteLengths; // how many notes does each frequency cover
+        private NoteSpan[] noteSpans; // how many notes does each frequency cover
         private float notesTotalLength;
         private float minNote;
         private float maxNote;
@@ -31,6 +32,7 @@ namespace GreatVideoMaker
         private float minAmplitude;
         private float maxAmplitude;
         private float frequencyFidelity; //how many frequencies share the same position
+        private int lookAround; //FUTURE. take future frames into consideration (get more fidelity)
 
         public event EventHandler<ProgressEventArgs> OnProgress;
         public event EventHandler OnComplete;
@@ -46,108 +48,174 @@ namespace GreatVideoMaker
         public float NotesTotalLength { get { return notesTotalLength; } }
         public float MinimumNote { get { return minNote; } }
         public float MaximumNote { get { return maxNote; } }
-        public NoteSpan[] NoteSpans { get { return noteLengths; } }
+        public NoteSpan[] NoteSpans { get { return noteSpans; } }
+        public int LookAround { get { return lookAround; } }
 
-        public SoundAnalyzer(string audiopath, int framerate)
+        public SoundAnalyzer(string audiopath, int framerate, int lookaround = 0)
         {
             this.filepath = audiopath;
             this.framerate = framerate;
+            this.lookAround = lookaround;
         }
 
         public void StartProcess()
         {
-            Task task = new Task(() =>
+            minAmplitude = int.MaxValue;
+            maxAmplitude = int.MinValue;
+
+            int lookFactor = 1 + lookAround * 2;
+            frequencyFidelity = framerate / (float)lookFactor; //when considering nearby frames, more data can be made
+            int takes;
+            int precount;
+            int count;
+            int countp2;
+            int bufferLength;
+
+            float[][] buffers;
+
+            using (WaveFileReader reader = new WaveFileReader(filepath))
             {
-                minAmplitude = int.MaxValue;
-                maxAmplitude = int.MinValue;
+                // lots of setup
+                ISampleProvider provider = reader.ToSampleProvider();
+                samplerate = provider.WaveFormat.SampleRate;
+                channels = provider.WaveFormat.Channels;
+                totalLength = reader.TotalTime;
 
-                int lookFactor = 1 + lookAround * 2;
-                frequencyFidelity = framerate / (float)lookFactor; //when considering nearby frames, more data can be made
+                frameLength = 1 / (double)framerate;
+                takes = (int)(reader.TotalTime.TotalSeconds * framerate);
+                precount = (int)(samplerate * frameLength * channels);
+                count = this.count = precount * lookFactor;
+                countp2 = count + 2; // bad variable name ik
+                bufferLength = Math.Max(samplerate, count) + 2;
 
-                using (WaveFileReader reader = new WaveFileReader(filepath))
+                buffers = new float[takes][];
+
+                // generating buffers for first x frames which cant look fully into the future
+                // im assuming that lookAround is smaller than takes, which it always should be....
+                for (int i = 0; i < lookAround; i++)
                 {
-                    ISampleProvider provider = reader.ToSampleProvider();
-                    samplerate = provider.WaveFormat.SampleRate;
-                    channels = provider.WaveFormat.Channels;
-                    totalLength = reader.TotalTime;
+                    float[] buffer = new float[bufferLength];
+                    int earlyLookFactor = 1 + lookAround + i; // simulates "reading" bytes from negative positions
+                    int earlycount = precount * earlyLookFactor + 2; // same thing but the classic +2 is here
 
-                    frameLength = 1 / (double)framerate;
-                    int takes = (int)(reader.TotalTime.TotalSeconds * framerate);
-                    int count = this.count = (int)(samplerate * frameLength * channels);
-                    int countp2 = count + 2; // bad variable name ik
-                    int bufferLength = Math.Max(samplerate, count) + 2;
+                    int offset = precount * (lookAround - i);
+                    provider.Read(buffer, offset, earlycount);
+                    reader.Seek(0, SeekOrigin.Begin); // reset reader back to 0 cause were simulating real reading
 
-                    frames = new Frame[takes];
+                    buffers[i] = buffer;
+                }
+                // the real frame reading. note we dont need after-processing although we needed pre-processing cause
+                // the stream can handle giving out less bytes in the end
+                for (int i = lookAround; i < takes; i++)
+                {
+                    float[] buffer = new float[bufferLength];
 
-                    // all note distance stuff
-                    distances = new float[count + 1];
-                    distances[0] = GetNoteDistance(1); //hackfix cause cant calculate distance to 0 frequencies
-                    for (int i = 1; i < distances.Length; i++)
+                    //read additional 2 floats + lookaround for fft then scroll back a bit to not desync time
+                    provider.Read(buffer, 0, countp2);
+                    reader.Seek(-(2 + precount * lookAround * 2) * reader.BlockAlign, SeekOrigin.Current);
+
+                    buffers[i] = buffer;
+                }
+            }
+
+            // all note distance stuff
+            distances = new float[count + 1];
+            distances[0] = GetNoteDistance(1); //hackfix cause cant calculate distance to 0 frequencies
+            for (int i = 1; i < distances.Length; i++)
+            {
+                distances[i] = GetNoteDistance((int)(i * frequencyFidelity));
+            }
+            maxNote = distances[distances.Length - 1];
+            minNote = distances[0];
+            notesTotalLength = maxNote - minNote;
+            float distanceScale = (bufferLength - 1) / notesTotalLength;
+            float distanceOffset = -minNote;
+            // calculating note spans
+            noteSpans = new NoteSpan[count];
+            for (int i = 0; i < count; i++)
+            {
+                noteSpans[i].start = distances[i];
+                noteSpans[i].end = distances[i + 1];
+                noteSpans[i].length = noteSpans[i].end - noteSpans[i].start;
+            }
+
+            frames = new Frame[takes];
+            List<BackgroundWorker> bgws = new List<BackgroundWorker>();
+            object bufferLock = new object(); // used for threads to know what to take
+            int bufferIndex = 0;
+
+            for (int i = 0; i < threadCount; i++)
+            {
+                BackgroundWorker k = new BackgroundWorker();
+                k.DoWork += K_DoWork;
+                k.RunWorkerCompleted += K_RunWorkerCompleted;
+                k.RunWorkerAsync();
+            }
+
+            void K_DoWork(object sender, DoWorkEventArgs e)
+            {
+                ProcessBuffer();
+            }
+
+            void K_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+            {
+                bgws.Remove((BackgroundWorker)sender);
+                if (bgws.Count == 0)
+                {
+                    DeclareComplete();
+                }
+            }
+
+            // this function could be run without any threads at all but then whats the point
+            void ProcessBuffer()
+            {
+                while (true)
+                {
+                    bool dostuff = false;
+                    int index = -1;
+
+                    lock (bufferLock)
                     {
-                        distances[i] = GetNoteDistance((int)(i * frequencyFidelity));
+                        if (bufferIndex < takes)
+                        {
+                            index = bufferIndex;
+                            bufferIndex++;
+                            dostuff = true;
+                        }
                     }
-                    maxNote = distances[distances.Length - 1];
-                    minNote = distances[0];
-                    notesTotalLength = maxNote - minNote;
-                    float distanceScale = (bufferLength - 1) / notesTotalLength;
-                    float distanceOffset = -minNote;
 
-                    noteLengths = new NoteSpan[count];
-                    for (int i = 0; i < count; i++)
+                    if (dostuff)
                     {
-                        noteLengths[i].start = distances[i];
-                        noteLengths[i].end = distances[i + 1];
-                        noteLengths[i].length = noteLengths[i].end - noteLengths[i].start;
-                    }
+                        float[] frequencies = new float[count];
 
-                    for (int i = 0; i < takes; i++)
-                    {
-                        float[] buffer = new float[bufferLength];
-                        float[] frequencies = new float[count];                        
-
-                        //read additional 2 floats for fft then scroll back a bit to not disturb reading
-                        provider.Read(buffer, 0, countp2);
-                        reader.Seek(-2 * reader.BlockAlign, SeekOrigin.Current);
-
-                        Fourier.ForwardReal(buffer, count);
+                        Fourier.ForwardReal(buffers[index], count);
 
                         //buffer processing for next things
                         for (int k = 0; k < count; k++)
                         {
-                            float abs = Math.Abs(buffer[k]);
+                            float abs = Math.Abs(buffers[index][k]);
                             if (abs > maxAmplitude) maxAmplitude = abs;
                             if (abs < minAmplitude) minAmplitude = abs;
 
                             frequencies[k] = abs; //frequencies are just the necessary bytes from the buffer (for now)
                         }
-                        
-                        /*for (int k = 0; k < count; k++)
-                        {
 
-                        }*/
+                        // honestly dont need to give buffers
+                        //frames[frameIndex].buffer = buffer;
+                        frames[index].frequencies = frequencies;
 
-                        /*for (int k = 0; k < buffer.Length; k++)
-                        {
-                            buffer[k] = Math.Abs(buffer[k]);
-                            if (buffer[k] > maxFreq) maxFreq = buffer[k];
-                            if (buffer[k] < minFreq) minFreq = buffer[k];
-
-                            int index = (int)(distanceScale * (distances[k] + distanceOffset));
-                            notes[index] = buffer[k];
-                        }
-                        frames[i].frequencies = buffer;
-                        frames[i].notes = notes;*/
-
-                        frames[i].buffer = buffer;
-                        frames[i].frequencies = frequencies;
-
-                        if (OnProgress != null) OnProgress.Invoke(this, new ProgressEventArgs(i, takes));
+                        if (OnProgress != null) OnProgress.Invoke(this, new ProgressEventArgs(index, takes));
                     }
+                    else break;
                 }
+            }
+        }
 
-                if (OnComplete != null) OnComplete.Invoke(this, EventArgs.Empty);
-            });
-            task.Start();
+        private delegate void CalculateFourier();
+
+        private void DeclareComplete()
+        {
+            if (OnComplete != null) OnComplete.Invoke(this, EventArgs.Empty);
         }
 
         private float GetNoteDistance(int comparedFrequency)
@@ -174,8 +242,8 @@ namespace GreatVideoMaker
 
         public struct Frame
         {
-            public float[] buffer;
-            public float[] frequencies;
+            //public float[] buffer;
+            public float[] frequencies; //basically done did a logarithmic
         }
 
         public struct NoteSpan

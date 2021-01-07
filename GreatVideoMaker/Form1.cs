@@ -32,6 +32,12 @@ namespace GreatVideoMaker
             set { label2.Text = value; }
         }
 
+        private int LookAhead
+        {
+            get { return (int)numericUpDown2.Value; }
+            set { numericUpDown2.Value = value; }
+        }
+
         public Form1()
         {
             InitializeComponent();
@@ -42,7 +48,7 @@ namespace GreatVideoMaker
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
                 AudioPath = openFileDialog1.FileName;
-                audio = new SoundAnalyzer(AudioPath, FrameRate);
+                audio = new SoundAnalyzer(AudioPath, FrameRate, LookAhead);
                 audio.OnProgress += Audio_OnProgress;
                 audio.OnComplete += Audio_OnComplete;
             }

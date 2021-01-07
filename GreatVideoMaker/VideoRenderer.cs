@@ -30,36 +30,8 @@ namespace GreatVideoMaker
         }
         
         IEnumerable<IVideoFrame> CreateFrames()
-        {
-            //only take certain amount of frequencies for rendering
-            int maxFrequencyCount = 4000; //for frequencies needs to be way lower, like 4000, but for notes its ok
-
-            //this is for frequency-based visualization            
+        {          
             float scaley = height / (sound.MaximumAmplitude - sound.MinimumAmplitude);
-            /*
-            for (int i = 0; i < sound.Frames.Length; i++)
-            {
-                int frequencyCount = (int)Math.Min(maxFrequencyCount / sound.FrequencyFidelity, sound.Frames[i].frequencies.Length);
-
-                Bitmap bitmap = new Bitmap(width, height);
-
-                using (Graphics g = Graphics.FromImage(bitmap))
-                {
-                    Brush b = new SolidBrush(Color.Red);
-                    g.Clear(Color.White);
-
-                    float scalex = width / (float)frequencyCount;
-                    for (int k = 0; k < frequencyCount; k++)
-                    {
-                        float x = k * scalex;
-                        float h = sound.Frames[i].frequencies[k] * scaley;
-                        g.FillRectangle(b, x, height - h, scalex, h);
-                    }
-                }
-
-                BitmapVideoFrameWrapper wrapper = new BitmapVideoFrameWrapper(bitmap);
-                yield return wrapper;
-            }*/
 
             //this is for note-based visualization
             for (int i = 0; i < sound.Frames.Length; i++)

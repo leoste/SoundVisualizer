@@ -14,28 +14,49 @@ namespace GreatVideoMaker
 {
     class VideoRenderer : Processer
     {
+        private static int width = 1280;
+        private static int height = 720;
+
         private string filepath;
         private SoundAnalyzer sound;
-
-        private int width = 1280;
-        private int height = 720;
+        private float log;
+        private int barRelation;
 
         public event EventHandler<ProgressEventArgs> OnProgress;
         public event EventHandler OnComplete;
 
-        public VideoRenderer(string filepath, SoundAnalyzer sound)
+        public VideoRenderer(string filepath, SoundAnalyzer sound, int barRelation = 64)
         {
             this.filepath = filepath;
             this.sound = sound;
+            log = 2; // not really used tho
+            this.barRelation = barRelation;
         }
         
         IEnumerable<IVideoFrame> CreateFrames()
         {
-            float scalex = width / sound.NotesTotalLength;
-            float scaley = height / (sound.MaximumAmplitude - sound.MinimumAmplitude);
+            float columnRelation = 1f / barRelation;
+
+            float halfHeight = height / 2f;
+            float columnWidth = width * columnRelation;
+            float columnHalfWidth = columnWidth / 2;
+            int noteMinBorder = -36; // anything lower than that wont be rendered
+            int noteMaxBorder = 48; // anything higher than that wont be rendered
+            float noteMinoffset = -(sound.MinimumNote - noteMinBorder);
+            float noteMaxOffset = (sound.MaximumNote - noteMaxBorder);
+            int startIndex = 0; //index of first note we can start on
+            int endIndex = sound.FrequencyCount;
+            bool startIsntSet = true;
+            bool endIsntSet = true;
+
+            float scalex = width / (sound.NotesTotalLength - noteMinoffset - noteMaxOffset);
+            //float basey = (float)Math.Log(sound.MaximumAmplitude - sound.MinimumAmplitude, log);
+            float basey = (sound.MaximumAmplitude - sound.MinimumAmplitude);
+            float scaley = width / 3.5f / basey; //width is 7x height ... but since im doing mirrored, 3.5 is used
+            float scalealpha = 255 / basey;
 
             //preparation for image calculation
-            SolidBrush[] brushes = new SolidBrush[sound.FrequencyCount];
+            Color[] colors = new Color[sound.FrequencyCount];
             float[] x = new float[sound.FrequencyCount];
             float[] w = new float[sound.FrequencyCount];
             Hsv hsv = new Hsv();
@@ -46,13 +67,31 @@ namespace GreatVideoMaker
                 //color
                 double thingy = sound.NoteSpans[i].start % 12 / 12;
                 if (thingy < 0) thingy = 1 + thingy;
-                hsv.H = 360 * thingy;
+                hsv.H = 360 * thingy;                
                 IRgb rgb = hsv.ToRgb();
                 Color c = Color.FromArgb(255, (int)rgb.R, (int)rgb.G, (int)rgb.B);
-                brushes[i] = new SolidBrush(c);
+                colors[i] = c;
 
-                x[i] = (sound.NoteSpans[i].start - sound.MinimumNote) * scalex;
-                w[i] = sound.NoteSpans[i].length * scalex;
+                x[i] = (sound.NoteSpans[i].start - sound.MinimumNote - noteMinoffset) * scalex - columnHalfWidth;
+                //w[i] = sound.NoteSpans[i].length * scalex;
+                w[i] = columnWidth;
+
+                if (startIsntSet)
+                {
+                    if (sound.NoteSpans[i].start >= noteMinBorder)
+                    {
+                        startIndex = i;
+                        startIsntSet = false;
+                    }
+                }
+                else if (endIsntSet)
+                {
+                    if (sound.NoteSpans[i].start >= noteMaxBorder)
+                {
+                        endIndex = i;
+                        endIsntSet = false;
+                    }
+                }
             }
 
             //this is for note-based visualization
@@ -62,13 +101,18 @@ namespace GreatVideoMaker
                 {
                     using (Graphics g = Graphics.FromImage(bitmap))
                     {
-                        g.Clear(Color.White);
+                        g.Clear(Color.Black);
 
-                        for (int k = 0; k < sound.Frames[i].frequencies.Length; k++)
+                        for (int k = startIndex; k < endIndex; k++)
                         {
-                            float h = sound.Frames[i].frequencies[k] * scaley;
-                            float y = height - h;
-                            g.FillRectangle(brushes[k], x[k], y, w[k], h);
+                            //float baseh = (float)Math.Max(Math.Log(sound.Frames[i].frequencies[k], log), 0); //delete negative data lol
+                            float baseh = sound.Frames[i].frequencies[k];
+                            float h = baseh * scaley;
+                            float y = halfHeight - h * 0.5f;
+                            Color c = colors[k];
+                            Brush brush = new SolidBrush(c);
+                            //Brush brush = new SolidBrush(Color.FromArgb((int)(baseh * scalealpha), c)); // for scaling alpha
+                            g.FillRectangle(brush, x[k], y, w[k], h);
                         }
                     }
                     BitmapVideoFrameWrapper wrapper = new BitmapVideoFrameWrapper(bitmap);

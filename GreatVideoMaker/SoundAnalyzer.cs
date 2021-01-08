@@ -10,62 +10,87 @@ using NAudio.Wave;
 
 namespace GreatVideoMaker
 {
-    class SoundAnalyzer : Processer
+    class SoundAnalyzer : Processer, ISoundAnalyzer
     {
         private static double baseFrequency = 440;
         private static int threadCount = 4;
-
-        private string filepath;
-        private int framerate;
-
-        private Frame[] frames;
-        private float[] distances;
-        private NoteSpan[] noteSpans; // how many notes does each frequency cover
-        private float notesTotalLength;
-        private float minNote;
-        private float maxNote;
-        private int samplerate;
-        private int channels;
-        private int count;
-        private TimeSpan totalLength;
-        private double frameLength;
-        private float minAmplitude;
-        private float maxAmplitude;
-        private float frequencyFidelity; //how many frequencies share the same position
-        private int lookAround; //FUTURE. take future frames into consideration (get more fidelity)
-
+        
         public event EventHandler<ProgressEventArgs> OnProgress;
         public event EventHandler OnComplete;
 
-        public Frame[] Frames { get { return frames; } }
-        public int SampleRate { get { return samplerate; } }
-        public TimeSpan TotalLength { get { return totalLength; } }
-        public string SourceFilePath { get { return filepath; } }
-        public int FrameRate { get { return framerate; } }
-        public float MinimumAmplitude { get { return minAmplitude; } }
-        public float MaximumAmplitude { get { return maxAmplitude; } }
-        public float FrequencyFidelity { get { return frequencyFidelity; } }
-        public float NotesTotalLength { get { return notesTotalLength; } }
-        public float MinimumNote { get { return minNote; } }
-        public float MaximumNote { get { return maxNote; } }
-        public NoteSpan[] NoteSpans { get { return noteSpans; } }
-        public int LookAround { get { return lookAround; } }
-        public int FrequencyCount { get { return count; } }
+        public Frame[] Frames { get; private set; }
+        public int SampleRate { get; private set; }
+        public TimeSpan TotalLength { get; private set; }
+        public string SourceFilePath { get; private set; }
+        public int FrameRate { get; private set; }
+        public float MinimumAmplitude { get; private set; }
+        public float MaximumAmplitude { get; private set; }
+        public float FrequencyFidelity { get; private set; } //how many frequencies share the same position
+        public float NotesTotalLength { get; private set; }
+        public float MinimumNote { get; private set; }
+        public float MaximumNote { get; private set; }
+        public NoteSpan[] NoteSpans { get; private set; } // how many notes does each frequency cover
+        public int LookAround { get; private set; } //take future and past frames into consideration (get more fidelity)
+        public int FrequencyCount { get; private set; }
+        public SoundAnalyzerData Data {
+            get 
+            {
+                return new SoundAnalyzerData()
+                {
+                    FrameRate = FrameRate,
+                    Frames = Frames,
+                    FrequencyCount = FrequencyCount,
+                    FrequencyFidelity = FrequencyFidelity,
+                    LookAround = LookAround,
+                    MaximumAmplitude = MaximumAmplitude,
+                    MaximumNote = MaximumNote,
+                    MinimumAmplitude = MinimumAmplitude,
+                    MinimumNote = MinimumNote,
+                    NoteSpans = NoteSpans,
+                    NotesTotalLength = NotesTotalLength,
+                    SampleRate = SampleRate,
+                    SourceFilePath = SourceFilePath,
+                    TotalLength = TotalLength
+                };
+            }
+        }
 
         public SoundAnalyzer(string audiopath, int framerate, int lookaround = 0)
         {
-            this.filepath = audiopath;
-            this.framerate = framerate;
-            this.lookAround = lookaround;
+            SourceFilePath = audiopath;
+            FrameRate = framerate;
+            LookAround = lookaround;
+        }
+
+        public SoundAnalyzer(SoundAnalyzerData data)
+        {
+            FrameRate = data.FrameRate;
+            Frames = data.Frames;
+            FrequencyCount = data.FrequencyCount;
+            FrequencyFidelity = data.FrequencyFidelity;
+            LookAround = data.LookAround;
+            MaximumAmplitude = data.MaximumAmplitude;
+            MaximumNote = data.MaximumNote;
+            MinimumAmplitude = data.MinimumAmplitude;
+            MinimumNote = data.MinimumNote;
+            NoteSpans = data.NoteSpans;
+            NotesTotalLength = data.NotesTotalLength;
+            SampleRate = data.SampleRate;
+            SourceFilePath = data.SourceFilePath;
+            TotalLength = data.TotalLength;            
         }
 
         public void StartProcess()
         {
-            minAmplitude = int.MaxValue;
-            maxAmplitude = int.MinValue;
+            float[] distances;
+            int channels;
+            double frameLength;
 
-            int lookFactor = 1 + lookAround * 2;
-            frequencyFidelity = framerate / (float)lookFactor; //when considering nearby frames, more data can be made
+            MinimumAmplitude = int.MaxValue;
+            MaximumAmplitude = int.MinValue;
+
+            int lookFactor = 1 + LookAround * 2;
+            FrequencyFidelity = FrameRate / (float)lookFactor; //when considering nearby frames, more data can be made
             int takes;
             int precount;
             int count;
@@ -74,32 +99,32 @@ namespace GreatVideoMaker
 
             float[][] buffers;
 
-            using (WaveFileReader reader = new WaveFileReader(filepath))
+            using (WaveFileReader reader = new WaveFileReader(SourceFilePath))
             {
                 // lots of setup
                 ISampleProvider provider = reader.ToSampleProvider();
-                samplerate = provider.WaveFormat.SampleRate;
+                SampleRate = provider.WaveFormat.SampleRate;
                 channels = provider.WaveFormat.Channels;
-                totalLength = reader.TotalTime;
+                TotalLength = reader.TotalTime;
 
-                frameLength = 1 / (double)framerate;
-                takes = (int)(reader.TotalTime.TotalSeconds * framerate);
-                precount = (int)(samplerate * frameLength * channels);
-                count = this.count = precount * lookFactor;
+                frameLength = 1 / (double)FrameRate;
+                takes = (int)(reader.TotalTime.TotalSeconds * FrameRate);
+                precount = (int)(SampleRate * frameLength * channels);
+                count = FrequencyCount = precount * lookFactor;
                 countp2 = count + 2; // bad variable name ik
-                bufferLength = Math.Max(samplerate, count) + 2;
+                bufferLength = Math.Max(SampleRate, count) + 2;
 
                 buffers = new float[takes][];
 
                 // generating buffers for first x frames which cant look fully into the future
                 // im assuming that lookAround is smaller than takes, which it always should be....
-                for (int i = 0; i < lookAround; i++)
+                for (int i = 0; i < LookAround; i++)
                 {
                     float[] buffer = new float[bufferLength];
-                    int earlyLookFactor = 1 + lookAround + i; // simulates "reading" bytes from negative positions
+                    int earlyLookFactor = 1 + LookAround + i; // simulates "reading" bytes from negative positions
                     int earlycount = precount * earlyLookFactor + 2; // same thing but the classic +2 is here
 
-                    int offset = precount * (lookAround - i);
+                    int offset = precount * (LookAround - i);
                     provider.Read(buffer, offset, earlycount);
                     reader.Seek(0, SeekOrigin.Begin); // reset reader back to 0 cause were simulating real reading
 
@@ -108,13 +133,13 @@ namespace GreatVideoMaker
                 // the real frame reading. note we dont need after-processing although we needed pre-processing cause
                 // the stream can handle giving out less bytes in the end
                 int seekMultiplier = reader.BlockAlign / channels;
-                for (int i = lookAround; i < takes; i++)
+                for (int i = LookAround; i < takes; i++)
                 {
                     float[] buffer = new float[bufferLength];
 
                     //read additional 2 floats + lookaround for fft then scroll back a bit to not desync time
                     provider.Read(buffer, 0, countp2);
-                    int backwardsCount = -(2 + precount * lookAround * 2);
+                    int backwardsCount = -(2 + precount * LookAround * 2);
                     reader.Seek(backwardsCount * seekMultiplier, SeekOrigin.Current);
 
                     buffers[i] = buffer;
@@ -126,23 +151,23 @@ namespace GreatVideoMaker
             distances[0] = GetNoteDistance(1); //hackfix cause cant calculate distance to 0 frequencies
             for (int i = 1; i < distances.Length; i++)
             {
-                distances[i] = GetNoteDistance((int)(i * frequencyFidelity));
+                distances[i] = GetNoteDistance((int)(i * FrequencyFidelity));
             }
-            maxNote = distances[distances.Length - 1];
-            minNote = distances[0];
-            notesTotalLength = maxNote - minNote;
-            float distanceScale = (bufferLength - 1) / notesTotalLength;
-            float distanceOffset = -minNote;
+            MaximumNote = distances[distances.Length - 1];
+            MinimumNote = distances[0];
+            NotesTotalLength = MaximumNote - MinimumNote;
+            float distanceScale = (bufferLength - 1) / NotesTotalLength;
+            float distanceOffset = -MinimumNote;
             // calculating note spans
-            noteSpans = new NoteSpan[count];
+            NoteSpans = new NoteSpan[count];
             for (int i = 0; i < count; i++)
             {
-                noteSpans[i].start = distances[i];
-                noteSpans[i].end = distances[i + 1];
-                noteSpans[i].length = noteSpans[i].end - noteSpans[i].start;
+                NoteSpans[i].start = distances[i];
+                NoteSpans[i].end = distances[i + 1];
+                NoteSpans[i].length = NoteSpans[i].end - NoteSpans[i].start;
             }
 
-            frames = new Frame[takes];
+            Frames = new Frame[takes];
             List<BackgroundWorker> bgws = new List<BackgroundWorker>();
             object bufferLock = new object(); // used for threads to know what to take
             int bufferIndex = 0;
@@ -197,15 +222,15 @@ namespace GreatVideoMaker
                         for (int k = 0; k < count; k++)
                         {
                             float abs = Math.Abs(buffers[index][k]);
-                            if (abs > maxAmplitude) maxAmplitude = abs;
-                            if (abs < minAmplitude) minAmplitude = abs;
+                            if (abs > MaximumAmplitude) MaximumAmplitude = abs;
+                            if (abs < MinimumAmplitude) MinimumAmplitude = abs;
 
                             frequencies[k] = abs; //frequencies are just the necessary bytes from the buffer (for now)
                         }
 
                         // honestly dont need to give buffers
                         //frames[frameIndex].buffer = buffer;
-                        frames[index].frequencies = frequencies;
+                        Frames[index].frequencies = frequencies;
 
                         if (OnProgress != null) OnProgress.Invoke(this, new ProgressEventArgs(index, takes));
                     }
@@ -242,18 +267,54 @@ namespace GreatVideoMaker
 
             return result;
         }
+    }
 
-        public struct Frame
-        {
-            //public float[] buffer;
-            public float[] frequencies; //basically done did a logarithmic
-        }
+    public struct Frame
+    {
+        //public float[] buffer;
+        public float[] frequencies; //basically done did a logarithmic
+    }
 
-        public struct NoteSpan
-        {
-            public float start;
-            public float end;
-            public float length;
-        }
+    public struct NoteSpan
+    {
+        public float start;
+        public float end;
+        public float length;
+    }
+
+    public struct SoundAnalyzerData : ISoundAnalyzer
+    {
+        public string SourceFilePath { get; set; }
+        public int FrameRate { get; set; }
+        public Frame[] Frames { get; set; }
+        public NoteSpan[] NoteSpans { get; set; }
+        public float NotesTotalLength { get; set; }
+        public float MinimumNote { get; set; }
+        public float MaximumNote { get; set; }
+        public int SampleRate { get; set; }
+        public int FrequencyCount { get; set; }
+        public TimeSpan TotalLength { get; set; }
+        public float MinimumAmplitude { get; set; }
+        public float MaximumAmplitude { get; set; }
+        public float FrequencyFidelity { get; set; }
+        public int LookAround { get; set; }
+    }
+
+    interface ISoundAnalyzer
+    {
+        string SourceFilePath { get; }
+        int FrameRate { get; }
+        Frame[] Frames { get; }
+        NoteSpan[] NoteSpans { get; }
+        float NotesTotalLength { get; }
+        float MinimumNote { get; }
+        float MaximumNote { get; }
+        int SampleRate { get; }
+        int FrequencyCount { get; }
+        TimeSpan TotalLength { get; }
+        float MinimumAmplitude { get; }
+        float MaximumAmplitude { get; }
+        float FrequencyFidelity { get; }
+        int LookAround { get; }
     }
 }

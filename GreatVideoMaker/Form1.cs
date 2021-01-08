@@ -38,6 +38,12 @@ namespace GreatVideoMaker
             set { numericUpDown2.Value = value; }
         }
 
+        private int BarRelation
+        {
+            get { return (int)numericUpDown4.Value; }
+            set { numericUpDown4.Value = value; }
+        }
+
         public Form1()
         {
             InitializeComponent();
@@ -77,7 +83,7 @@ namespace GreatVideoMaker
             if (saveFileDialog1.ShowDialog() == DialogResult.OK)
             {
                 VideoPath = saveFileDialog1.FileName;
-                video = new VideoRenderer(VideoPath, audio);
+                video = new VideoRenderer(VideoPath, audio, BarRelation);
                 video.OnProgress += Video_OnProgress;
                 video.OnComplete += Video_OnComplete;
             }
@@ -109,6 +115,23 @@ namespace GreatVideoMaker
         private void button3_Click(object sender, EventArgs e)
         {
             video.StartProcess();
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            if (saveFileDialog2.ShowDialog() == DialogResult.OK)
+            {
+                Serializer.WriteToXmlFile(saveFileDialog2.FileName, audio.Data);
+            }
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            if (openFileDialog2.ShowDialog() == DialogResult.OK)
+            {
+                SoundAnalyzerData data = Serializer.ReadFromXmlFile<SoundAnalyzerData>(openFileDialog2.FileName);
+                audio = new SoundAnalyzer(data);
+            }
         }
     }
 }

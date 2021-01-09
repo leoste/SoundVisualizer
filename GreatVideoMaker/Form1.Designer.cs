@@ -58,6 +58,7 @@ namespace GreatVideoMaker
             this.label8 = new System.Windows.Forms.Label();
             this.numericUpDown4 = new System.Windows.Forms.NumericUpDown();
             this.label9 = new System.Windows.Forms.Label();
+            this.numericUpDown5 = new System.Windows.Forms.NumericUpDown();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -66,6 +67,7 @@ namespace GreatVideoMaker
             this.groupBox4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown3)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown4)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown5)).BeginInit();
             this.SuspendLayout();
             // 
             // button1
@@ -311,6 +313,7 @@ namespace GreatVideoMaker
             // 
             // groupBox4
             // 
+            this.groupBox4.Controls.Add(this.numericUpDown5);
             this.groupBox4.Controls.Add(this.numericUpDown3);
             this.groupBox4.Controls.Add(this.label8);
             this.groupBox4.Controls.Add(this.numericUpDown4);
@@ -326,15 +329,15 @@ namespace GreatVideoMaker
             // 
             this.numericUpDown3.Location = new System.Drawing.Point(90, 45);
             this.numericUpDown3.Maximum = new decimal(new int[] {
-            29,
+            360,
             0,
             0,
             0});
             this.numericUpDown3.Name = "numericUpDown3";
-            this.numericUpDown3.Size = new System.Drawing.Size(120, 20);
+            this.numericUpDown3.Size = new System.Drawing.Size(57, 20);
             this.numericUpDown3.TabIndex = 6;
             this.numericUpDown3.Value = new decimal(new int[] {
-            1,
+            160,
             0,
             0,
             0});
@@ -344,9 +347,9 @@ namespace GreatVideoMaker
             this.label8.AutoSize = true;
             this.label8.Location = new System.Drawing.Point(6, 47);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(35, 13);
+            this.label8.Size = new System.Drawing.Size(85, 13);
             this.label8.TabIndex = 5;
-            this.label8.Text = "label8";
+            this.label8.Text = "color start,length";
             // 
             // numericUpDown4
             // 
@@ -365,7 +368,7 @@ namespace GreatVideoMaker
             this.numericUpDown4.Size = new System.Drawing.Size(120, 20);
             this.numericUpDown4.TabIndex = 4;
             this.numericUpDown4.Value = new decimal(new int[] {
-            96,
+            128,
             0,
             0,
             0});
@@ -378,6 +381,23 @@ namespace GreatVideoMaker
             this.label9.Size = new System.Drawing.Size(61, 13);
             this.label9.TabIndex = 3;
             this.label9.Text = "barRelation";
+            // 
+            // numericUpDown5
+            // 
+            this.numericUpDown5.Location = new System.Drawing.Point(153, 45);
+            this.numericUpDown5.Maximum = new decimal(new int[] {
+            360,
+            0,
+            0,
+            0});
+            this.numericUpDown5.Name = "numericUpDown5";
+            this.numericUpDown5.Size = new System.Drawing.Size(57, 20);
+            this.numericUpDown5.TabIndex = 7;
+            this.numericUpDown5.Value = new decimal(new int[] {
+            60,
+            0,
+            0,
+            0});
             // 
             // Form1
             // 
@@ -402,6 +422,7 @@ namespace GreatVideoMaker
             this.groupBox4.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown3)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown4)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown5)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -437,6 +458,7 @@ namespace GreatVideoMaker
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.NumericUpDown numericUpDown4;
         private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.NumericUpDown numericUpDown5;
     }
 }
 

@@ -43,6 +43,16 @@ namespace GreatVideoMaker
             get { return (int)numericUpDown4.Value; }
             set { numericUpDown4.Value = value; }
         }
+        private float ColorStartDegree
+        {
+            get { return (float)numericUpDown3.Value; }
+            set { numericUpDown3.Value = (decimal)value; }
+        }
+        private float ColorLengthDegree
+        {
+            get { return (float)numericUpDown5.Value; }
+            set { numericUpDown5.Value = (decimal)value; }
+        }
 
         public Form1()
         {
@@ -83,7 +93,10 @@ namespace GreatVideoMaker
             if (saveFileDialog1.ShowDialog() == DialogResult.OK)
             {
                 VideoPath = saveFileDialog1.FileName;
-                video = new VideoRenderer(VideoPath, audio, BarRelation);
+                video = new VideoRenderer(VideoPath, audio,
+                    BarRelation,
+                    ColorStartDegree,
+                    ColorLengthDegree);
                 video.OnProgress += Video_OnProgress;
                 video.OnComplete += Video_OnComplete;
             }

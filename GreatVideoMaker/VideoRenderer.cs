@@ -19,23 +19,32 @@ namespace GreatVideoMaker
 
         private string filepath;
         private SoundAnalyzer sound;
+
         private float log;
         private int barRelation;
+        private float startColorDegree;
+        private float lengthColorDegree;
 
         public event EventHandler<ProgressEventArgs> OnProgress;
         public event EventHandler OnComplete;
 
-        public VideoRenderer(string filepath, SoundAnalyzer sound, int barRelation = 64)
+        public VideoRenderer(string filepath, SoundAnalyzer sound,
+            int barRelation = 64,
+            float startColorDegree = 0, // 216, 160
+            float lengthColorDegree = 60) // 60, 60
         {
             this.filepath = filepath;
             this.sound = sound;
             log = 2; // not really used tho
             this.barRelation = barRelation;
+            this.startColorDegree = startColorDegree;
+            this.lengthColorDegree = lengthColorDegree;
         }
         
         IEnumerable<IVideoFrame> CreateFrames()
         {
             float columnRelation = 1f / barRelation;
+            float scaleThingy = lengthColorDegree / 6;
 
             float halfHeight = height / 2f;
             float columnWidth = width * columnRelation;
@@ -44,12 +53,13 @@ namespace GreatVideoMaker
             int noteMaxBorder = 48; // anything higher than that wont be rendered
             float noteMinoffset = -(sound.MinimumNote - noteMinBorder);
             float noteMaxOffset = (sound.MaximumNote - noteMaxBorder);
+            float visibleNoteSpan = sound.NotesTotalLength - noteMinoffset - noteMaxOffset;
             int startIndex = 0; //index of first note we can start on
             int endIndex = sound.FrequencyCount;
             bool startIsntSet = true;
             bool endIsntSet = true;
 
-            float scalex = width / (sound.NotesTotalLength - noteMinoffset - noteMaxOffset);
+            float scalex = width / visibleNoteSpan;
             //float basey = (float)Math.Log(sound.MaximumAmplitude - sound.MinimumAmplitude, log);
             float basey = (sound.MaximumAmplitude - sound.MinimumAmplitude);
             float scaley = width / 3.5f / basey; //width is 7x height ... but since im doing mirrored, 3.5 is used
@@ -58,16 +68,22 @@ namespace GreatVideoMaker
             //preparation for image calculation
             Color[] colors = new Color[sound.FrequencyCount];
             float[] x = new float[sound.FrequencyCount];
-            float[] w = new float[sound.FrequencyCount];
+            float[] w = new float[sound.FrequencyCount];            
             Hsv hsv = new Hsv();
             hsv.S = 1;
             hsv.V = 1;
             for (int i = 0; i < sound.FrequencyCount; i++)
             {
                 //color
-                double thingy = sound.NoteSpans[i].start % 12 / 12;
-                if (thingy < 0) thingy = 1 + thingy;
-                hsv.H = 360 * thingy;                
+                //double thingy = sound.NoteSpans[i].start % 12 / 12;
+                double thingy = (sound.NoteSpans[i].start + noteMinoffset) % 12;
+                if (thingy < 0) thingy = 12 + thingy; // correct negative numbers
+                if (thingy > 6) thingy = 12 - thingy; // make it go backwards
+                thingy = thingy * scaleThingy; //divide only by 6 cause thats the max number can go to thanks to backwards
+                thingy = (thingy + startColorDegree) % 360;
+                //thingy *= lengthColorDegree;
+                
+                hsv.H = thingy;
                 IRgb rgb = hsv.ToRgb();
                 Color c = Color.FromArgb(255, (int)rgb.R, (int)rgb.G, (int)rgb.B);
                 colors[i] = c;

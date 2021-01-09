@@ -185,10 +185,5 @@ namespace GreatVideoMaker
             });
             task.Start();
         }
-
-        public IEnumerable<IVideoFrame> SimulateProcess() // this is to simulate video but not actually render as file
-        {
-            return CreateFrames();
-        }
     }
 }

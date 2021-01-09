@@ -54,25 +54,25 @@ namespace GreatVideoMaker
             this.openFileDialog2 = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialog2 = new System.Windows.Forms.SaveFileDialog();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.numericUpDown7 = new System.Windows.Forms.NumericUpDown();
+            this.numericUpDown6 = new System.Windows.Forms.NumericUpDown();
+            this.label10 = new System.Windows.Forms.Label();
+            this.numericUpDown5 = new System.Windows.Forms.NumericUpDown();
             this.numericUpDown3 = new System.Windows.Forms.NumericUpDown();
             this.label8 = new System.Windows.Forms.Label();
             this.numericUpDown4 = new System.Windows.Forms.NumericUpDown();
             this.label9 = new System.Windows.Forms.Label();
-            this.numericUpDown5 = new System.Windows.Forms.NumericUpDown();
-            this.numericUpDown6 = new System.Windows.Forms.NumericUpDown();
-            this.label10 = new System.Windows.Forms.Label();
-            this.numericUpDown7 = new System.Windows.Forms.NumericUpDown();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             this.groupBox4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown7)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown6)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown5)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown3)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown4)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown5)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown6)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown7)).BeginInit();
             this.SuspendLayout();
             // 
             // button1
@@ -107,7 +107,7 @@ namespace GreatVideoMaker
             // openFileDialog1
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
-            this.openFileDialog1.Filter = "WAV files|*.wav";
+            this.openFileDialog1.Filter = "WAV files|*.wav|MP3 files|*.mp3";
             // 
             // saveFileDialog1
             // 
@@ -333,6 +333,71 @@ namespace GreatVideoMaker
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "parameters";
             // 
+            // numericUpDown7
+            // 
+            this.numericUpDown7.Location = new System.Drawing.Point(153, 71);
+            this.numericUpDown7.Maximum = new decimal(new int[] {
+            30,
+            0,
+            0,
+            0});
+            this.numericUpDown7.Name = "numericUpDown7";
+            this.numericUpDown7.Size = new System.Drawing.Size(57, 20);
+            this.numericUpDown7.TabIndex = 10;
+            this.numericUpDown7.Value = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            // 
+            // numericUpDown6
+            // 
+            this.numericUpDown6.Location = new System.Drawing.Point(90, 71);
+            this.numericUpDown6.Maximum = new decimal(new int[] {
+            30,
+            0,
+            0,
+            0});
+            this.numericUpDown6.Minimum = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
+            this.numericUpDown6.Name = "numericUpDown6";
+            this.numericUpDown6.Size = new System.Drawing.Size(57, 20);
+            this.numericUpDown6.TabIndex = 9;
+            this.numericUpDown6.Value = new decimal(new int[] {
+            8,
+            0,
+            0,
+            0});
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(6, 73);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(79, 13);
+            this.label10.TabIndex = 8;
+            this.label10.Text = "decay Exp,time";
+            // 
+            // numericUpDown5
+            // 
+            this.numericUpDown5.Location = new System.Drawing.Point(153, 45);
+            this.numericUpDown5.Maximum = new decimal(new int[] {
+            360,
+            0,
+            0,
+            0});
+            this.numericUpDown5.Name = "numericUpDown5";
+            this.numericUpDown5.Size = new System.Drawing.Size(57, 20);
+            this.numericUpDown5.TabIndex = 7;
+            this.numericUpDown5.Value = new decimal(new int[] {
+            60,
+            0,
+            0,
+            0});
+            // 
             // numericUpDown3
             // 
             this.numericUpDown3.Location = new System.Drawing.Point(90, 45);
@@ -390,71 +455,6 @@ namespace GreatVideoMaker
             this.label9.TabIndex = 3;
             this.label9.Text = "barRelation";
             // 
-            // numericUpDown5
-            // 
-            this.numericUpDown5.Location = new System.Drawing.Point(153, 45);
-            this.numericUpDown5.Maximum = new decimal(new int[] {
-            360,
-            0,
-            0,
-            0});
-            this.numericUpDown5.Name = "numericUpDown5";
-            this.numericUpDown5.Size = new System.Drawing.Size(57, 20);
-            this.numericUpDown5.TabIndex = 7;
-            this.numericUpDown5.Value = new decimal(new int[] {
-            60,
-            0,
-            0,
-            0});
-            // 
-            // numericUpDown6
-            // 
-            this.numericUpDown6.Location = new System.Drawing.Point(90, 71);
-            this.numericUpDown6.Maximum = new decimal(new int[] {
-            30,
-            0,
-            0,
-            0});
-            this.numericUpDown6.Minimum = new decimal(new int[] {
-            2,
-            0,
-            0,
-            0});
-            this.numericUpDown6.Name = "numericUpDown6";
-            this.numericUpDown6.Size = new System.Drawing.Size(57, 20);
-            this.numericUpDown6.TabIndex = 9;
-            this.numericUpDown6.Value = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
-            // 
-            // label10
-            // 
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(6, 73);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(79, 13);
-            this.label10.TabIndex = 8;
-            this.label10.Text = "decay Exp,time";
-            // 
-            // numericUpDown7
-            // 
-            this.numericUpDown7.Location = new System.Drawing.Point(153, 71);
-            this.numericUpDown7.Maximum = new decimal(new int[] {
-            30,
-            0,
-            0,
-            0});
-            this.numericUpDown7.Name = "numericUpDown7";
-            this.numericUpDown7.Size = new System.Drawing.Size(57, 20);
-            this.numericUpDown7.TabIndex = 10;
-            this.numericUpDown7.Value = new decimal(new int[] {
-            5,
-            0,
-            0,
-            0});
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -476,11 +476,11 @@ namespace GreatVideoMaker
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown7)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown6)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown5)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown3)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown4)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown5)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown6)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown7)).EndInit();
             this.ResumeLayout(false);
 
         }

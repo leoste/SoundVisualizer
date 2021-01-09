@@ -99,7 +99,7 @@ namespace GreatVideoMaker
 
             float[][] buffers;
 
-            using (WaveFileReader reader = new WaveFileReader(SourceFilePath))
+            using (AudioFileReader reader = new AudioFileReader(SourceFilePath))
             {
                 // lots of setup
                 ISampleProvider provider = reader.ToSampleProvider();

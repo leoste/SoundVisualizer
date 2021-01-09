@@ -54,6 +54,17 @@ namespace GreatVideoMaker
             set { numericUpDown5.Value = (decimal)value; }
         }
 
+        private int DecayExponent
+        {
+            get { return (int)numericUpDown6.Value; }
+            set { numericUpDown6.Value = value; }
+        }
+        private int DecayTime
+        {
+            get { return (int)numericUpDown6.Value; }
+            set { numericUpDown7.Value = value; }
+        }
+
         public Form1()
         {
             InitializeComponent();
@@ -96,7 +107,9 @@ namespace GreatVideoMaker
                 video = new VideoRenderer(VideoPath, audio,
                     BarRelation,
                     ColorStartDegree,
-                    ColorLengthDegree);
+                    ColorLengthDegree,
+                    DecayExponent,
+                    DecayTime);
                 video.OnProgress += Video_OnProgress;
                 video.OnComplete += Video_OnComplete;
             }

@@ -24,14 +24,18 @@ namespace GreatVideoMaker
         private int barRelation;
         private float startColorDegree;
         private float lengthColorDegree;
+        private int decayExponent;
+        private int decayTime;
 
         public event EventHandler<ProgressEventArgs> OnProgress;
         public event EventHandler OnComplete;
 
         public VideoRenderer(string filepath, SoundAnalyzer sound,
-            int barRelation = 64,
+            int barRelation = 128,
             float startColorDegree = 0, // 216, 160
-            float lengthColorDegree = 60) // 60, 60
+            float lengthColorDegree = 180, // 60, 60
+            int decayExponent = 10,
+            int decayTime = 5) 
         {
             this.filepath = filepath;
             this.sound = sound;
@@ -39,8 +43,10 @@ namespace GreatVideoMaker
             this.barRelation = barRelation;
             this.startColorDegree = startColorDegree;
             this.lengthColorDegree = lengthColorDegree;
+            this.decayExponent = decayExponent;
+            this.decayTime = decayTime;
         }
-        
+
         IEnumerable<IVideoFrame> CreateFrames()
         {
             float columnRelation = 1f / barRelation;
@@ -68,7 +74,7 @@ namespace GreatVideoMaker
             //preparation for image calculation
             Color[] colors = new Color[sound.FrequencyCount];
             float[] x = new float[sound.FrequencyCount];
-            float[] w = new float[sound.FrequencyCount];            
+            float[] w = new float[sound.FrequencyCount];
             Hsv hsv = new Hsv();
             hsv.S = 1;
             hsv.V = 1;
@@ -82,7 +88,7 @@ namespace GreatVideoMaker
                 thingy = thingy * scaleThingy; //divide only by 6 cause thats the max number can go to thanks to backwards
                 thingy = (thingy + startColorDegree) % 360;
                 //thingy *= lengthColorDegree;
-                
+
                 hsv.H = thingy;
                 IRgb rgb = hsv.ToRgb();
                 Color c = Color.FromArgb(255, (int)rgb.R, (int)rgb.G, (int)rgb.B);
@@ -103,12 +109,18 @@ namespace GreatVideoMaker
                 else if (endIsntSet)
                 {
                     if (sound.NoteSpans[i].start >= noteMaxBorder)
-                {
+                    {
                         endIndex = i;
                         endIsntSet = false;
                     }
                 }
             }
+
+            // anti-spaz measures
+            float[] decays = new float[sound.FrequencyCount];
+            float[] decayPeaks = new float[sound.FrequencyCount];
+            float[] decayCounts = new float[sound.FrequencyCount];
+            float decayCountMargin = decayExponent / decayTime;
 
             //this is for note-based visualization
             for (int i = 0; i < sound.Frames.Length; i++)
@@ -123,6 +135,22 @@ namespace GreatVideoMaker
                         {
                             //float baseh = (float)Math.Max(Math.Log(sound.Frames[i].frequencies[k], log), 0); //delete negative data lol
                             float baseh = sound.Frames[i].frequencies[k];
+
+                            //decays[k] = (float)Math.Log(baseh, decayAmount);
+                            if (decayCounts[k] > 0)
+                            {
+                                decays[k] = (float)Math.Log(decayCounts[k], decayExponent) * decayPeaks[k];
+                                decayCounts[k] -= decayCountMargin;
+                            }
+
+                            if (baseh >= decays[k]) //if new is bigger overwrite decay
+                            {
+                                decayPeaks[k] = baseh;
+                                decayCounts[k] = decayTime;
+                                //decays[k] = baseh; // not necessary cause wont be used in this cycle
+                            }
+                            else baseh = decays[k]; // if new is smaller show decay
+
                             float h = baseh * scaley;
                             float y = halfHeight - h * 0.5f;
                             Color c = colors[k];

@@ -107,7 +107,7 @@ namespace GreatVideoMaker
             // openFileDialog1
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
-            this.openFileDialog1.Filter = "WAV files|*.wav|MP3 files|*.mp3";
+            this.openFileDialog1.Filter = "Sound files| *.wav;*.mp3;*.m4a";
             // 
             // saveFileDialog1
             // 

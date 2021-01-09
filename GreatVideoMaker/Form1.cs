@@ -14,12 +14,7 @@ namespace GreatVideoMaker
     {
         private SoundAnalyzer audio;
         private VideoRenderer video;
-
-        private int FrameRate
-        {
-            get { return (int)numericUpDown1.Value; }
-        }
-
+                
         private string AudioPath
         {
             get { return label1.Text; }
@@ -31,39 +26,16 @@ namespace GreatVideoMaker
             get { return label2.Text; }
             set { label2.Text = value; }
         }
-
-        private int LookAhead
-        {
-            get { return (int)numericUpDown2.Value; }
-            set { numericUpDown2.Value = value; }
-        }
-
-        private int BarRelation
-        {
-            get { return (int)numericUpDown4.Value; }
-            set { numericUpDown4.Value = value; }
-        }
-        private float ColorStartDegree
-        {
-            get { return (float)numericUpDown3.Value; }
-            set { numericUpDown3.Value = (decimal)value; }
-        }
-        private float ColorLengthDegree
-        {
-            get { return (float)numericUpDown5.Value; }
-            set { numericUpDown5.Value = (decimal)value; }
-        }
-
-        private int DecayExponent
-        {
-            get { return (int)numericUpDown6.Value; }
-            set { numericUpDown6.Value = value; }
-        }
-        private int DecayTime
-        {
-            get { return (int)numericUpDown6.Value; }
-            set { numericUpDown7.Value = value; }
-        }
+        private int FrameRate { get { return (int)numericUpDown1.Value; } }
+        private int LookAhead { get { return (int)numericUpDown2.Value; } }
+        private int BarRelation { get { return (int)numericUpDown4.Value; } }
+        private float ColorStartDegree { get { return (float)numericUpDown3.Value; } }
+        private float ColorLengthDegree { get { return (float)numericUpDown5.Value; } }
+        private int DecayExponent { get { return (int)numericUpDown6.Value; } }
+        private int DecayTime { get { return (int)numericUpDown6.Value; } }
+        private Size FrameSize { get { return new Size((int)numericUpDown9.Value, (int)numericUpDown8.Value); } }
+        private int MinNote { get { return (int)numericUpDown11.Value; } }
+        private int MaxNote { get { return (int)numericUpDown10.Value; } }
 
         public Form1()
         {
@@ -75,7 +47,7 @@ namespace GreatVideoMaker
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
                 AudioPath = openFileDialog1.FileName;
-                audio = new SoundAnalyzer(AudioPath, FrameRate, LookAhead);
+                audio = new SoundAnalyzer(AudioPath, FrameRate, FrameSize, LookAhead);
                 audio.OnProgress += Audio_OnProgress;
                 audio.OnComplete += Audio_OnComplete;
             }
@@ -109,7 +81,9 @@ namespace GreatVideoMaker
                     ColorStartDegree,
                     ColorLengthDegree,
                     DecayExponent,
-                    DecayTime);
+                    DecayTime,
+                    MinNote,
+                    MaxNote);
                 video.OnProgress += Video_OnProgress;
                 video.OnComplete += Video_OnComplete;
             }

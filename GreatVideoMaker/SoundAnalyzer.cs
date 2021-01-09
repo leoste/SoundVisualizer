@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -23,6 +24,7 @@ namespace GreatVideoMaker
         public TimeSpan TotalLength { get; private set; }
         public string SourceFilePath { get; private set; }
         public int FrameRate { get; private set; }
+        public Size FrameSize { get; private set; }
         public float MinimumAmplitude { get; private set; }
         public float MaximumAmplitude { get; private set; }
         public float FrequencyFidelity { get; private set; } //how many frequencies share the same position
@@ -38,6 +40,7 @@ namespace GreatVideoMaker
                 return new SoundAnalyzerData()
                 {
                     FrameRate = FrameRate,
+                    FrameSize = FrameSize,
                     Frames = Frames,
                     FrequencyCount = FrequencyCount,
                     FrequencyFidelity = FrequencyFidelity,
@@ -55,11 +58,12 @@ namespace GreatVideoMaker
             }
         }
 
-        public SoundAnalyzer(string audiopath, int framerate, int lookaround = 0)
+        public SoundAnalyzer(string audiopath, int framerate, Size framesize, int lookaround = 0)
         {
             SourceFilePath = audiopath;
             FrameRate = framerate;
             LookAround = lookaround;
+            FrameSize = framesize;
         }
 
         public SoundAnalyzer(SoundAnalyzerData data)
@@ -286,6 +290,7 @@ namespace GreatVideoMaker
     {
         public string SourceFilePath { get; set; }
         public int FrameRate { get; set; }
+        public Size FrameSize { get; set; }
         public Frame[] Frames { get; set; }
         public NoteSpan[] NoteSpans { get; set; }
         public float NotesTotalLength { get; set; }
@@ -304,6 +309,7 @@ namespace GreatVideoMaker
     {
         string SourceFilePath { get; }
         int FrameRate { get; }
+        Size FrameSize { get; }
         Frame[] Frames { get; }
         NoteSpan[] NoteSpans { get; }
         float NotesTotalLength { get; }

@@ -14,18 +14,17 @@ namespace GreatVideoMaker
 {
     class VideoRenderer : Processer
     {
-        private static int width = 1280;
-        private static int height = 720;
-
         private string filepath;
         private SoundAnalyzer sound;
 
         private float log;
         private int barRelation;
-        private float startColorDegree;
-        private float lengthColorDegree;
+        private float colorStartDegree;
+        private float colorLengthDegree;
         private int decayExponent;
         private int decayTime;
+        private int maxNoteBorder;
+        private int minNoteBorder;
 
         public event EventHandler<ProgressEventArgs> OnProgress;
         public event EventHandler OnComplete;
@@ -35,40 +34,42 @@ namespace GreatVideoMaker
             float startColorDegree = 0, // 216, 160
             float lengthColorDegree = 180, // 60, 60
             int decayExponent = 10,
-            int decayTime = 5) 
+            int decayTime = 5,
+            int minNoteBorder = -36,
+            int maxNoteBorder = 48)
         {
             this.filepath = filepath;
             this.sound = sound;
             log = 2; // not really used tho
             this.barRelation = barRelation;
-            this.startColorDegree = startColorDegree;
-            this.lengthColorDegree = lengthColorDegree;
+            this.colorStartDegree = startColorDegree;
+            this.colorLengthDegree = lengthColorDegree;
             this.decayExponent = decayExponent;
             this.decayTime = decayTime;
+            this.minNoteBorder = minNoteBorder;
+            this.maxNoteBorder = maxNoteBorder;
         }
 
         IEnumerable<IVideoFrame> CreateFrames()
         {
             float columnRelation = 1f / barRelation;
-            float scaleThingy = lengthColorDegree / 6;
+            float scaleThingy = colorLengthDegree / 6;
 
-            float halfHeight = height / 2f;
-            float columnWidth = width * columnRelation;
+            float halfHeight = sound.FrameSize.Height / 2f;
+            float columnWidth = sound.FrameSize.Width * columnRelation;
             float columnHalfWidth = columnWidth / 2;
-            int noteMinBorder = -36; // anything lower than that wont be rendered
-            int noteMaxBorder = 48; // anything higher than that wont be rendered
-            float noteMinoffset = -(sound.MinimumNote - noteMinBorder);
-            float noteMaxOffset = (sound.MaximumNote - noteMaxBorder);
+            float noteMinoffset = -(sound.MinimumNote - minNoteBorder);
+            float noteMaxOffset = (sound.MaximumNote - maxNoteBorder);
             float visibleNoteSpan = sound.NotesTotalLength - noteMinoffset - noteMaxOffset;
             int startIndex = 0; //index of first note we can start on
             int endIndex = sound.FrequencyCount;
             bool startIsntSet = true;
             bool endIsntSet = true;
 
-            float scalex = width / visibleNoteSpan;
+            float scalex = sound.FrameSize.Width / visibleNoteSpan;
             //float basey = (float)Math.Log(sound.MaximumAmplitude - sound.MinimumAmplitude, log);
             float basey = (sound.MaximumAmplitude - sound.MinimumAmplitude);
-            float scaley = width / 3.5f / basey; //width is 7x height ... but since im doing mirrored, 3.5 is used
+            float scaley = sound.FrameSize.Width / 3.5f / basey; //width is 7x height ... but since im doing mirrored, 3.5 is used
             float scalealpha = 255 / basey;
 
             //preparation for image calculation
@@ -86,7 +87,7 @@ namespace GreatVideoMaker
                 if (thingy < 0) thingy = 12 + thingy; // correct negative numbers
                 if (thingy > 6) thingy = 12 - thingy; // make it go backwards
                 thingy = thingy * scaleThingy; //divide only by 6 cause thats the max number can go to thanks to backwards
-                thingy = (thingy + startColorDegree) % 360;
+                thingy = (thingy + colorStartDegree) % 360;
                 //thingy *= lengthColorDegree;
 
                 hsv.H = thingy;
@@ -100,7 +101,7 @@ namespace GreatVideoMaker
 
                 if (startIsntSet)
                 {
-                    if (sound.NoteSpans[i].start >= noteMinBorder)
+                    if (sound.NoteSpans[i].start >= minNoteBorder)
                     {
                         startIndex = i;
                         startIsntSet = false;
@@ -108,7 +109,7 @@ namespace GreatVideoMaker
                 }
                 else if (endIsntSet)
                 {
-                    if (sound.NoteSpans[i].start >= noteMaxBorder)
+                    if (sound.NoteSpans[i].start >= maxNoteBorder)
                     {
                         endIndex = i;
                         endIsntSet = false;
@@ -125,7 +126,7 @@ namespace GreatVideoMaker
             //this is for note-based visualization
             for (int i = 0; i < sound.Frames.Length; i++)
             {
-                using (Bitmap bitmap = new Bitmap(width, height))
+                using (Bitmap bitmap = new Bitmap(sound.FrameSize.Width, sound.FrameSize.Height))
                 {
                     using (Graphics g = Graphics.FromImage(bitmap))
                     {
@@ -160,7 +161,7 @@ namespace GreatVideoMaker
                         }
                     }
                     BitmapVideoFrameWrapper wrapper = new BitmapVideoFrameWrapper(bitmap);
-                    yield return wrapper;
+                    yield return wrapper;                    
                 }
             }
         }
@@ -183,6 +184,11 @@ namespace GreatVideoMaker
                 if (OnComplete != null) OnComplete.Invoke(this, EventArgs.Empty);
             });
             task.Start();
+        }
+
+        public IEnumerable<IVideoFrame> SimulateProcess() // this is to simulate video but not actually render as file
+        {
+            return CreateFrames();
         }
     }
 }

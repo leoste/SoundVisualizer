@@ -62,6 +62,12 @@ namespace GreatVideoMaker
             this.label8 = new System.Windows.Forms.Label();
             this.numericUpDown4 = new System.Windows.Forms.NumericUpDown();
             this.label9 = new System.Windows.Forms.Label();
+            this.numericUpDown8 = new System.Windows.Forms.NumericUpDown();
+            this.numericUpDown9 = new System.Windows.Forms.NumericUpDown();
+            this.label11 = new System.Windows.Forms.Label();
+            this.numericUpDown11 = new System.Windows.Forms.NumericUpDown();
+            this.label12 = new System.Windows.Forms.Label();
+            this.numericUpDown10 = new System.Windows.Forms.NumericUpDown();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -73,6 +79,10 @@ namespace GreatVideoMaker
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown5)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown3)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown4)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown8)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown9)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown11)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown10)).BeginInit();
             this.SuspendLayout();
             // 
             // button1
@@ -124,6 +134,8 @@ namespace GreatVideoMaker
             // 
             // groupBox1
             // 
+            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox1.Controls.Add(this.button6);
             this.groupBox1.Controls.Add(this.button5);
             this.groupBox1.Controls.Add(this.label7);
@@ -134,15 +146,16 @@ namespace GreatVideoMaker
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Location = new System.Drawing.Point(12, 89);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(400, 119);
+            this.groupBox1.Size = new System.Drawing.Size(426, 119);
             this.groupBox1.TabIndex = 4;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Source audio";
             // 
             // button6
             // 
+            this.button6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.button6.Enabled = false;
-            this.button6.Location = new System.Drawing.Point(319, 19);
+            this.button6.Location = new System.Drawing.Point(345, 19);
             this.button6.Name = "button6";
             this.button6.Size = new System.Drawing.Size(75, 23);
             this.button6.TabIndex = 8;
@@ -152,8 +165,9 @@ namespace GreatVideoMaker
             // 
             // button5
             // 
+            this.button5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.button5.Enabled = false;
-            this.button5.Location = new System.Drawing.Point(319, 48);
+            this.button5.Location = new System.Drawing.Point(345, 48);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(75, 23);
             this.button5.TabIndex = 7;
@@ -163,8 +177,9 @@ namespace GreatVideoMaker
             // 
             // label7
             // 
+            this.label7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(297, 53);
+            this.label7.Location = new System.Drawing.Point(323, 53);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(16, 13);
             this.label7.TabIndex = 6;
@@ -191,14 +206,18 @@ namespace GreatVideoMaker
             // 
             // progressBar1
             // 
+            this.progressBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.progressBar1.Location = new System.Drawing.Point(6, 90);
             this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(388, 23);
+            this.progressBar1.Size = new System.Drawing.Size(414, 23);
             this.progressBar1.Step = 1;
             this.progressBar1.TabIndex = 3;
             // 
             // groupBox2
             // 
+            this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox2.Controls.Add(this.button3);
             this.groupBox2.Controls.Add(this.label4);
             this.groupBox2.Controls.Add(this.button2);
@@ -206,7 +225,7 @@ namespace GreatVideoMaker
             this.groupBox2.Controls.Add(this.label2);
             this.groupBox2.Location = new System.Drawing.Point(12, 319);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(400, 119);
+            this.groupBox2.Size = new System.Drawing.Size(426, 119);
             this.groupBox2.TabIndex = 5;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Output video";
@@ -232,27 +251,34 @@ namespace GreatVideoMaker
             // 
             // progressBar2
             // 
+            this.progressBar2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.progressBar2.Location = new System.Drawing.Point(6, 90);
             this.progressBar2.Name = "progressBar2";
-            this.progressBar2.Size = new System.Drawing.Size(388, 23);
+            this.progressBar2.Size = new System.Drawing.Size(414, 23);
             this.progressBar2.TabIndex = 5;
             // 
             // groupBox3
             // 
+            this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox3.Controls.Add(this.numericUpDown8);
             this.groupBox3.Controls.Add(this.numericUpDown2);
+            this.groupBox3.Controls.Add(this.numericUpDown9);
             this.groupBox3.Controls.Add(this.label6);
+            this.groupBox3.Controls.Add(this.label11);
             this.groupBox3.Controls.Add(this.numericUpDown1);
             this.groupBox3.Controls.Add(this.label5);
             this.groupBox3.Location = new System.Drawing.Point(12, 12);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(400, 71);
+            this.groupBox3.Size = new System.Drawing.Size(426, 71);
             this.groupBox3.TabIndex = 6;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "parameters";
             // 
             // numericUpDown2
             // 
-            this.numericUpDown2.Location = new System.Drawing.Point(90, 45);
+            this.numericUpDown2.Location = new System.Drawing.Point(300, 19);
             this.numericUpDown2.Maximum = new decimal(new int[] {
             29,
             0,
@@ -270,7 +296,7 @@ namespace GreatVideoMaker
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(6, 47);
+            this.label6.Location = new System.Drawing.Point(216, 21);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(57, 13);
             this.label6.TabIndex = 5;
@@ -318,6 +344,11 @@ namespace GreatVideoMaker
             // 
             // groupBox4
             // 
+            this.groupBox4.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox4.Controls.Add(this.numericUpDown10);
+            this.groupBox4.Controls.Add(this.numericUpDown11);
+            this.groupBox4.Controls.Add(this.label12);
             this.groupBox4.Controls.Add(this.numericUpDown7);
             this.groupBox4.Controls.Add(this.numericUpDown6);
             this.groupBox4.Controls.Add(this.label10);
@@ -328,14 +359,14 @@ namespace GreatVideoMaker
             this.groupBox4.Controls.Add(this.label9);
             this.groupBox4.Location = new System.Drawing.Point(12, 214);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(400, 97);
+            this.groupBox4.Size = new System.Drawing.Size(426, 97);
             this.groupBox4.TabIndex = 7;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "parameters";
             // 
             // numericUpDown7
             // 
-            this.numericUpDown7.Location = new System.Drawing.Point(153, 71);
+            this.numericUpDown7.Location = new System.Drawing.Point(363, 45);
             this.numericUpDown7.Maximum = new decimal(new int[] {
             30,
             0,
@@ -352,7 +383,7 @@ namespace GreatVideoMaker
             // 
             // numericUpDown6
             // 
-            this.numericUpDown6.Location = new System.Drawing.Point(90, 71);
+            this.numericUpDown6.Location = new System.Drawing.Point(300, 45);
             this.numericUpDown6.Maximum = new decimal(new int[] {
             30,
             0,
@@ -375,7 +406,7 @@ namespace GreatVideoMaker
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(6, 73);
+            this.label10.Location = new System.Drawing.Point(216, 47);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(79, 13);
             this.label10.TabIndex = 8;
@@ -383,7 +414,7 @@ namespace GreatVideoMaker
             // 
             // numericUpDown5
             // 
-            this.numericUpDown5.Location = new System.Drawing.Point(153, 45);
+            this.numericUpDown5.Location = new System.Drawing.Point(153, 21);
             this.numericUpDown5.Maximum = new decimal(new int[] {
             360,
             0,
@@ -400,7 +431,7 @@ namespace GreatVideoMaker
             // 
             // numericUpDown3
             // 
-            this.numericUpDown3.Location = new System.Drawing.Point(90, 45);
+            this.numericUpDown3.Location = new System.Drawing.Point(90, 21);
             this.numericUpDown3.Maximum = new decimal(new int[] {
             360,
             0,
@@ -418,7 +449,7 @@ namespace GreatVideoMaker
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(6, 47);
+            this.label8.Location = new System.Drawing.Point(6, 23);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(85, 13);
             this.label8.TabIndex = 5;
@@ -426,7 +457,7 @@ namespace GreatVideoMaker
             // 
             // numericUpDown4
             // 
-            this.numericUpDown4.Location = new System.Drawing.Point(90, 19);
+            this.numericUpDown4.Location = new System.Drawing.Point(300, 19);
             this.numericUpDown4.Maximum = new decimal(new int[] {
             2048,
             0,
@@ -449,17 +480,113 @@ namespace GreatVideoMaker
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(6, 21);
+            this.label9.Location = new System.Drawing.Point(216, 21);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(61, 13);
             this.label9.TabIndex = 3;
             this.label9.Text = "barRelation";
             // 
+            // numericUpDown8
+            // 
+            this.numericUpDown8.Location = new System.Drawing.Point(153, 45);
+            this.numericUpDown8.Maximum = new decimal(new int[] {
+            2160,
+            0,
+            0,
+            0});
+            this.numericUpDown8.Name = "numericUpDown8";
+            this.numericUpDown8.Size = new System.Drawing.Size(57, 20);
+            this.numericUpDown8.TabIndex = 13;
+            this.numericUpDown8.Value = new decimal(new int[] {
+            720,
+            0,
+            0,
+            0});
+            // 
+            // numericUpDown9
+            // 
+            this.numericUpDown9.Location = new System.Drawing.Point(90, 45);
+            this.numericUpDown9.Maximum = new decimal(new int[] {
+            3840,
+            0,
+            0,
+            0});
+            this.numericUpDown9.Name = "numericUpDown9";
+            this.numericUpDown9.Size = new System.Drawing.Size(57, 20);
+            this.numericUpDown9.TabIndex = 12;
+            this.numericUpDown9.Value = new decimal(new int[] {
+            1280,
+            0,
+            0,
+            0});
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(6, 47);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(64, 13);
+            this.label11.TabIndex = 11;
+            this.label11.Text = "width,height";
+            // 
+            // numericUpDown11
+            // 
+            this.numericUpDown11.Location = new System.Drawing.Point(90, 47);
+            this.numericUpDown11.Maximum = new decimal(new int[] {
+            108,
+            0,
+            0,
+            0});
+            this.numericUpDown11.Minimum = new decimal(new int[] {
+            108,
+            0,
+            0,
+            -2147483648});
+            this.numericUpDown11.Name = "numericUpDown11";
+            this.numericUpDown11.Size = new System.Drawing.Size(57, 20);
+            this.numericUpDown11.TabIndex = 12;
+            this.numericUpDown11.Value = new decimal(new int[] {
+            36,
+            0,
+            0,
+            -2147483648});
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(6, 49);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(66, 13);
+            this.label12.TabIndex = 11;
+            this.label12.Text = "note borders";
+            // 
+            // numericUpDown10
+            // 
+            this.numericUpDown10.Location = new System.Drawing.Point(153, 47);
+            this.numericUpDown10.Maximum = new decimal(new int[] {
+            108,
+            0,
+            0,
+            0});
+            this.numericUpDown10.Minimum = new decimal(new int[] {
+            108,
+            0,
+            0,
+            -2147483648});
+            this.numericUpDown10.Name = "numericUpDown10";
+            this.numericUpDown10.Size = new System.Drawing.Size(57, 20);
+            this.numericUpDown10.TabIndex = 13;
+            this.numericUpDown10.Value = new decimal(new int[] {
+            48,
+            0,
+            0,
+            0});
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(424, 450);
+            this.ClientSize = new System.Drawing.Size(450, 450);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox2);
@@ -481,6 +608,10 @@ namespace GreatVideoMaker
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown5)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown3)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown4)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown8)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown9)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown11)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown10)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -520,6 +651,12 @@ namespace GreatVideoMaker
         private System.Windows.Forms.NumericUpDown numericUpDown6;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.NumericUpDown numericUpDown7;
+        private System.Windows.Forms.NumericUpDown numericUpDown8;
+        private System.Windows.Forms.NumericUpDown numericUpDown9;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.NumericUpDown numericUpDown10;
+        private System.Windows.Forms.NumericUpDown numericUpDown11;
+        private System.Windows.Forms.Label label12;
     }
 }
 

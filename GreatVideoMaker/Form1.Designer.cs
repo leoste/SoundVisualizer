@@ -262,7 +262,7 @@ namespace GreatVideoMaker
             this.numericUpDown2.Size = new System.Drawing.Size(120, 20);
             this.numericUpDown2.TabIndex = 6;
             this.numericUpDown2.Value = new decimal(new int[] {
-            2,
+            1,
             0,
             0,
             0});

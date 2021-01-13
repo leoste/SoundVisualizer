@@ -1,2 +1,2 @@
-# sound-visualizer
-Visualize sound and do some cool rendering with it
+# SoundVisualizer
+Program that visualizes an audio file and renders it into a video. WIP

@@ -11,7 +11,7 @@ using NAudio.Wave;
 
 namespace GreatVideoMaker
 {
-    class SoundAnalyzer : Processer, ISoundAnalyzer
+    class SoundAnalyzer : Processer
     {
         private static double baseFrequency = 440;
         private static int threadCount = 4;
@@ -34,54 +34,13 @@ namespace GreatVideoMaker
         public NoteSpan[] NoteSpans { get; private set; } // how many notes does each frequency cover
         public int LookAround { get; private set; } //take future and past frames into consideration (get more fidelity)
         public int FrequencyCount { get; private set; }
-        public SoundAnalyzerData Data {
-            get 
-            {
-                return new SoundAnalyzerData()
-                {
-                    FrameRate = FrameRate,
-                    FrameSize = FrameSize,
-                    Frames = Frames,
-                    FrequencyCount = FrequencyCount,
-                    FrequencyFidelity = FrequencyFidelity,
-                    LookAround = LookAround,
-                    MaximumAmplitude = MaximumAmplitude,
-                    MaximumNote = MaximumNote,
-                    MinimumAmplitude = MinimumAmplitude,
-                    MinimumNote = MinimumNote,
-                    NoteSpans = NoteSpans,
-                    NotesTotalLength = NotesTotalLength,
-                    SampleRate = SampleRate,
-                    SourceFilePath = SourceFilePath,
-                    TotalLength = TotalLength
-                };
-            }
-        }
-
+        
         public SoundAnalyzer(string audiopath, int framerate, Size framesize, int lookaround = 0)
         {
             SourceFilePath = audiopath;
             FrameRate = framerate;
             LookAround = lookaround;
             FrameSize = framesize;
-        }
-
-        public SoundAnalyzer(SoundAnalyzerData data)
-        {
-            FrameRate = data.FrameRate;
-            Frames = data.Frames;
-            FrequencyCount = data.FrequencyCount;
-            FrequencyFidelity = data.FrequencyFidelity;
-            LookAround = data.LookAround;
-            MaximumAmplitude = data.MaximumAmplitude;
-            MaximumNote = data.MaximumNote;
-            MinimumAmplitude = data.MinimumAmplitude;
-            MinimumNote = data.MinimumNote;
-            NoteSpans = data.NoteSpans;
-            NotesTotalLength = data.NotesTotalLength;
-            SampleRate = data.SampleRate;
-            SourceFilePath = data.SourceFilePath;
-            TotalLength = data.TotalLength;            
         }
 
         public void StartProcess()
@@ -284,43 +243,5 @@ namespace GreatVideoMaker
         public float start;
         public float end;
         public float length;
-    }
-
-    public struct SoundAnalyzerData : ISoundAnalyzer
-    {
-        public string SourceFilePath { get; set; }
-        public int FrameRate { get; set; }
-        public Size FrameSize { get; set; }
-        public Frame[] Frames { get; set; }
-        public NoteSpan[] NoteSpans { get; set; }
-        public float NotesTotalLength { get; set; }
-        public float MinimumNote { get; set; }
-        public float MaximumNote { get; set; }
-        public int SampleRate { get; set; }
-        public int FrequencyCount { get; set; }
-        public TimeSpan TotalLength { get; set; }
-        public float MinimumAmplitude { get; set; }
-        public float MaximumAmplitude { get; set; }
-        public float FrequencyFidelity { get; set; }
-        public int LookAround { get; set; }
-    }
-
-    interface ISoundAnalyzer
-    {
-        string SourceFilePath { get; }
-        int FrameRate { get; }
-        Size FrameSize { get; }
-        Frame[] Frames { get; }
-        NoteSpan[] NoteSpans { get; }
-        float NotesTotalLength { get; }
-        float MinimumNote { get; }
-        float MaximumNote { get; }
-        int SampleRate { get; }
-        int FrequencyCount { get; }
-        TimeSpan TotalLength { get; }
-        float MinimumAmplitude { get; }
-        float MaximumAmplitude { get; }
-        float FrequencyFidelity { get; }
-        int LookAround { get; }
     }
 }

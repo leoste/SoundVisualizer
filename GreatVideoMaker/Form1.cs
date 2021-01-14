@@ -116,22 +116,5 @@ namespace GreatVideoMaker
         {
             video.StartProcess();
         }
-
-        private void button6_Click(object sender, EventArgs e)
-        {
-            if (saveFileDialog2.ShowDialog() == DialogResult.OK)
-            {
-                Serializer.WriteToXmlFile(saveFileDialog2.FileName, audio.Data);
-            }
-        }
-
-        private void button5_Click(object sender, EventArgs e)
-        {
-            if (openFileDialog2.ShowDialog() == DialogResult.OK)
-            {
-                SoundAnalyzerData data = Serializer.ReadFromXmlFile<SoundAnalyzerData>(openFileDialog2.FileName);
-                audio = new SoundAnalyzer(data);
-            }
-        }
     }
 }

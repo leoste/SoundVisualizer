@@ -18,7 +18,6 @@ namespace GreatVideoMaker
         private string filepath;
         private SoundAnalyzer sound;
 
-        private float log;
         private int barRelation;
         private float colorStartDegree;
         private float colorLengthDegree;
@@ -32,8 +31,8 @@ namespace GreatVideoMaker
 
         public VideoRenderer(string filepath, SoundAnalyzer sound,
             int barRelation = 128,
-            float startColorDegree = 0, // 216, 160
-            float lengthColorDegree = 180, // 60, 60
+            float colorStartDegree = 0, // 216, 160
+            float colorLengthDegree = 180, // 60, 60
             int decayExponent = 10,
             int decayTime = 5,
             int minNoteBorder = -36,
@@ -41,10 +40,9 @@ namespace GreatVideoMaker
         {
             this.filepath = filepath;
             this.sound = sound;
-            log = 2; // not really used tho
             this.barRelation = barRelation;
-            this.colorStartDegree = startColorDegree;
-            this.colorLengthDegree = lengthColorDegree;
+            this.colorStartDegree = colorStartDegree;
+            this.colorLengthDegree = colorLengthDegree;
             this.decayExponent = decayExponent;
             this.decayTime = decayTime;
             this.minNoteBorder = minNoteBorder;
@@ -73,9 +71,11 @@ namespace GreatVideoMaker
             //color preparation for image calculation            
             Color[] colors = new Color[sound.FrameSize.Width]; //theres only really point in calculating color for each pixel
             float colorRelation = visibleNoteSpan / colors.Length;
-            Hsv hsv = new Hsv();
-            hsv.S = 1;
-            hsv.V = 1;
+            Hsv hsv = new Hsv
+            {
+                S = 1,
+                V = 1
+            };
             for (int i = 0; i < colors.Length; i++)
             {
                 double thingy = (i * colorRelation + noteMinoffset) % 12;

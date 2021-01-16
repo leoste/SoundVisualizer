@@ -26,6 +26,11 @@ namespace GreatVideoMaker
             get { return label2.Text; }
             set { label2.Text = value; }
         }
+        private int ProcessorCount
+        {
+            get { return (int)numericUpDown12.Value; }
+            set { numericUpDown12.Value = value; }
+        }
         private int FrameRate { get { return (int)numericUpDown1.Value; } }
         private int LookAhead { get { return (int)numericUpDown2.Value; } }
         private int BarRelation { get { return (int)numericUpDown4.Value; } }
@@ -40,6 +45,8 @@ namespace GreatVideoMaker
         public Form1()
         {
             InitializeComponent();
+
+            ProcessorCount = Environment.ProcessorCount;
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -115,6 +122,11 @@ namespace GreatVideoMaker
         private void button3_Click(object sender, EventArgs e)
         {
             video.StartProcess();
+        }
+
+        private void numericUpDown12_ValueChanged(object sender, EventArgs e)
+        {
+            RenderInfo.ProcessorCount = (int)numericUpDown12.Value;
         }
     }
 }

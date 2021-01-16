@@ -14,7 +14,6 @@ namespace GreatVideoMaker
     class SoundAnalyzer : Processer
     {
         private static double baseFrequency = 440;
-        private static int threadCount = 4;
         
         public event EventHandler<ProgressEventArgs> OnProgress;
         public event EventHandler OnComplete;
@@ -133,7 +132,7 @@ namespace GreatVideoMaker
             object bufferLock = new object(); // used for threads to know what to take
             int bufferIndex = 0;
 
-            for (int i = 0; i < threadCount; i++)
+            for (int i = 0; i < RenderInfo.ProcessorCount; i++)
             {
                 BackgroundWorker k = new BackgroundWorker();
                 k.DoWork += K_DoWork;

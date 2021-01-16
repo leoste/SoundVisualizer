@@ -17,7 +17,7 @@ namespace GreatVideoMaker
     {
         private string filepath;
         private SoundAnalyzer sound;
-
+        private Size frameSize;
         private int barRelation;
         private float colorStartDegree;
         private float colorLengthDegree;
@@ -29,7 +29,7 @@ namespace GreatVideoMaker
         public event EventHandler<ProgressEventArgs> OnProgress;
         public event EventHandler OnComplete;
 
-        public VideoRenderer(string filepath, SoundAnalyzer sound,
+        public VideoRenderer(SoundAnalyzer sound, string filepath, Size frameSize,
             int barRelation = 128,
             float colorStartDegree = 0, // 216, 160
             float colorLengthDegree = 180, // 60, 60
@@ -40,6 +40,7 @@ namespace GreatVideoMaker
         {
             this.filepath = filepath;
             this.sound = sound;
+            this.frameSize = frameSize;
             this.barRelation = barRelation;
             this.colorStartDegree = colorStartDegree;
             this.colorLengthDegree = colorLengthDegree;
@@ -54,8 +55,8 @@ namespace GreatVideoMaker
             float columnRelation = 1f / barRelation;
             float scaleThingy = colorLengthDegree / 6;
 
-            float halfHeight = sound.FrameSize.Height / 2f;
-            float columnWidth = sound.FrameSize.Width * columnRelation;
+            float halfHeight = frameSize.Height / 2f;
+            float columnWidth = frameSize.Width * columnRelation;
             float columnHalfWidth = columnWidth / 2;
             float noteMinoffset = -(sound.MinimumNote - minNoteBorder);
             float noteMaxOffset = (sound.MaximumNote - maxNoteBorder);
@@ -63,13 +64,13 @@ namespace GreatVideoMaker
             bool startIsntSet = true;
             bool endIsntSet = true;
 
-            float scalex = sound.FrameSize.Width / visibleNoteSpan;
+            float scalex = frameSize.Width / visibleNoteSpan;
             float basey = (sound.MaximumAmplitude - sound.MinimumAmplitude);
-            float scaley = sound.FrameSize.Width / 7f * 2 / basey; //width is 7x height ... but multiply with 2 cause its mirrored
+            float scaley = frameSize.Width / 7f * 2 / basey; //width is 7x height ... but multiply with 2 cause its mirrored
             //float scalealpha = 255 / basey;
 
             //color preparation for image calculation            
-            Color[] colors = new Color[sound.FrameSize.Width]; //theres only really point in calculating color for each pixel
+            Color[] colors = new Color[frameSize.Width]; //theres only really point in calculating color for each pixel
             float colorRelation = visibleNoteSpan / colors.Length;
             Hsv hsv = new Hsv
             {
@@ -164,7 +165,7 @@ namespace GreatVideoMaker
                     }
                 }
 
-                using (Bitmap bitmap = new Bitmap(sound.FrameSize.Width, sound.FrameSize.Height))
+                using (Bitmap bitmap = new Bitmap(frameSize.Width, frameSize.Height))
                 {
                     using (Graphics g = Graphics.FromImage(bitmap))
                     {

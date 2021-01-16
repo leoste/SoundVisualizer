@@ -47,7 +47,7 @@ namespace GreatVideoMaker
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
                 AudioPath = openFileDialog1.FileName;
-                audio = new SoundAnalyzer(AudioPath, FrameRate, FrameSize, LookAhead);
+                audio = new SoundAnalyzer(AudioPath, FrameRate, LookAhead);
                 audio.OnProgress += Audio_OnProgress;
                 audio.OnComplete += Audio_OnComplete;
             }
@@ -76,7 +76,7 @@ namespace GreatVideoMaker
             if (saveFileDialog1.ShowDialog() == DialogResult.OK)
             {
                 VideoPath = saveFileDialog1.FileName;
-                video = new VideoRenderer(VideoPath, audio,
+                video = new VideoRenderer(audio, VideoPath, FrameSize,
                     BarRelation,
                     ColorStartDegree,
                     ColorLengthDegree,

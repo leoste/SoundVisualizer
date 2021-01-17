@@ -10,6 +10,8 @@ using System.Drawing;
 using System.IO;
 using ColorMine.ColorSpaces;
 using System.Drawing.Drawing2D;
+using System.Collections.Concurrent;
+using System.ComponentModel;
 
 namespace GreatVideoMaker
 {
@@ -190,28 +192,105 @@ namespace GreatVideoMaker
                 return wrapper;
             }
 
+            BlockingCollection<BitmapVideoFrameWrapper> collection = new BlockingCollection<BitmapVideoFrameWrapper>();
+            List<BackgroundWorker> bgws = new List<BackgroundWorker>();
+            int takeIndex = 0;
+            int takes = sound.Frames.Length;
+            object[] takeLocks = new object[takes + RenderInfo.ProcessorCount]; // made array longer so wouldnt have to check to not go out of bounds each time
+            object[] giveLocks = new object[takeLocks.Length];
+            for (int i = 0; i < takeLocks.Length; i++)
+            {
+                takeLocks[i] = new object();
+                giveLocks[i] = new object();
+            }
+            object lockLock = new object();            
+
+            void Bgw_DoWork(object sender, DoWorkEventArgs e)
+            {
+                bool quit;
+
+                while (true)
+                {
+                    // get index of what will be worked on
+                    int index = 0;
+                    lock (lockLock)
+                    {
+                        if (takeIndex < takes)
+                        {
+                            index = takeIndex;
+                            takeIndex++;
+                            quit = false;
+                        }
+                        else quit = true;
+                    }
+
+                    if (quit) break;
+
+                    lock (giveLocks[index + 1]) // prevent next one from being submitted until this one isnt submitted
+                    {
+                        PointF[] sourcePoints;
+
+                        // do this AFTER last index is pre-processed
+                        lock (takeLocks[index + 1]) // prevent the next one from being worked on
+                        {
+                            lock (takeLocks[index]) { } // effectively waits until this one can be worked on, doesnt actually need anything
+
+                            /*if (debugIndex != index) throw new Exception();
+                            debugIndex++;*/
+
+                            sourcePoints = GetSourcePoints(index);
+                        }
+
+                        // do this whenever
+                        BitmapVideoFrameWrapper wrapper = GetFrame(sourcePoints);
+
+                        // do this stuff AFTER last index is submitted
+                        lock (giveLocks[index]) { } // effectively waits until can input frame
+                        collection.Add(wrapper);
+                    }
+                }
+            }
+
+            void Bgw_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+            {
+                BackgroundWorker bgw = sender as BackgroundWorker;
+                bgws.Remove(bgw);
+                bgw.Dispose();
+                if (bgws.Count == 0)
+                {
+                    collection.CompleteAdding();
+                }
+            }
+
+            for (int i = 0; i < RenderInfo.ProcessorCount; i++)
+            {
+                BackgroundWorker bgw = new BackgroundWorker();
+                bgws.Add(bgw);
+                bgw.DoWork += Bgw_DoWork;
+                bgw.RunWorkerCompleted += Bgw_RunWorkerCompleted;
+                bgw.RunWorkerAsync();
+            }
+
+            //return collection.GetConsumingEnumerable();
+
+            while (!collection.IsCompleted)
+            {
+                yield return collection.Take();
+            }
+
             //this is for note-based visualization
-            for (int i = 0; i < sound.Frames.Length; i += RenderInfo.ProcessorCount)
+            /*for (int i = 0; i < sound.Frames.Length; i += RenderInfo.ProcessorCount)
             {
                 Task<BitmapVideoFrameWrapper>[] tasks = new Task<BitmapVideoFrameWrapper>[Math.Min(RenderInfo.ProcessorCount, sound.Frames.Length - 1 - i)];
                 for (int j = 0; j < tasks.Length; j++)
                 {
                     int index = i + j;
 
-                    
+                    // this also needs to be multithreaded somehow
+                    PointF[] sourcePoints = GetSourcePoints(index);
 
                     tasks[j] = new Task<BitmapVideoFrameWrapper>(() =>
                     {
-                        /*// artificial delay for TESTING
-                        if (OnProgress != null) OnProgress.Invoke(this, new ProgressEventArgs(i, sound.Frames.Length));
-                        for (int k = 0; k < 299999999; k++)
-                        {
-                            Math.Log(90000, 50);
-                        }*/
-
-                        // this also needs to be multithreaded somehow
-                        PointF[] sourcePoints = GetSourcePoints(index);
-
                         return GetFrame(sourcePoints);
                     });
                     tasks[j].Start();
@@ -223,7 +302,7 @@ namespace GreatVideoMaker
                     yield return wrapper;
                     wrapper.Source.Dispose();
                 }
-            }
+            }*/
         }
 
         public void StartProcess()

@@ -147,7 +147,9 @@ namespace GreatVideoMaker
 
             void K_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
             {
-                bgws.Remove((BackgroundWorker)sender);
+                BackgroundWorker bgw = sender as BackgroundWorker;
+                bgws.Remove(bgw);
+                bgw.Dispose();
                 if (bgws.Count == 0)
                 {
                     DeclareComplete();

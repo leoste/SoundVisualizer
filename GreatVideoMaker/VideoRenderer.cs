@@ -275,7 +275,9 @@ namespace GreatVideoMaker
 
             while (!collection.IsCompleted)
             {
-                yield return collection.Take();
+                BitmapVideoFrameWrapper wrapper = collection.Take();
+                yield return wrapper;
+                wrapper.Dispose();
             }
 
             //this is for note-based visualization

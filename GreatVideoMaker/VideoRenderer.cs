@@ -123,15 +123,15 @@ namespace GreatVideoMaker
             float[] decayCounts = new float[visibleLength];
             float decayCountMargin = decayExponent / decayTime;
 
-            //this is for note-based visualization
-            for (int i = 0; i < sound.Frames.Length; i++)
+            // this function IS NOT threadsafe!!! it modifies decay stuff
+            PointF[] GetSourcePoints(int index)
             {
                 // first get the points that we do know
                 PointF[] sourcePoints = new PointF[visibleLength];
                 for (int k = 0; k < visibleLength; k++)
                 {
                     int correctedIndex = k + startIndex;
-                    float baseh = sound.Frames[i].frequencies[correctedIndex];
+                    float baseh = sound.Frames[index].frequencies[correctedIndex];
 
                     // MAYBE calculating the decays before running points simulation could ruin the outcome points a bit
                     // but its a bit hard to change order so i'll leave it be for now, it probably doesnt do much
@@ -150,7 +150,12 @@ namespace GreatVideoMaker
                     float h = baseh * scaley;
                     sourcePoints[k] = new PointF(x[correctedIndex], h);
                 }
+                return sourcePoints;
+            }
 
+            // this function IS threadsafe!!! doesnt modify anything
+            BitmapVideoFrameWrapper GetFrame(PointF[] sourcePoints)
+            {
                 // generate real points that will be drawn. essentially we have now filled in the missing gaps that there otherwise would be
                 // but also minimized amount of points at higher end where a lot of them share the same space (so more efficient rendering)
                 PointF[] uniformPoints;
@@ -165,24 +170,58 @@ namespace GreatVideoMaker
                     }
                 }
 
-                using (Bitmap bitmap = new Bitmap(frameSize.Width, frameSize.Height))
+                // i dont use "using" cause bitmap needs to stay for a while until its really used, then i dispose it
+                Bitmap bitmap = new Bitmap(frameSize.Width, frameSize.Height);
+                using (Graphics g = Graphics.FromImage(bitmap))
                 {
-                    using (Graphics g = Graphics.FromImage(bitmap))
+                    g.Clear(Color.Black);
+
+                    for (int k = 0; k < uniformPoints.Length; k++)
                     {
-                        g.Clear(Color.Black);
+                        Color c = colors[(int)uniformPoints[k].X];
+                        Brush brush = new SolidBrush(c);
 
-                        for (int k = 0; k < uniformPoints.Length; k++)
-                        {
-                            Color c = colors[(int)uniformPoints[k].X];
-                            Brush brush = new SolidBrush(c);
-
-                            float h = uniformPoints[k].Y;
-                            float y = halfHeight - h * 0.5f;
-                            g.FillRectangle(brush, uniformPoints[k].X, y, columnWidth, h);
-                        }
+                        float h = uniformPoints[k].Y;
+                        float y = halfHeight - h * 0.5f;
+                        g.FillRectangle(brush, uniformPoints[k].X, y, columnWidth, h);
                     }
-                    BitmapVideoFrameWrapper wrapper = new BitmapVideoFrameWrapper(bitmap);
-                    yield return wrapper;                    
+                }
+                BitmapVideoFrameWrapper wrapper = new BitmapVideoFrameWrapper(bitmap);
+                return wrapper;
+            }
+
+            //this is for note-based visualization
+            for (int i = 0; i < sound.Frames.Length; i += RenderInfo.ProcessorCount)
+            {
+                Task<BitmapVideoFrameWrapper>[] tasks = new Task<BitmapVideoFrameWrapper>[Math.Min(RenderInfo.ProcessorCount, sound.Frames.Length - 1 - i)];
+                for (int j = 0; j < tasks.Length; j++)
+                {
+                    int index = i + j;
+
+                    
+
+                    tasks[j] = new Task<BitmapVideoFrameWrapper>(() =>
+                    {
+                        /*// artificial delay for TESTING
+                        if (OnProgress != null) OnProgress.Invoke(this, new ProgressEventArgs(i, sound.Frames.Length));
+                        for (int k = 0; k < 299999999; k++)
+                        {
+                            Math.Log(90000, 50);
+                        }*/
+
+                        // this also needs to be multithreaded somehow
+                        PointF[] sourcePoints = GetSourcePoints(index);
+
+                        return GetFrame(sourcePoints);
+                    });
+                    tasks[j].Start();
+                }
+                Task.WaitAll(tasks);
+                for (int j = 0; j < tasks.Length; j++)
+                {
+                    BitmapVideoFrameWrapper wrapper = tasks[j].Result;
+                    yield return wrapper;
+                    wrapper.Source.Dispose();
                 }
             }
         }
@@ -191,6 +230,7 @@ namespace GreatVideoMaker
         {
             Task task = new Task(() =>
             {
+                //CreateFrames().ToList(); // artificial "rendering" for testing
                 var videoFramesSource = new RawVideoPipeSource(CreateFrames()) { FrameRate = sound.FrameRate };
                 FFMpegArguments
                     .FromPipeInput(videoFramesSource)

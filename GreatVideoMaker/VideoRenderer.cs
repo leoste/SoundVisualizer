@@ -12,6 +12,7 @@ using ColorMine.ColorSpaces;
 using System.Drawing.Drawing2D;
 using System.Collections.Concurrent;
 using System.ComponentModel;
+using System.Threading;
 
 namespace GreatVideoMaker
 {
@@ -196,14 +197,25 @@ namespace GreatVideoMaker
             List<BackgroundWorker> bgws = new List<BackgroundWorker>();
             int takeIndex = 0;
             int takes = sound.Frames.Length;
-            object[] takeLocks = new object[takes + RenderInfo.ProcessorCount]; // made array longer so wouldnt have to check to not go out of bounds each time
+
+            /*object[] takeLocks = new object[takes + RenderInfo.ProcessorCount]; // made array longer so wouldnt have to check to not go out of bounds each time
             object[] giveLocks = new object[takeLocks.Length];
             for (int i = 0; i < takeLocks.Length; i++)
             {
                 takeLocks[i] = new object();
                 giveLocks[i] = new object();
+            }*/
+            object lockLock = new object();
+
+            AutoResetEvent[] takeEvents = new AutoResetEvent[RenderInfo.ProcessorCount];
+            AutoResetEvent[] lockEvents = new AutoResetEvent[RenderInfo.ProcessorCount];
+            for (int i = 0; i < takeEvents.Length; i++)
+            {
+                takeEvents[i] = new AutoResetEvent(false);
+                lockEvents[i] = new AutoResetEvent(false);
             }
-            object lockLock = new object();            
+            takeEvents[0].Set();
+            lockEvents[0].Set();
 
             void Bgw_DoWork(object sender, DoWorkEventArgs e)
             {
@@ -226,39 +238,36 @@ namespace GreatVideoMaker
 
                     if (quit) break;
 
-                    lock (giveLocks[index + 1]) // prevent next one from being submitted until this one isnt submitted
-                    {
-                        PointF[] sourcePoints;
+                    int myIndex = index % RenderInfo.ProcessorCount;
+                    int nextIndex = (index + 1) % RenderInfo.ProcessorCount;
 
-                        // do this AFTER last index is pre-processed
-                        lock (takeLocks[index + 1]) // prevent the next one from being worked on
-                        {
-                            lock (takeLocks[index]) { } // effectively waits until this one can be worked on, doesnt actually need anything
+                    takeEvents[myIndex].WaitOne();
+                    PointF[] sourcePoints = GetSourcePoints(index);
+                    takeEvents[nextIndex].Set();
+                    BitmapVideoFrameWrapper wrapper = GetFrame(sourcePoints);
 
-                            /*if (debugIndex != index) throw new Exception();
-                            debugIndex++;*/
-
-                            sourcePoints = GetSourcePoints(index);
-                        }
-
-                        // do this whenever
-                        BitmapVideoFrameWrapper wrapper = GetFrame(sourcePoints);
-
-                        // do this stuff AFTER last index is submitted
-                        lock (giveLocks[index]) { } // effectively waits until can input frame
-                        collection.Add(wrapper);
-                    }
+                    lockEvents[myIndex].WaitOne();
+                    collection.Add(wrapper);
+                    lockEvents[nextIndex].Set();
                 }
             }
 
             void Bgw_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
             {
                 BackgroundWorker bgw = sender as BackgroundWorker;
-                bgws.Remove(bgw);
-                bgw.Dispose();
-                if (bgws.Count == 0)
+
+                lock (bgws)
                 {
-                    collection.CompleteAdding();
+                    bgws.Remove(bgw);
+                    bgw.Dispose();
+                    if (bgws.Count == 0)
+                    {
+                        for (int i = 0; i < RenderInfo.ProcessorCount; i++)
+                        {
+                            takeEvents[i].Dispose();
+                        }
+                        collection.CompleteAdding();
+                    }
                 }
             }
 

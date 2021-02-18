@@ -8,6 +8,6 @@ namespace GreatVideoMaker
 {
     class RenderInfo
     {
-        public static int ProcessorCount { get; set; }
+        public static int ProcessorCount { get; set; } = 4;
     }
 }

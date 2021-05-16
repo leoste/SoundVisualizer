@@ -123,7 +123,7 @@ namespace GreatVideoMaker
             // anti-spaz measures
             float decayCountMargin = (float)decayExponent / decayTime;
 
-            // this function IS NOT threadsafe!!! it modifies decay stuff
+            // this function IS also threadsafe now!!! doesnt modify anything anymore
             PointF[] GetSourcePoints(int index)
             {
                 // first get the points that we do know
@@ -133,9 +133,9 @@ namespace GreatVideoMaker
                     int correctedIndex = k + startIndex;
                     float baseh = sound.Frames[index].frequencies[correctedIndex];
 
-                    for (int l = 1; l < Math.Min(i, decayTime); l++)
+                    for (int l = 1; l < Math.Min(index, decayTime); l++)
                     {
-                        float oldBaseh = sound.Frames[i - l].frequencies[correctedIndex];
+                        float oldBaseh = sound.Frames[index - l].frequencies[correctedIndex];
                         if (oldBaseh >= baseh)
                         {
                             float decayCounts_k = decayExponent - l * decayCountMargin;
@@ -239,9 +239,9 @@ namespace GreatVideoMaker
                     int myIndex = index % RenderInfo.ProcessorCount;
                     int nextIndex = (index + 1) % RenderInfo.ProcessorCount;
 
-                    takeEvents[myIndex].WaitOne();
+                    //takeEvents[myIndex].WaitOne();
                     PointF[] sourcePoints = GetSourcePoints(index);
-                    takeEvents[nextIndex].Set();
+                    //takeEvents[nextIndex].Set();
                     BitmapVideoFrameWrapper wrapper = GetFrame(sourcePoints);
 
                     lockEvents[myIndex].WaitOne();

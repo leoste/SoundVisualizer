@@ -429,7 +429,7 @@ namespace GreatVideoMaker
             this.numericUpDown7.Size = new System.Drawing.Size(57, 20);
             this.numericUpDown7.TabIndex = 10;
             this.numericUpDown7.Value = new decimal(new int[] {
-            8,
+            6,
             0,
             0,
             0});

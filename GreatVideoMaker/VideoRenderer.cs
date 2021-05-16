@@ -121,10 +121,7 @@ namespace GreatVideoMaker
             int visibleLength = endIndex - startIndex;
 
             // anti-spaz measures
-            float[] decays = new float[visibleLength];
-            float[] decayPeaks = new float[visibleLength];
-            float[] decayCounts = new float[visibleLength];
-            float decayCountMargin = decayExponent / decayTime;
+            float decayCountMargin = (float)decayExponent / decayTime;
 
             // this function IS NOT threadsafe!!! it modifies decay stuff
             PointF[] GetSourcePoints(int index)
@@ -136,19 +133,20 @@ namespace GreatVideoMaker
                     int correctedIndex = k + startIndex;
                     float baseh = sound.Frames[index].frequencies[correctedIndex];
 
-                    // MAYBE calculating the decays before running points simulation could ruin the outcome points a bit
-                    // but its a bit hard to change order so i'll leave it be for now, it probably doesnt do much
-                    if (decayCounts[k] > 0)
+                    for (int l = 1; l < Math.Min(i, decayTime); l++)
                     {
-                        decays[k] = (float)Math.Log(decayCounts[k], decayExponent) * decayPeaks[k];
-                        decayCounts[k] -= decayCountMargin;
+                        float oldBaseh = sound.Frames[i - l].frequencies[correctedIndex];
+                        if (oldBaseh >= baseh)
+                        {
+                            float decayCounts_k = decayExponent - l * decayCountMargin;
+                            float decays_k = (float)Math.Log(decayCounts_k, decayExponent) * oldBaseh;
+
+                            if (decays_k > baseh)
+                            {
+                                baseh = decays_k;
+                            }
+                        }
                     }
-                    if (baseh >= decays[k]) //if new is bigger overwrite decay
-                    {
-                        decayPeaks[k] = baseh;
-                        decayCounts[k] = decayTime;
-                    }
-                    else baseh = decays[k]; // if new is smaller show decay
 
                     float h = baseh * scaley;
                     sourcePoints[k] = new PointF(x[correctedIndex], h);

@@ -37,7 +37,7 @@ namespace GreatVideoMaker
         private float ColorStartDegree { get { return (float)numericUpDown3.Value; } }
         private float ColorLengthDegree { get { return (float)numericUpDown5.Value; } }
         private int DecayExponent { get { return (int)numericUpDown6.Value; } }
-        private int DecayTime { get { return (int)numericUpDown6.Value; } }
+        private int DecayTime { get { return (int)numericUpDown7.Value; } }
         private Size FrameSize { get { return new Size((int)numericUpDown9.Value, (int)numericUpDown8.Value); } }
         private int MinNote { get { return (int)numericUpDown11.Value; } }
         private int MaxNote { get { return (int)numericUpDown10.Value; } }

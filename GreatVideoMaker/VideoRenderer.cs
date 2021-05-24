@@ -69,7 +69,7 @@ namespace GreatVideoMaker
 
             float scalex = frameSize.Width / visibleNoteSpan;
             float basey = (sound.MaximumAmplitude - sound.MinimumAmplitude);
-            float scaley = frameSize.Width / 7f * 2 / basey; //width is 7x height ... but multiply with 2 cause its mirrored
+            float scaley = frameSize.Width / 7f / basey; //width is 7x height ...
             //float scalealpha = 255 / basey;
 
             //color preparation for image calculation            
@@ -182,8 +182,8 @@ namespace GreatVideoMaker
                         Color c = colors[(int)uniformPoints[k].X];
                         Brush brush = new SolidBrush(c);
 
-                        float h = uniformPoints[k].Y;
-                        float y = halfHeight - h * 0.5f;
+                        float h = uniformPoints[k].Y; // multiply with 2 if mirrored
+                        float y = halfHeight - h; // multiply h with 0.5f if mirrored
                         g.FillRectangle(brush, uniformPoints[k].X, y, columnWidth, h);
                     }
                 }

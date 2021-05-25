@@ -195,24 +195,12 @@ namespace GreatVideoMaker
             List<BackgroundWorker> bgws = new List<BackgroundWorker>();
             int takeIndex = 0;
             int takes = sound.Frames.Length;
-
-            /*object[] takeLocks = new object[takes + RenderInfo.ProcessorCount]; // made array longer so wouldnt have to check to not go out of bounds each time
-            object[] giveLocks = new object[takeLocks.Length];
-            for (int i = 0; i < takeLocks.Length; i++)
-            {
-                takeLocks[i] = new object();
-                giveLocks[i] = new object();
-            }*/
             object lockLock = new object();
-
-            AutoResetEvent[] takeEvents = new AutoResetEvent[RenderInfo.ProcessorCount];
             AutoResetEvent[] lockEvents = new AutoResetEvent[RenderInfo.ProcessorCount];
-            for (int i = 0; i < takeEvents.Length; i++)
+            for (int i = 0; i < lockEvents.Length; i++)
             {
-                takeEvents[i] = new AutoResetEvent(false);
                 lockEvents[i] = new AutoResetEvent(false);
             }
-            takeEvents[0].Set();
             lockEvents[0].Set();
 
             void Bgw_DoWork(object sender, DoWorkEventArgs e)
@@ -239,9 +227,7 @@ namespace GreatVideoMaker
                     int myIndex = index % RenderInfo.ProcessorCount;
                     int nextIndex = (index + 1) % RenderInfo.ProcessorCount;
 
-                    //takeEvents[myIndex].WaitOne();
                     PointF[] sourcePoints = GetSourcePoints(index);
-                    //takeEvents[nextIndex].Set();
                     BitmapVideoFrameWrapper wrapper = GetFrame(sourcePoints);
 
                     lockEvents[myIndex].WaitOne();
@@ -262,7 +248,7 @@ namespace GreatVideoMaker
                     {
                         for (int i = 0; i < RenderInfo.ProcessorCount; i++)
                         {
-                            takeEvents[i].Dispose();
+                            lockEvents[i].Dispose();
                         }
                         collection.CompleteAdding();
                     }
@@ -286,32 +272,6 @@ namespace GreatVideoMaker
                 yield return wrapper;
                 wrapper.Dispose();
             }
-
-            //this is for note-based visualization
-            /*for (int i = 0; i < sound.Frames.Length; i += RenderInfo.ProcessorCount)
-            {
-                Task<BitmapVideoFrameWrapper>[] tasks = new Task<BitmapVideoFrameWrapper>[Math.Min(RenderInfo.ProcessorCount, sound.Frames.Length - 1 - i)];
-                for (int j = 0; j < tasks.Length; j++)
-                {
-                    int index = i + j;
-
-                    // this also needs to be multithreaded somehow
-                    PointF[] sourcePoints = GetSourcePoints(index);
-
-                    tasks[j] = new Task<BitmapVideoFrameWrapper>(() =>
-                    {
-                        return GetFrame(sourcePoints);
-                    });
-                    tasks[j].Start();
-                }
-                Task.WaitAll(tasks);
-                for (int j = 0; j < tasks.Length; j++)
-                {
-                    BitmapVideoFrameWrapper wrapper = tasks[j].Result;
-                    yield return wrapper;
-                    wrapper.Source.Dispose();
-                }
-            }*/
         }
 
         public void StartProcess()

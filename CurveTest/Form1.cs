@@ -16,7 +16,8 @@ namespace CurveTest
         // segmentcount is how many equal length segments there should be
         PointF[] getCurve(out PointF[] baseCurve, double segmentCount = 10)
         {
-            PointF[] sourcePoints = new PointF[] { new PointF(0, 300), new PointF(100, 400), new PointF(150, 200), new PointF(200, 500), new PointF(300, 350), new PointF(400, 250), new PointF(500, 400), new PointF(600, 300) };            
+            PointF[] sourcePoints = new PointF[] { new PointF(0, 300), new PointF(100, 400), new PointF(150, 200), new PointF(200, 500), new PointF(300, 350), new PointF(400, 250), new PointF(500, 400), new PointF(600, 300) };
+            sourcePoints = new PointF[] { new PointF(100, 200), new PointF(300, 100), new PointF(500, 300), new PointF(300, 500), new PointF(100, 400) };
 
             using (GraphicsPath path = new GraphicsPath())
             {

@@ -68,6 +68,7 @@ namespace GreatVideoMaker
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.numericUpDown12 = new System.Windows.Forms.NumericUpDown();
             this.label7 = new System.Windows.Forms.Label();
+            this.label13 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -541,6 +542,7 @@ namespace GreatVideoMaker
             // 
             // groupBox5
             // 
+            this.groupBox5.Controls.Add(this.label13);
             this.groupBox5.Controls.Add(this.numericUpDown12);
             this.groupBox5.Controls.Add(this.label7);
             this.groupBox5.Location = new System.Drawing.Point(12, 12);
@@ -581,6 +583,15 @@ namespace GreatVideoMaker
             this.label7.Size = new System.Drawing.Size(58, 13);
             this.label7.TabIndex = 7;
             this.label7.Text = "processors";
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(6, 226);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(49, 13);
+            this.label13.TabIndex = 9;
+            this.label13.Text = "200, 190";
             // 
             // Form1
             // 
@@ -661,6 +672,7 @@ namespace GreatVideoMaker
         private System.Windows.Forms.GroupBox groupBox5;
         private System.Windows.Forms.NumericUpDown numericUpDown12;
         private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Label label13;
     }
 }
 

@@ -163,7 +163,6 @@ namespace GreatVideoMaker
                 using (GraphicsPath path = new GraphicsPath())
                 {
                     path.AddCurve(sourcePoints);
-                    // use a unit matrix to get points per pixel https://stackoverflow.com/questions/52433314/extracting-points-coordinatesx-y-from-a-curve-c-sharp
                     using (Matrix mx = new Matrix(1, 0, 0, 1, 0, 0))
                     {
                         path.Flatten(mx, 0.1f);
@@ -174,19 +173,16 @@ namespace GreatVideoMaker
                 // BAD. shouldnt have to recalculate this curve for each frame, maybe something can be done? but maybe its not a big deal cause
                 // maybe want to do curve fluxuations anyway or something cool
                 PointF[] curvePoints = new PointF[] { new PointF(0, 300), new PointF(200, 350), new PointF(300, 250), new PointF(400, 400), new PointF(600, 350), new PointF(800, 250), new PointF(1000, 300), new PointF(1280, 300) };
-                //curvePoints = new PointF[] { new PointF(100, 200), new PointF(300, 100), new PointF(500, 300), new PointF(300, 500), new PointF(100, 400) };
-                //curvePoints = new PointF[] { new PointF(0, 400), new PointF(1280, 400) };
                 curvePoints = new PointF[] {
-                    new PointF(0.2f * frameSize.Width, 0.5f * frameSize.Height),
-                    new PointF(0.35f * frameSize.Width, 0.2f * frameSize.Height),
-                    new PointF(0.5f * frameSize.Width, 0.35f * frameSize.Height),
-                    new PointF(0.65f * frameSize.Width, 0.2f * frameSize.Height),
-                    new PointF(0.8f * frameSize.Width, 0.5f * frameSize.Height),
-                    new PointF(0.65f * frameSize.Width, 0.8f * frameSize.Height),
-                    new PointF(0.5f * frameSize.Width, 0.65f * frameSize.Height),
-                    new PointF(0.35f * frameSize.Width, 0.8f * frameSize.Height),
-                    new PointF(0.2f * frameSize.Width, 0.5f * frameSize.Height)
+                    new PointF(0f * frameSize.Width, 0.8f * frameSize.Height),
+                    new PointF(0.15f * frameSize.Width, 0.73f * frameSize.Height),
+                    new PointF(0.3f * frameSize.Width, 0.62f * frameSize.Height),
+                    new PointF(0.5f * frameSize.Width, 0.73f * frameSize.Height),
+                    new PointF(0.7f * frameSize.Width, 0.62f * frameSize.Height),
+                    new PointF(0.85f * frameSize.Width, 0.73f * frameSize.Height),
+                    new PointF(1f * frameSize.Width, 0.8f * frameSize.Height)
                 };
+                
                 CurveMorpher curve = new CurveMorpher(curvePoints, uniformPoints);
 
                 // i dont use "using" cause bitmap needs to stay for a while until its really used, then i dispose it
@@ -200,13 +196,9 @@ namespace GreatVideoMaker
                         Color c = colors[(int)uniformPoints[k].X];
                         Brush brush = new SolidBrush(c);
 
-                        PointF a = curve.Matrix.Points[k + 1];
-                        PointF b = curve.Matrix.GetSecondPoint(k + 1, uniformPoints[k].Y);
+                        PointF a = curve.Matrix.Points[k];
+                        PointF b = curve.Matrix.GetSecondPoint(k, uniformPoints[k].Y);
                         g.DrawLine(new Pen(brush, columnWidth), a, b);
-
-                        /*float h = uniformPoints[k].Y; // multiply with 2 if mirrored
-                        float y = halfHeight - h; // multiply h with 0.5f if mirrored
-                        g.FillRectangle(brush, uniformPoints[k].X, y, columnWidth, h);*/
                     }
                 }
                 BitmapVideoFrameWrapper wrapper = new BitmapVideoFrameWrapper(bitmap);

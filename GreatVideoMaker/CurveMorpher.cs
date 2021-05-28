@@ -10,6 +10,8 @@ namespace GreatVideoMaker
 {
     class CurveMorpher
     {
+        private readonly double rad90deg = 1.5707963267948966192313216916398;
+
         private PointF[] sourcePoints;
         private PointF[] morphingPoints;
 
@@ -56,33 +58,33 @@ namespace GreatVideoMaker
 
         void DivideCurve()
         {
-            int segmentPointCount = morphingPoints.Length + 1;
+            int segmentPointCount = morphingPoints.Length;
 
-            PointF[] points = new PointF[segmentPointCount + 1];
-            double[] angles = new double[segmentPointCount + 1];
-            points[0] = curve[0];
-            points[points.Length - 1] = curve[curve.Length - 1];
+            PointF[] points = new PointF[segmentPointCount];
+            double[] angles = new double[segmentPointCount];
 
             double currentPos = 0;
             double lastLength = 0;
             int curveIndex = 0;
-            int dividedIndex = 1;
+            int dividedIndex = 0;
+            int lastCurveIndex = 0;
 
             while (dividedIndex < segmentPointCount)
             {
-                double currentGoal = (double)morphingPoints[dividedIndex - 1].X / morphingPoints[morphingPoints.Length - 1].X * curveLength;
+                double currentGoal = (double)morphingPoints[dividedIndex].X / morphingPoints[morphingPoints.Length - 1].X * curveLength;
 
                 if (currentPos < currentGoal - 0.0000001)
                 {
                     currentPos += curveLengths[curveIndex];
                     lastLength = curveLengths[curveIndex];
+                    lastCurveIndex = curveIndex;
                     curveIndex++;
                 }
                 else
                 {
                     double diff = currentPos - currentGoal;
                     double relation = 1 - diff / lastLength;
-                    PointF a = curve[curveIndex - 1];
+                    PointF a = curve[lastCurveIndex];
                     PointF b = curve[curveIndex];
                     PointF c = new PointF(
                         (float)(a.X + (b.X - a.X) * relation),
@@ -92,12 +94,16 @@ namespace GreatVideoMaker
 
                     double leftAngle = Math.Atan2(c.Y - a.Y, c.X - a.X);
                     double rightAngle = Math.Atan2(b.Y - c.Y, b.X - c.X);
-                    double angle = (leftAngle + rightAngle) / 2 - 1.5707963267948966192313216916398; // 90 degrees in radians
+                    double angle = (leftAngle + rightAngle) / 2 - rad90deg; // 90 degrees in radians
                     angles[dividedIndex] = angle;
 
                     dividedIndex++;
                 }
             }
+
+            /*// corners dont get calculated in algorithm, for points its pointless for angles cant do 3 point calculation, only 2
+            points[0] = curve[0];
+            angles[0] = Math.Atan2(points[1].Y - points[0].Y, points[1].X - points[0].X) - rad90deg;*/
 
             matrix = new VectorMatrix(points, angles);
         }

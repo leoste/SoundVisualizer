@@ -34,6 +34,19 @@ namespace CurveTest
 
         void CalculateCurve()
         {
+            PointF[] uniformPoints;
+            using (GraphicsPath path = new GraphicsPath())
+            {
+                //path.AddEllipse(100, 100, 500, 800);
+                //path.AddEllipse(400, 100, 500, 800);
+                path.AddString("xd cool test", this.Font.FontFamily, 0, 200, new Point(), StringFormat.GenericTypographic);
+                using (Matrix mx = new Matrix(1, 0, 0, 1, 0, 0))
+                {
+                    path.Flatten(mx, 0.1f);
+                    uniformPoints = path.PathPoints;
+                }
+            }
+
             List<PointF> points = new List<PointF>();
             foreach (Control control in flowLayoutPanel1.Controls)
             {
@@ -58,6 +71,7 @@ namespace CurveTest
 
                 g.Clear(Color.White);
                 g.DrawCurve(black, points.ToArray());
+                g.DrawLines(red, uniformPoints);
             }
 
             pictureBox1.Image = bitmap;
@@ -68,6 +82,7 @@ namespace CurveTest
             InitializeComponent();
             AddPanel();
             AddPanel();
+            CalculateCurve();
         }
 
         private void button1_Click(object sender, EventArgs e)

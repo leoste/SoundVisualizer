@@ -66,9 +66,10 @@ namespace GreatVideoMaker
             this.numericUpDown4 = new System.Windows.Forms.NumericUpDown();
             this.label9 = new System.Windows.Forms.Label();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.label13 = new System.Windows.Forms.Label();
             this.numericUpDown12 = new System.Windows.Forms.NumericUpDown();
             this.label7 = new System.Windows.Forms.Label();
-            this.label13 = new System.Windows.Forms.Label();
+            this.label14 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -542,6 +543,7 @@ namespace GreatVideoMaker
             // 
             // groupBox5
             // 
+            this.groupBox5.Controls.Add(this.label14);
             this.groupBox5.Controls.Add(this.label13);
             this.groupBox5.Controls.Add(this.numericUpDown12);
             this.groupBox5.Controls.Add(this.label7);
@@ -551,6 +553,15 @@ namespace GreatVideoMaker
             this.groupBox5.TabIndex = 8;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "info";
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(6, 226);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(49, 13);
+            this.label13.TabIndex = 9;
+            this.label13.Text = "200, 190";
             // 
             // numericUpDown12
             // 
@@ -584,14 +595,14 @@ namespace GreatVideoMaker
             this.label7.TabIndex = 7;
             this.label7.Text = "processors";
             // 
-            // label13
+            // label14
             // 
-            this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(6, 226);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(49, 13);
-            this.label13.TabIndex = 9;
-            this.label13.Text = "200, 190";
+            this.label14.AutoSize = true;
+            this.label14.Location = new System.Drawing.Point(6, 239);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(49, 13);
+            this.label14.TabIndex = 10;
+            this.label14.Text = "300, 120";
             // 
             // Form1
             // 
@@ -673,6 +684,7 @@ namespace GreatVideoMaker
         private System.Windows.Forms.NumericUpDown numericUpDown12;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.Label label14;
     }
 }
 

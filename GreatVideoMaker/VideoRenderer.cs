@@ -210,7 +210,7 @@ namespace GreatVideoMaker
             int takeIndex = 0;
             int takes = sound.Frames.Length;
             object lockLock = new object();
-            AutoResetEvent[] lockEvents = new AutoResetEvent[RenderInfo.ProcessorCount];
+            AutoResetEvent[] lockEvents = new AutoResetEvent[takes];
             for (int i = 0; i < lockEvents.Length; i++)
             {
                 lockEvents[i] = new AutoResetEvent(false);
@@ -238,15 +238,11 @@ namespace GreatVideoMaker
 
                     if (quit) break;
 
-                    int myIndex = index % RenderInfo.ProcessorCount;
-                    int nextIndex = (index + 1) % RenderInfo.ProcessorCount;
-
                     PointF[] sourcePoints = GetSourcePoints(index);
                     BitmapVideoFrameWrapper wrapper = GetFrame(sourcePoints);
 
-                    lockEvents[myIndex].WaitOne();
+                    lockEvents[index].WaitOne();
                     collection.Add(wrapper);
-                    lockEvents[nextIndex].Set();
                 }
             }
 
@@ -260,7 +256,7 @@ namespace GreatVideoMaker
                     bgw.Dispose();
                     if (bgws.Count == 0)
                     {
-                        for (int i = 0; i < RenderInfo.ProcessorCount; i++)
+                        for (int i = 0; i < lockEvents.Length; i++)
                         {
                             lockEvents[i].Dispose();
                         }
@@ -278,14 +274,15 @@ namespace GreatVideoMaker
                 bgw.RunWorkerAsync();
             }
 
-            //return collection.GetConsumingEnumerable();
-
-            while (!collection.IsCompleted)
+            for (int i = 0; i < takes; i++)
             {
+                lockEvents[i].Set();
                 BitmapVideoFrameWrapper wrapper = collection.Take();
                 yield return wrapper;
                 wrapper.Dispose();
             }
+
+            collection.Dispose();
         }
 
         public void StartProcess()

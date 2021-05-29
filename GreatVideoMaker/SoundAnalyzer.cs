@@ -135,6 +135,7 @@ namespace GreatVideoMaker
             for (int i = 0; i < RenderInfo.ProcessorCount; i++)
             {
                 BackgroundWorker k = new BackgroundWorker();
+                bgws.Add(k);
                 k.DoWork += K_DoWork;
                 k.RunWorkerCompleted += K_RunWorkerCompleted;
                 k.RunWorkerAsync();
@@ -148,11 +149,15 @@ namespace GreatVideoMaker
             void K_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
             {
                 BackgroundWorker bgw = sender as BackgroundWorker;
-                bgws.Remove(bgw);
-                bgw.Dispose();
-                if (bgws.Count == 0)
+
+                lock (bgws)
                 {
-                    DeclareComplete();
+                    bgws.Remove(bgw);
+                    bgw.Dispose();
+                    if (bgws.Count == 0)
+                    {
+                        DeclareComplete();
+                    }
                 }
             }
 

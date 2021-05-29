@@ -67,9 +67,9 @@ namespace GreatVideoMaker
             this.label9 = new System.Windows.Forms.Label();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.label14 = new System.Windows.Forms.Label();
-            this.label13 = new System.Windows.Forms.Label();
             this.numericUpDown12 = new System.Windows.Forms.NumericUpDown();
             this.label7 = new System.Windows.Forms.Label();
+            this.label13 = new System.Windows.Forms.Label();
             this.flyleaf1 = new FlyleafLib.Controls.Flyleaf();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -564,15 +564,6 @@ namespace GreatVideoMaker
             this.label14.TabIndex = 10;
             this.label14.Text = "300, 120";
             // 
-            // label13
-            // 
-            this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(288, 20);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(49, 13);
-            this.label13.TabIndex = 9;
-            this.label13.Text = "200, 190";
-            // 
             // numericUpDown12
             // 
             this.numericUpDown12.Location = new System.Drawing.Point(90, 18);
@@ -605,6 +596,15 @@ namespace GreatVideoMaker
             this.label7.TabIndex = 7;
             this.label7.Text = "processors";
             // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(288, 20);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(49, 13);
+            this.label13.TabIndex = 9;
+            this.label13.Text = "200, 190";
+            // 
             // flyleaf1
             // 
             this.flyleaf1.BackColor = System.Drawing.Color.Black;
@@ -625,7 +625,7 @@ namespace GreatVideoMaker
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.Text = "g";
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);

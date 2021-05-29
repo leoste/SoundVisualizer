@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using FlyleafLib.MediaPlayer;
 
 namespace GreatVideoMaker
 {
@@ -14,6 +15,7 @@ namespace GreatVideoMaker
     {
         private SoundAnalyzer audio;
         private VideoRenderer video;
+        private Player player;
                 
         private string AudioPath
         {
@@ -47,6 +49,10 @@ namespace GreatVideoMaker
             InitializeComponent();
 
             ProcessorCount = Environment.ProcessorCount;
+
+            player = new Player();
+            FlyleafLib.Master.RegisterFFmpeg("ffmpeg");
+            player.Control = flyleaf1;
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -100,7 +106,8 @@ namespace GreatVideoMaker
         {
             Invoke((MethodInvoker)delegate
             {
-
+                player.Open(VideoPath);
+                player.OpenCompleted += (o, x) => { if (x.success && x.type == FlyleafLib.MediaType.Video) player.Play(); };
             });
         }
 

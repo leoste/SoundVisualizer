@@ -71,6 +71,7 @@ namespace GreatVideoMaker
             this.label7 = new System.Windows.Forms.Label();
             this.label13 = new System.Windows.Forms.Label();
             this.flyleaf1 = new FlyleafLib.Controls.Flyleaf();
+            this.label15 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -182,6 +183,7 @@ namespace GreatVideoMaker
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.label15);
             this.groupBox2.Controls.Add(this.button3);
             this.groupBox2.Controls.Add(this.label4);
             this.groupBox2.Controls.Add(this.button2);
@@ -304,7 +306,7 @@ namespace GreatVideoMaker
             this.numericUpDown8.Size = new System.Drawing.Size(57, 20);
             this.numericUpDown8.TabIndex = 13;
             this.numericUpDown8.Value = new decimal(new int[] {
-            720,
+            480,
             0,
             0,
             0});
@@ -321,7 +323,7 @@ namespace GreatVideoMaker
             this.numericUpDown9.Size = new System.Drawing.Size(57, 20);
             this.numericUpDown9.TabIndex = 12;
             this.numericUpDown9.Value = new decimal(new int[] {
-            1280,
+            480,
             0,
             0,
             0});
@@ -613,6 +615,15 @@ namespace GreatVideoMaker
             this.flyleaf1.Size = new System.Drawing.Size(854, 480);
             this.flyleaf1.TabIndex = 9;
             // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.Location = new System.Drawing.Point(87, 53);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(13, 13);
+            this.label15.TabIndex = 8;
+            this.label15.Text = "0";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -696,6 +707,7 @@ namespace GreatVideoMaker
         private System.Windows.Forms.Label label13;
         private System.Windows.Forms.Label label14;
         private FlyleafLib.Controls.Flyleaf flyleaf1;
+        private System.Windows.Forms.Label label15;
     }
 }
 

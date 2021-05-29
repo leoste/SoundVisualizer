@@ -172,17 +172,17 @@ namespace GreatVideoMaker
 
                 // BAD. shouldnt have to recalculate this curve for each frame, maybe something can be done? but maybe its not a big deal cause
                 // maybe want to do curve fluxuations anyway or something cool
-                PointF[] curvePoints = new PointF[] { new PointF(0, 300), new PointF(200, 350), new PointF(300, 250), new PointF(400, 400), new PointF(600, 350), new PointF(800, 250), new PointF(1000, 300), new PointF(1280, 300) };
-                curvePoints = new PointF[] {
-                    new PointF(0f * frameSize.Width, 0.8f * frameSize.Height),
-                    new PointF(0.15f * frameSize.Width, 0.73f * frameSize.Height),
-                    new PointF(0.3f * frameSize.Width, 0.62f * frameSize.Height),
-                    new PointF(0.5f * frameSize.Width, 0.73f * frameSize.Height),
-                    new PointF(0.7f * frameSize.Width, 0.62f * frameSize.Height),
-                    new PointF(0.85f * frameSize.Width, 0.73f * frameSize.Height),
-                    new PointF(1f * frameSize.Width, 0.8f * frameSize.Height)
-                };
-                
+                PointF[] curvePoints;
+                using (GraphicsPath path = new GraphicsPath())
+                {
+                    path.AddEllipse(0.8f * frameSize.Width, 0.8f * frameSize.Height, -0.6f * frameSize.Width, -0.6f * frameSize.Height);
+                    using (Matrix mx = new Matrix(1, 0, 0, 1, 0, 0))
+                    {
+                        path.Flatten(mx, 0.1f);
+                        curvePoints = path.PathPoints;
+                    }
+                }
+
                 CurveMorpher curve = new CurveMorpher(curvePoints, uniformPoints);
 
                 // i dont use "using" cause bitmap needs to stay for a while until its really used, then i dispose it
@@ -205,7 +205,7 @@ namespace GreatVideoMaker
                 return wrapper;
             }
 
-            BlockingCollection<BitmapVideoFrameWrapper> collection = new BlockingCollection<BitmapVideoFrameWrapper>();
+            ConcurrentDictionary<int, BitmapVideoFrameWrapper> dictionary = new ConcurrentDictionary<int, BitmapVideoFrameWrapper>();
             List<BackgroundWorker> bgws = new List<BackgroundWorker>();
             int takeIndex = 0;
             int takes = sound.Frames.Length;
@@ -215,7 +215,6 @@ namespace GreatVideoMaker
             {
                 lockEvents[i] = new AutoResetEvent(false);
             }
-            lockEvents[0].Set();
 
             void Bgw_DoWork(object sender, DoWorkEventArgs e)
             {
@@ -241,8 +240,9 @@ namespace GreatVideoMaker
                     PointF[] sourcePoints = GetSourcePoints(index);
                     BitmapVideoFrameWrapper wrapper = GetFrame(sourcePoints);
 
-                    lockEvents[index].WaitOne();
-                    collection.Add(wrapper);
+                    bool success = dictionary.TryAdd(index, wrapper);
+                    AnalyzeSuccess(success);
+                    lockEvents[index].Set();
                 }
             }
 
@@ -256,16 +256,17 @@ namespace GreatVideoMaker
                     bgw.Dispose();
                     if (bgws.Count == 0)
                     {
-                        for (int i = 0; i < lockEvents.Length; i++)
-                        {
-                            lockEvents[i].Dispose();
-                        }
-                        collection.CompleteAdding();
+                        
                     }
                 }
             }
 
-            for (int i = 0; i < RenderInfo.ProcessorCount; i++)
+            void AnalyzeSuccess(bool success)
+            {
+                if (!success) throw new Exception("oi ei");
+            }
+
+            for (int i = 0; i < RenderInfo.ProcessorCount - 1; i++)
             {
                 BackgroundWorker bgw = new BackgroundWorker();
                 bgws.Add(bgw);
@@ -276,13 +277,14 @@ namespace GreatVideoMaker
 
             for (int i = 0; i < takes; i++)
             {
-                lockEvents[i].Set();
-                BitmapVideoFrameWrapper wrapper = collection.Take();
+                lockEvents[i].WaitOne();
+                lockEvents[i].Dispose();
+                BitmapVideoFrameWrapper wrapper;
+                bool success = dictionary.TryRemove(i, out wrapper);
+                AnalyzeSuccess(success);
                 yield return wrapper;
                 wrapper.Dispose();
             }
-
-            collection.Dispose();
         }
 
         public void StartProcess()

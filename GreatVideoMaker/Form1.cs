@@ -72,7 +72,7 @@ namespace GreatVideoMaker
         {
             Invoke((MethodInvoker)delegate
             {
-                               
+                int test = 0;            
             });
         }
 

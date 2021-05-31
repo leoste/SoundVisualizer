@@ -188,7 +188,7 @@ namespace GreatVideoMaker
                         //buffer processing for next things
                         for (int k = 0; k < count; k++)
                         {
-                            float abs = Math.Abs(buffers[index][k]);
+                            float abs = Math.Abs(buffers[index][k]) / count;
                             if (abs > MaximumAmplitude) MaximumAmplitude = abs;
                             if (abs < MinimumAmplitude) MinimumAmplitude = abs;
 

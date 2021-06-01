@@ -40,6 +40,7 @@ namespace GreatVideoMaker
             this.label3 = new System.Windows.Forms.Label();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.label15 = new System.Windows.Forms.Label();
             this.button3 = new System.Windows.Forms.Button();
             this.label4 = new System.Windows.Forms.Label();
             this.progressBar2 = new System.Windows.Forms.ProgressBar();
@@ -66,8 +67,11 @@ namespace GreatVideoMaker
             this.numericUpDown4 = new System.Windows.Forms.NumericUpDown();
             this.label9 = new System.Windows.Forms.Label();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.label14 = new System.Windows.Forms.Label();
             this.numericUpDown12 = new System.Windows.Forms.NumericUpDown();
             this.label7 = new System.Windows.Forms.Label();
+            this.label13 = new System.Windows.Forms.Label();
+            this.flyleaf1 = new FlyleafLib.Controls.Flyleaf();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -141,7 +145,7 @@ namespace GreatVideoMaker
             this.groupBox1.Controls.Add(this.progressBar1);
             this.groupBox1.Controls.Add(this.button1);
             this.groupBox1.Controls.Add(this.label1);
-            this.groupBox1.Location = new System.Drawing.Point(234, 66);
+            this.groupBox1.Location = new System.Drawing.Point(12, 120);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(426, 119);
             this.groupBox1.TabIndex = 4;
@@ -179,17 +183,27 @@ namespace GreatVideoMaker
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.label15);
             this.groupBox2.Controls.Add(this.button3);
             this.groupBox2.Controls.Add(this.label4);
             this.groupBox2.Controls.Add(this.button2);
             this.groupBox2.Controls.Add(this.progressBar2);
             this.groupBox2.Controls.Add(this.label2);
-            this.groupBox2.Location = new System.Drawing.Point(234, 294);
+            this.groupBox2.Location = new System.Drawing.Point(12, 348);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(426, 119);
             this.groupBox2.TabIndex = 5;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Output video";
+            // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.Location = new System.Drawing.Point(87, 53);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(13, 13);
+            this.label15.TabIndex = 8;
+            this.label15.Text = "0";
             // 
             // button3
             // 
@@ -225,7 +239,7 @@ namespace GreatVideoMaker
             this.groupBox3.Controls.Add(this.label6);
             this.groupBox3.Controls.Add(this.numericUpDown1);
             this.groupBox3.Controls.Add(this.label5);
-            this.groupBox3.Location = new System.Drawing.Point(234, 12);
+            this.groupBox3.Location = new System.Drawing.Point(12, 66);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(426, 48);
             this.groupBox3.TabIndex = 6;
@@ -301,7 +315,7 @@ namespace GreatVideoMaker
             this.numericUpDown8.Size = new System.Drawing.Size(57, 20);
             this.numericUpDown8.TabIndex = 13;
             this.numericUpDown8.Value = new decimal(new int[] {
-            720,
+            480,
             0,
             0,
             0});
@@ -318,7 +332,7 @@ namespace GreatVideoMaker
             this.numericUpDown9.Size = new System.Drawing.Size(57, 20);
             this.numericUpDown9.TabIndex = 12;
             this.numericUpDown9.Value = new decimal(new int[] {
-            1280,
+            480,
             0,
             0,
             0});
@@ -357,7 +371,7 @@ namespace GreatVideoMaker
             this.groupBox4.Controls.Add(this.label8);
             this.groupBox4.Controls.Add(this.numericUpDown4);
             this.groupBox4.Controls.Add(this.label9);
-            this.groupBox4.Location = new System.Drawing.Point(234, 191);
+            this.groupBox4.Location = new System.Drawing.Point(12, 245);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Size = new System.Drawing.Size(426, 97);
             this.groupBox4.TabIndex = 7;
@@ -541,14 +555,25 @@ namespace GreatVideoMaker
             // 
             // groupBox5
             // 
+            this.groupBox5.Controls.Add(this.label14);
             this.groupBox5.Controls.Add(this.numericUpDown12);
             this.groupBox5.Controls.Add(this.label7);
+            this.groupBox5.Controls.Add(this.label13);
             this.groupBox5.Location = new System.Drawing.Point(12, 12);
             this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(216, 400);
+            this.groupBox5.Size = new System.Drawing.Size(426, 48);
             this.groupBox5.TabIndex = 8;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "info";
+            // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Location = new System.Drawing.Point(360, 20);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(49, 13);
+            this.label14.TabIndex = 10;
+            this.label14.Text = "300, 120";
             // 
             // numericUpDown12
             // 
@@ -582,18 +607,36 @@ namespace GreatVideoMaker
             this.label7.TabIndex = 7;
             this.label7.Text = "processors";
             // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(288, 20);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(49, 13);
+            this.label13.TabIndex = 9;
+            this.label13.Text = "200, 190";
+            // 
+            // flyleaf1
+            // 
+            this.flyleaf1.BackColor = System.Drawing.Color.Black;
+            this.flyleaf1.Location = new System.Drawing.Point(444, 12);
+            this.flyleaf1.Name = "flyleaf1";
+            this.flyleaf1.Size = new System.Drawing.Size(854, 480);
+            this.flyleaf1.TabIndex = 9;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(672, 427);
+            this.ClientSize = new System.Drawing.Size(1312, 504);
+            this.Controls.Add(this.flyleaf1);
             this.Controls.Add(this.groupBox5);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.Text = "g";
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
@@ -661,6 +704,10 @@ namespace GreatVideoMaker
         private System.Windows.Forms.GroupBox groupBox5;
         private System.Windows.Forms.NumericUpDown numericUpDown12;
         private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.Label label14;
+        private FlyleafLib.Controls.Flyleaf flyleaf1;
+        private System.Windows.Forms.Label label15;
     }
 }
 

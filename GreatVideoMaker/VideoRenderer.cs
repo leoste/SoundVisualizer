@@ -10,6 +10,9 @@ using System.Drawing;
 using System.IO;
 using ColorMine.ColorSpaces;
 using System.Drawing.Drawing2D;
+using System.Collections.Concurrent;
+using System.ComponentModel;
+using System.Threading;
 
 namespace GreatVideoMaker
 {
@@ -66,7 +69,7 @@ namespace GreatVideoMaker
 
             float scalex = frameSize.Width / visibleNoteSpan;
             float basey = (sound.MaximumAmplitude - sound.MinimumAmplitude);
-            float scaley = frameSize.Width / 7f * 2 / basey; //width is 7x height ... but multiply with 2 cause its mirrored
+            float scaley = frameSize.Width / 7f / basey; //width is 7x height ...
             //float scalealpha = 255 / basey;
 
             //color preparation for image calculation            
@@ -120,19 +123,19 @@ namespace GreatVideoMaker
             // anti-spaz measures
             float decayCountMargin = (float)decayExponent / decayTime;
 
-            //this is for note-based visualization
-            for (int i = 0; i < sound.Frames.Length; i++)
+            // this function IS also threadsafe now!!! doesnt modify anything anymore
+            PointF[] GetSourcePoints(int index)
             {
                 // first get the points that we do know
                 PointF[] sourcePoints = new PointF[visibleLength];
                 for (int k = 0; k < visibleLength; k++)
                 {
                     int correctedIndex = k + startIndex;
-                    float baseh = sound.Frames[i].frequencies[correctedIndex];
+                    float baseh = sound.Frames[index].frequencies[correctedIndex];
 
-                    for (int l = 1; l < Math.Min(i, decayTime); l++)
+                    for (int l = 1; l < Math.Min(index, decayTime); l++)
                     {
-                        float oldBaseh = sound.Frames[i - l].frequencies[correctedIndex];
+                        float oldBaseh = sound.Frames[index - l].frequencies[correctedIndex];
                         if (oldBaseh >= baseh)
                         {
                             float decayCounts_k = decayExponent - l * decayCountMargin;
@@ -148,14 +151,18 @@ namespace GreatVideoMaker
                     float h = baseh * scaley;
                     sourcePoints[k] = new PointF(x[correctedIndex], h);
                 }
+                return sourcePoints;
+            }
 
+            // this function IS threadsafe!!! doesnt modify anything
+            BitmapVideoFrameWrapper GetFrame(PointF[] sourcePoints)
+            {
                 // generate real points that will be drawn. essentially we have now filled in the missing gaps that there otherwise would be
                 // but also minimized amount of points at higher end where a lot of them share the same space (so more efficient rendering)
                 PointF[] uniformPoints;
                 using (GraphicsPath path = new GraphicsPath())
                 {
                     path.AddCurve(sourcePoints);
-                    // use a unit matrix to get points per pixel https://stackoverflow.com/questions/52433314/extracting-points-coordinatesx-y-from-a-curve-c-sharp
                     using (Matrix mx = new Matrix(1, 0, 0, 1, 0, 0))
                     {
                         path.Flatten(mx, 0.1f);
@@ -163,25 +170,120 @@ namespace GreatVideoMaker
                     }
                 }
 
-                using (Bitmap bitmap = new Bitmap(frameSize.Width, frameSize.Height))
+                // BAD. shouldnt have to recalculate this curve for each frame, maybe something can be done? but maybe its not a big deal cause
+                // maybe want to do curve fluxuations anyway or something cool
+                PointF[] curvePoints;
+                using (GraphicsPath path = new GraphicsPath())
                 {
-                    using (Graphics g = Graphics.FromImage(bitmap))
+                    path.AddEllipse(0.8f * frameSize.Width, 0.8f * frameSize.Height, -0.6f * frameSize.Width, -0.6f * frameSize.Height);
+                    using (Matrix mx = new Matrix(1, 0, 0, 1, 0, 0))
                     {
-                        g.Clear(Color.Black);
-
-                        for (int k = 0; k < uniformPoints.Length; k++)
-                        {
-                            Color c = colors[(int)uniformPoints[k].X];
-                            Brush brush = new SolidBrush(c);
-
-                            float h = uniformPoints[k].Y;
-                            float y = halfHeight - h * 0.5f;
-                            g.FillRectangle(brush, uniformPoints[k].X, y, columnWidth, h);
-                        }
+                        path.Flatten(mx, 0.1f);
+                        curvePoints = path.PathPoints;
                     }
-                    BitmapVideoFrameWrapper wrapper = new BitmapVideoFrameWrapper(bitmap);
-                    yield return wrapper;                    
                 }
+
+                CurveMorpher curve = new CurveMorpher(curvePoints, uniformPoints);
+
+                // i dont use "using" cause bitmap needs to stay for a while until its really used, then i dispose it
+                Bitmap bitmap = new Bitmap(frameSize.Width, frameSize.Height);
+                using (Graphics g = Graphics.FromImage(bitmap))
+                {
+                    g.Clear(Color.Black);
+
+                    for (int k = 0; k < uniformPoints.Length; k++)
+                    {
+                        Color c = colors[(int)uniformPoints[k].X];
+                        Brush brush = new SolidBrush(c);
+
+                        PointF a = curve.Matrix.Points[k];
+                        PointF b = curve.Matrix.GetSecondPoint(k, uniformPoints[k].Y);
+                        g.DrawLine(new Pen(brush, columnWidth), a, b);
+                    }
+                }
+                BitmapVideoFrameWrapper wrapper = new BitmapVideoFrameWrapper(bitmap);
+                return wrapper;
+            }
+
+            ConcurrentDictionary<int, BitmapVideoFrameWrapper> dictionary = new ConcurrentDictionary<int, BitmapVideoFrameWrapper>();
+            List<BackgroundWorker> bgws = new List<BackgroundWorker>();
+            int takeIndex = 0;
+            int takes = sound.Frames.Length;
+            object lockLock = new object();
+            AutoResetEvent[] lockEvents = new AutoResetEvent[takes];
+            for (int i = 0; i < lockEvents.Length; i++)
+            {
+                lockEvents[i] = new AutoResetEvent(false);
+            }
+
+            void Bgw_DoWork(object sender, DoWorkEventArgs e)
+            {
+                bool quit;
+
+                while (true)
+                {
+                    // get index of what will be worked on
+                    int index = 0;
+                    lock (lockLock)
+                    {
+                        if (takeIndex < takes)
+                        {
+                            index = takeIndex;
+                            takeIndex++;
+                            quit = false;
+                        }
+                        else quit = true;
+                    }
+
+                    if (quit) break;
+
+                    PointF[] sourcePoints = GetSourcePoints(index);
+                    BitmapVideoFrameWrapper wrapper = GetFrame(sourcePoints);
+
+                    bool success = dictionary.TryAdd(index, wrapper);
+                    AnalyzeSuccess(success);
+                    lockEvents[index].Set();
+                }
+            }
+
+            void Bgw_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+            {
+                BackgroundWorker bgw = sender as BackgroundWorker;
+
+                lock (bgws)
+                {
+                    bgws.Remove(bgw);
+                    bgw.Dispose();
+                    if (bgws.Count == 0)
+                    {
+                        
+                    }
+                }
+            }
+
+            void AnalyzeSuccess(bool success)
+            {
+                if (!success) throw new Exception("oi ei");
+            }
+
+            for (int i = 0; i < RenderInfo.ProcessorCount - 1; i++)
+            {
+                BackgroundWorker bgw = new BackgroundWorker();
+                bgws.Add(bgw);
+                bgw.DoWork += Bgw_DoWork;
+                bgw.RunWorkerCompleted += Bgw_RunWorkerCompleted;
+                bgw.RunWorkerAsync();
+            }
+
+            for (int i = 0; i < takes; i++)
+            {
+                lockEvents[i].WaitOne();
+                lockEvents[i].Dispose();
+                BitmapVideoFrameWrapper wrapper;
+                bool success = dictionary.TryRemove(i, out wrapper);
+                AnalyzeSuccess(success);
+                yield return wrapper;
+                wrapper.Dispose();
             }
         }
 
@@ -189,6 +291,7 @@ namespace GreatVideoMaker
         {
             Task task = new Task(() =>
             {
+                //CreateFrames().ToList(); // artificial "rendering" for testing
                 var videoFramesSource = new RawVideoPipeSource(CreateFrames()) { FrameRate = sound.FrameRate };
                 FFMpegArguments
                     .FromPipeInput(videoFramesSource)

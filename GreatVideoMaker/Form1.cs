@@ -53,7 +53,7 @@ namespace GreatVideoMaker
             ProcessorCount = Environment.ProcessorCount;
 
             player = new Player();
-            FlyleafLib.Master.RegisterFFmpeg("ffmpeg");
+            FlyleafLib.Master.RegisterFFmpeg("C:\\programs");
             player.Control = flyleaf1;
         }
 

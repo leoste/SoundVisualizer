@@ -395,7 +395,7 @@ namespace GreatVideoMaker
             this.numericUpDown10.Size = new System.Drawing.Size(57, 20);
             this.numericUpDown10.TabIndex = 13;
             this.numericUpDown10.Value = new decimal(new int[] {
-            48,
+            30,
             0,
             0,
             0});
@@ -417,7 +417,7 @@ namespace GreatVideoMaker
             this.numericUpDown11.Size = new System.Drawing.Size(57, 20);
             this.numericUpDown11.TabIndex = 12;
             this.numericUpDown11.Value = new decimal(new int[] {
-            36,
+            30,
             0,
             0,
             -2147483648});

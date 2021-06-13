@@ -132,6 +132,8 @@ namespace GreatVideoMaker
             object bufferLock = new object(); // used for threads to know what to take
             int bufferIndex = 0;
 
+            double[] window = MathNet.Numerics.Window.Hann(count);
+
             for (int i = 0; i < RenderInfo.ProcessorCount; i++)
             {
                 BackgroundWorker k = new BackgroundWorker();
@@ -182,6 +184,11 @@ namespace GreatVideoMaker
                     if (dostuff)
                     {
                         float[] frequencies = new float[count];
+
+                        for (int k = 0; k < count; k++)
+                        {
+                            buffers[index][k] = (float)(buffers[index][k] * window[k]);
+                        }
 
                         Fourier.ForwardReal(buffers[index], count, FourierOptions.NoScaling);
 

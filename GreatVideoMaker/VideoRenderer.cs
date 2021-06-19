@@ -176,6 +176,15 @@ namespace GreatVideoMaker
                 using (GraphicsPath path = new GraphicsPath())
                 {
                     path.AddEllipse(0.8f * frameSize.Width, 0.8f * frameSize.Height, -0.6f * frameSize.Width, -0.6f * frameSize.Height);
+                    /*path.AddCurve(new PointF[] {
+                        new PointF(245, 175),
+                        new PointF(335, 70),
+                        new PointF(420, 175),
+                        new PointF(245, 420),
+                        new PointF(70, 175),
+                        new PointF(145, 70),
+                        new PointF(245, 175)
+                    });*/
                     using (Matrix mx = new Matrix(1, 0, 0, 1, 0, 0))
                     {
                         path.Flatten(mx, 0.1f);

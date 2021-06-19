@@ -72,6 +72,8 @@ namespace GreatVideoMaker
             this.label7 = new System.Windows.Forms.Label();
             this.label13 = new System.Windows.Forms.Label();
             this.flyleaf1 = new FlyleafLib.Controls.Flyleaf();
+            this.label16 = new System.Windows.Forms.Label();
+            this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -145,7 +147,7 @@ namespace GreatVideoMaker
             this.groupBox1.Controls.Add(this.progressBar1);
             this.groupBox1.Controls.Add(this.button1);
             this.groupBox1.Controls.Add(this.label1);
-            this.groupBox1.Location = new System.Drawing.Point(12, 120);
+            this.groupBox1.Location = new System.Drawing.Point(12, 143);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(426, 119);
             this.groupBox1.TabIndex = 4;
@@ -189,7 +191,7 @@ namespace GreatVideoMaker
             this.groupBox2.Controls.Add(this.button2);
             this.groupBox2.Controls.Add(this.progressBar2);
             this.groupBox2.Controls.Add(this.label2);
-            this.groupBox2.Location = new System.Drawing.Point(12, 348);
+            this.groupBox2.Location = new System.Drawing.Point(12, 371);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(426, 119);
             this.groupBox2.TabIndex = 5;
@@ -235,13 +237,15 @@ namespace GreatVideoMaker
             // 
             // groupBox3
             // 
+            this.groupBox3.Controls.Add(this.comboBox1);
+            this.groupBox3.Controls.Add(this.label16);
             this.groupBox3.Controls.Add(this.numericUpDown2);
             this.groupBox3.Controls.Add(this.label6);
             this.groupBox3.Controls.Add(this.numericUpDown1);
             this.groupBox3.Controls.Add(this.label5);
             this.groupBox3.Location = new System.Drawing.Point(12, 66);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(426, 48);
+            this.groupBox3.Size = new System.Drawing.Size(426, 71);
             this.groupBox3.TabIndex = 6;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "parameters";
@@ -371,7 +375,7 @@ namespace GreatVideoMaker
             this.groupBox4.Controls.Add(this.label8);
             this.groupBox4.Controls.Add(this.numericUpDown4);
             this.groupBox4.Controls.Add(this.label9);
-            this.groupBox4.Location = new System.Drawing.Point(12, 245);
+            this.groupBox4.Location = new System.Drawing.Point(12, 268);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Size = new System.Drawing.Size(426, 97);
             this.groupBox4.TabIndex = 7;
@@ -624,6 +628,23 @@ namespace GreatVideoMaker
             this.flyleaf1.Size = new System.Drawing.Size(854, 480);
             this.flyleaf1.TabIndex = 9;
             // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.Location = new System.Drawing.Point(6, 47);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(43, 13);
+            this.label16.TabIndex = 7;
+            this.label16.Text = "window";
+            // 
+            // comboBox1
+            // 
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Location = new System.Drawing.Point(89, 44);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(121, 21);
+            this.comboBox1.TabIndex = 8;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -708,6 +729,8 @@ namespace GreatVideoMaker
         private System.Windows.Forms.Label label14;
         private FlyleafLib.Controls.Flyleaf flyleaf1;
         private System.Windows.Forms.Label label15;
+        private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.Label label16;
     }
 }
 

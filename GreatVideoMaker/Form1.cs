@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -55,6 +56,15 @@ namespace GreatVideoMaker
             player = new Player();
             FlyleafLib.Master.RegisterFFmpeg("C:\\programs");
             player.Control = flyleaf1;
+
+            MethodInfo[] windows = typeof(MathNet.Numerics.Window).GetMethods();
+            comboBox1.BeginUpdate();
+            for (int i = 0; i < windows.Length; i++)
+            {
+                if (windows[i].ReturnType == typeof(double[])) comboBox1.Items.Add(windows[i].Name);
+            }
+            comboBox1.SelectedIndex = 3;
+            comboBox1.EndUpdate();
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -62,9 +72,6 @@ namespace GreatVideoMaker
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
                 AudioPath = openFileDialog1.FileName;
-                audio = new SoundAnalyzer(AudioPath, FrameRate, LookAhead);
-                audio.OnProgress += Audio_OnProgress;
-                audio.OnComplete += Audio_OnComplete;
             }
         }
 
@@ -91,16 +98,10 @@ namespace GreatVideoMaker
             if (saveFileDialog1.ShowDialog() == DialogResult.OK)
             {
                 VideoPath = saveFileDialog1.FileName;
-                video = new VideoRenderer(audio, VideoPath, FrameSize,
-                    BarRelation,
-                    ColorStartDegree,
-                    ColorLengthDegree,
-                    DecayExponent,
-                    DecayTime,
-                    MinNote,
-                    MaxNote);
-                video.OnProgress += Video_OnProgress;
-                video.OnComplete += Video_OnComplete;
+            }
+            else
+            {
+                VideoPath = "";
             }
         }
 
@@ -127,11 +128,24 @@ namespace GreatVideoMaker
 
         private void button4_Click(object sender, EventArgs e)
         {
+            audio = new SoundAnalyzer(AudioPath, FrameRate, LookAhead, comboBox1.SelectedItem as string);
+            audio.OnProgress += Audio_OnProgress;
+            audio.OnComplete += Audio_OnComplete;
             audio.StartProcess();
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
+            video = new VideoRenderer(audio, VideoPath, FrameSize,
+                BarRelation,
+                ColorStartDegree,
+                ColorLengthDegree,
+                DecayExponent,
+                DecayTime,
+                MinNote,
+                MaxNote);
+            video.OnProgress += Video_OnProgress;
+            video.OnComplete += Video_OnComplete;
             player.Stop();
             watch.Reset();
             watch.Start();

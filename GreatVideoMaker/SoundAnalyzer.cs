@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using MathNet.Numerics.IntegralTransforms;
@@ -14,6 +15,8 @@ namespace GreatVideoMaker
     class SoundAnalyzer : Processer
     {
         private static double baseFrequency = 440;
+
+        private string windowName;
         
         public event EventHandler<ProgressEventArgs> OnProgress;
         public event EventHandler OnComplete;
@@ -33,11 +36,12 @@ namespace GreatVideoMaker
         public int LookAround { get; private set; } //take future and past frames into consideration (get more fidelity)
         public int FrequencyCount { get; private set; }
         
-        public SoundAnalyzer(string audiopath, int framerate, int lookaround = 0)
+        public SoundAnalyzer(string audiopath, int framerate, int lookaround = 0, string windowName = "HannPeriodic")
         {
             SourceFilePath = audiopath;
             FrameRate = framerate;
             LookAround = lookaround;
+            this.windowName = windowName;
         }
 
         public void StartProcess()
@@ -132,7 +136,9 @@ namespace GreatVideoMaker
             object bufferLock = new object(); // used for threads to know what to take
             int bufferIndex = 0;
 
-            double[] window = MathNet.Numerics.Window.Hann(count);
+            MethodInfo method = typeof(MathNet.Numerics.Window).GetMethod(windowName);
+            // really am doing this: MathNet.Numerics.Window.HannPeriodic(count);
+            double[] window = method.Invoke(this, new object[] { count }) as double[];
 
             for (int i = 0; i < RenderInfo.ProcessorCount; i++)
             {

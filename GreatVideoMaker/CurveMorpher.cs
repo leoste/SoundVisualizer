@@ -24,20 +24,27 @@ namespace GreatVideoMaker
         public VectorMatrix Matrix { get { return matrix; } }
         public PointF[] BaseCurve { get { return curve; } }
 
-        public CurveMorpher(PointF[] sourcePoints, PointF[] morphedPoints)
+        public CurveMorpher(PointF[] sourcePoints, PointF[] morphedPoints, bool isCurve = true)
         {
             this.sourcePoints = sourcePoints;
             this.morphingPoints = morphedPoints;
 
-            // calculate base curve from source points
-            using (GraphicsPath path = new GraphicsPath())
+            if (isCurve)
             {
-                path.AddCurve(this.sourcePoints);
-                using (Matrix mx = new Matrix(1, 0, 0, 1, 0, 0))
+                // calculate base curve from source points
+                using (GraphicsPath path = new GraphicsPath())
                 {
-                    path.Flatten(mx, 0.1f);
-                    curve = path.PathPoints;
+                    path.AddLines(this.sourcePoints);
+                    using (Matrix mx = new Matrix(1, 0, 0, 1, 0, 0))
+                    {
+                        path.Flatten(mx, 0.1f);
+                        curve = path.PathPoints;
+                    }
                 }
+            }
+            else
+            {
+                curve = sourcePoints;
             }
 
             // calculate length of the curve

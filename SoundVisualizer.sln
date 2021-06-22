@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GreatVideoMaker", "GreatVid
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CurveTest", "CurveTest\CurveTest.csproj", "{38F43B08-3691-47AF-ADD3-EA9D27F1D184}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SvgTest", "SvgTest\SvgTest.csproj", "{415CD845-7A4D-4852-8046-73EDC6852424}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -40,6 +42,18 @@ Global
 		{38F43B08-3691-47AF-ADD3-EA9D27F1D184}.x64|Any CPU.Build.0 = Debug|Any CPU
 		{38F43B08-3691-47AF-ADD3-EA9D27F1D184}.x64|x64.ActiveCfg = Debug|Any CPU
 		{38F43B08-3691-47AF-ADD3-EA9D27F1D184}.x64|x64.Build.0 = Debug|Any CPU
+		{415CD845-7A4D-4852-8046-73EDC6852424}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{415CD845-7A4D-4852-8046-73EDC6852424}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{415CD845-7A4D-4852-8046-73EDC6852424}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{415CD845-7A4D-4852-8046-73EDC6852424}.Debug|x64.Build.0 = Debug|Any CPU
+		{415CD845-7A4D-4852-8046-73EDC6852424}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{415CD845-7A4D-4852-8046-73EDC6852424}.Release|Any CPU.Build.0 = Release|Any CPU
+		{415CD845-7A4D-4852-8046-73EDC6852424}.Release|x64.ActiveCfg = Release|Any CPU
+		{415CD845-7A4D-4852-8046-73EDC6852424}.Release|x64.Build.0 = Release|Any CPU
+		{415CD845-7A4D-4852-8046-73EDC6852424}.x64|Any CPU.ActiveCfg = Debug|Any CPU
+		{415CD845-7A4D-4852-8046-73EDC6852424}.x64|Any CPU.Build.0 = Debug|Any CPU
+		{415CD845-7A4D-4852-8046-73EDC6852424}.x64|x64.ActiveCfg = Debug|Any CPU
+		{415CD845-7A4D-4852-8046-73EDC6852424}.x64|x64.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

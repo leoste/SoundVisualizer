@@ -25,6 +25,12 @@ namespace GreatVideoMaker
             set { label1.Text = value; }
         }
 
+        private string SvgPath
+        {
+            get { return label17.Text; }
+            set { label17.Text = value; }
+        }
+
         private string VideoPath
         {
             get { return label2.Text; }
@@ -72,6 +78,14 @@ namespace GreatVideoMaker
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
                 AudioPath = openFileDialog1.FileName;
+            }
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            if (openFileDialog2.ShowDialog() == DialogResult.OK)
+            {
+                SvgPath = openFileDialog2.FileName;
             }
         }
 
@@ -136,7 +150,7 @@ namespace GreatVideoMaker
 
         private void button3_Click(object sender, EventArgs e)
         {
-            video = new VideoRenderer(audio, VideoPath, FrameSize,
+            video = new VideoRenderer(audio, VideoPath, SvgPath, FrameSize,
                 BarRelation,
                 ColorStartDegree,
                 ColorLengthDegree,

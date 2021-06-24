@@ -179,18 +179,7 @@ namespace GreatVideoMaker
             // this function IS threadsafe!!! doesnt modify anything
             BitmapVideoFrameWrapper GetFrame(PointF[] sourcePoints)
             {
-                // generate real points that will be drawn. essentially we have now filled in the missing gaps that there otherwise would be
-                // but also minimized amount of points at higher end where a lot of them share the same space (so more efficient rendering)
-                PointF[] uniformPoints;
-                using (GraphicsPath path = new GraphicsPath())
-                {
-                    path.AddCurve(sourcePoints);
-                    using (Matrix mx = new Matrix(1, 0, 0, 1, 0, 0))
-                    {
-                        path.Flatten(mx, 0.1f);
-                        uniformPoints = path.PathPoints;
-                    }
-                }
+                PointF[] uniformPoints = CurveSpecifier.SpecifyHorizontally(sourcePoints, 1);
 
                 CurveMorpher curve = new CurveMorpher(curvePoints, uniformPoints, false);
 

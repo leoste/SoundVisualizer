@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace GreatVideoMaker
 {
+    //morphs given points to locations on a curve, retaining the horizontal distance of the points from each other.
     class CurveMorpher
     {
         private readonly double rad90deg = 1.5707963267948966192313216916398;

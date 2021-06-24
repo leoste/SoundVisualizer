@@ -25,10 +25,12 @@ namespace GreatVideoMaker
         public VectorMatrix Matrix { get { return matrix; } }
         public PointF[] BaseCurve { get { return curve; } }
 
-        public CurveMorpher(PointF[] sourcePoints, PointF[] morphedPoints, bool isCurve = true)
+        public CurveMorpher(PointF[] sourcePoints, PointF[] morphedPoints, double curveLength, double[] curveLengths, bool isCurve = true)
         {
             this.sourcePoints = sourcePoints;
             this.morphingPoints = morphedPoints;
+            this.curveLength = curveLength;
+            this.curveLengths = curveLengths;
 
             if (isCurve)
             {
@@ -46,18 +48,6 @@ namespace GreatVideoMaker
             else
             {
                 curve = sourcePoints;
-            }
-
-            // calculate length of the curve
-            curveLength = 0;
-            curveLengths = new double[curve.Length - 1];
-            for (int i = 0; i < curveLengths.Length; i++)
-            {
-                PointF a = curve[i];
-                PointF b = curve[i + 1];
-
-                curveLengths[i] = Math.Sqrt(Math.Pow(b.X - a.X, 2) + Math.Pow(b.Y - a.Y, 2));
-                curveLength += curveLengths[i];
             }
 
             // calculate equal distance points on the curve

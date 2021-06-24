@@ -11,7 +11,7 @@ namespace GreatVideoMaker
     //another name idea was CurveElaborator
     class CurveSpecifier
     {
-        public static PointF[] SpecifyHorizontally(PointF[] sourcePoints, double definition = 1)
+        public static PointF[] SpecifyHorizontally(PointF[] sourcePoints, double definition)
         {
             // pre-work curve to not lose definition on sharp vertical climbs
             PointF[] curve;

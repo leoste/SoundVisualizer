@@ -45,6 +45,9 @@ namespace GreatVideoMaker
 
                 double diff = currentPos - curve[lastCurveIndex].X;
                 double relation = diff / (curve[curveIndex].X - curve[lastCurveIndex].X);
+                // hackfix but meh happens only in edgecases
+                if (double.IsNaN(relation)) relation = 0;
+
                 PointF a = curve[lastCurveIndex];
                 PointF b = curve[curveIndex];
                 PointF c = new PointF(

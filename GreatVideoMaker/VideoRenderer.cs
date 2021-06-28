@@ -146,12 +146,6 @@ namespace GreatVideoMaker
             }
             // calculate length of the curve
             CurveOperations.CalculateLength(curvePoints, out double curveLength, out double[] curveLengths);
-            CurveOperations.CalculateLength(curvePoints, out double curveLength2, out double[] curveLengths2, true);
-            bool equal = true;
-            for (int i = 0; i < curveLengths2.Length; i++)
-            {
-                if (curveLengths[i] != curveLengths2[i]) equal = false;
-            }
             double definition = frameSize.Width / barRelation * frameSize.Width / curveLength;
 
             // this function IS also threadsafe now!!! doesnt modify anything anymore

@@ -9,15 +9,15 @@ using System.Threading.Tasks;
 namespace GreatVideoMaker
 {
     //another name idea was CurveElaborator
-    class CurveSpecifier
+    class CurveOperations
     {
-        public static PointF[] SpecifyHorizontally(PointF[] sourcePoints, double definition)
+        public static PointF[] SpecifyHorizontally(PointF[] curvePoints, double definition)
         {
             // pre-work curve to not lose definition on sharp vertical climbs
             PointF[] curve;
             using (GraphicsPath path = new GraphicsPath())
             {
-                path.AddCurve(sourcePoints);
+                path.AddCurve(curvePoints);
                 using (Matrix mx = new Matrix(1, 0, 0, 1, 0, 0))
                 {
                     path.Flatten(mx, 0.1f);
@@ -59,6 +59,21 @@ namespace GreatVideoMaker
             };
 
             return newCurve.ToArray();
+        }
+
+        public static void CalculateLength(PointF[] curvePoints, out double curveLength, out double[] curveLengths)
+        {
+            curveLength = 0;
+            curveLengths = new double[curvePoints.Length - 1];
+
+            for (int i = 0; i < curveLengths.Length; i++)
+            {
+                PointF a = curvePoints[i];
+                PointF b = curvePoints[i + 1];
+
+                curveLengths[i] = Math.Sqrt(Math.Pow(b.X - a.X, 2) + Math.Pow(b.Y - a.Y, 2));
+                curveLength += curveLengths[i];
+            }
         }
     }
 }

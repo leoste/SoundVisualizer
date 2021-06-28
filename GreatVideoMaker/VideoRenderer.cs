@@ -145,16 +145,8 @@ namespace GreatVideoMaker
                 }
             }
             // calculate length of the curve
-            double curveLength = 0;
-            double[] curveLengths = new double[curvePoints.Length - 1];
-            for (int i = 0; i < curveLengths.Length; i++)
-            {
-                PointF a = curvePoints[i];
-                PointF b = curvePoints[i + 1];
-
-                curveLengths[i] = Math.Sqrt(Math.Pow(b.X - a.X, 2) + Math.Pow(b.Y - a.Y, 2));
-                curveLength += curveLengths[i];
-            }
+            CurveOperations.CalculateLength(curvePoints, out double curveLength, out double[] curveLengths);
+            double definition = frameSize.Width / barRelation * frameSize.Width / curveLength;
 
             // this function IS also threadsafe now!!! doesnt modify anything anymore
             PointF[] GetSourcePoints(int index)
@@ -190,8 +182,7 @@ namespace GreatVideoMaker
             // this function IS threadsafe!!! doesnt modify anything
             BitmapVideoFrameWrapper GetFrame(PointF[] sourcePoints)
             {
-                double definition = frameSize.Width / barRelation * frameSize.Width / curveLength;
-                PointF[] uniformPoints = CurveSpecifier.SpecifyHorizontally(sourcePoints, definition);
+                PointF[] uniformPoints = CurveOperations.SpecifyHorizontally(sourcePoints, definition);
 
                 CurveMorpher curve = new CurveMorpher(curvePoints, uniformPoints, curveLength, curveLengths, false);
 

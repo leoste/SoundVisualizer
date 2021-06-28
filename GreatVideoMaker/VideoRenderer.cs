@@ -211,11 +211,15 @@ namespace GreatVideoMaker
             int takeIndex = 0;
             int takes = sound.Frames.Length;
             object lockLock = new object();
-            AutoResetEvent[] lockEvents = new AutoResetEvent[takes];
-            for (int i = 0; i < lockEvents.Length; i++)
-            {
-                lockEvents[i] = new AutoResetEvent(false);
-            }
+
+            // prevent memory usage exploding when renderer hangs up
+            int frameRenderBuffer = RenderInfo.ProcessorCount * 2;
+            AutoResetEvent[] loopLocks = new AutoResetEvent[takes];
+            AutoResetEvent[] workLocks = new AutoResetEvent[takes];
+
+            for (int i = 0; i < takes; i++) loopLocks[i] = new AutoResetEvent(false);
+            for (int i = 0; i < frameRenderBuffer; i++) workLocks[i] = new AutoResetEvent(true);
+            for (int i = frameRenderBuffer; i < workLocks.Length; i++) workLocks[i] = new AutoResetEvent(false);
 
             void Bgw_DoWork(object sender, DoWorkEventArgs e)
             {
@@ -238,12 +242,18 @@ namespace GreatVideoMaker
 
                     if (quit) break;
 
+                    // wait for permission from main loop so memory wouldnt explode
+                    workLocks[index].WaitOne();
+                    workLocks[index].Dispose();
+
                     PointF[] sourcePoints = GetSourcePoints(index);
                     BitmapVideoFrameWrapper wrapper = GetFrame(sourcePoints);
 
                     bool success = dictionary.TryAdd(index, wrapper);
                     AnalyzeSuccess(success);
-                    lockEvents[index].Set();
+
+                    // allow frame to be used
+                    loopLocks[index].Set();
                 }
             }
 
@@ -278,13 +288,15 @@ namespace GreatVideoMaker
 
             for (int i = 0; i < takes; i++)
             {
-                lockEvents[i].WaitOne();
-                lockEvents[i].Dispose();
+                loopLocks[i].WaitOne();
+                loopLocks[i].Dispose();
                 BitmapVideoFrameWrapper wrapper;
                 bool success = dictionary.TryRemove(i, out wrapper);
                 AnalyzeSuccess(success);
                 yield return wrapper;
                 wrapper.Dispose();
+                int setIndex = i + frameRenderBuffer;
+                if (setIndex < takes) workLocks[setIndex].Set();
             }
         }
 

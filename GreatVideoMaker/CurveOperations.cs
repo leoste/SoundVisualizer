@@ -61,15 +61,17 @@ namespace GreatVideoMaker
             return newCurve.ToArray();
         }
 
+        // the reverse loop with --i integrated into calculations saves really tiny bit of efficiency.
+        // if it was the right way, would have to subtract again when writing into curveLengths
         public static void CalculateLength(PointF[] curvePoints, out double curveLength, out double[] curveLengths)
         {
             curveLength = 0;
             curveLengths = new double[curvePoints.Length - 1];
 
-            for (int i = 0; i < curveLengths.Length; i++)
+            for (int i = curveLengths.Length; i > 0;)
             {
-                PointF a = curvePoints[i];
-                PointF b = curvePoints[i + 1];
+                PointF b = curvePoints[i];
+                PointF a = curvePoints[--i];
 
                 curveLengths[i] = Math.Sqrt(Math.Pow(b.X - a.X, 2) + Math.Pow(b.Y - a.Y, 2));
                 curveLength += curveLengths[i];

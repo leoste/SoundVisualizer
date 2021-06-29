@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -19,40 +20,67 @@ namespace SvgTest
         {
             InitializeComponent();
 
-            string filename = "D:\\josuemb_house-silhouette.svg"; // put something here to test, cant be bothered to make fancy tester
+            string filename = "D:\\361274.svg"; // put something here to test, cant be bothered to make fancy tester
 
             SvgDocument document = SvgDocument.Open(filename);
+
             RectangleF rect = document.Path.GetBounds();
+
+            List<GraphicsPath> paths = new List<GraphicsPath>();
+            using (GraphicsPathIterator iterator = new GraphicsPathIterator(document.Path))
+            {
+                for (int i = 0; i < iterator.SubpathCount; i++)
+                {
+                    iterator.NextMarker(out int startIndex, out int endIndex);
+                    //iterator.NextSubpath(out int startIndex, out int endIndex, out bool isClosed);
+                    int takeCount = endIndex + 1;
+
+                    PointF[] newPathPoints = document.Path.PathPoints.Skip(startIndex).Take(takeCount).ToArray();
+                    byte[] newPathTypes = document.Path.PathTypes.Skip(startIndex).Take(takeCount).ToArray();
+
+                    GraphicsPath path = new GraphicsPath(newPathPoints, newPathTypes, document.Path.FillMode);
+
+                    paths.Add(path);
+                }
+            }
+
+            /*path.Transform(new Matrix(rect, new PointF[] {
+                new PointF(0, 0),
+                new PointF(rect.Width, 0),
+                new PointF(0, rect.Height)
+            }));*/
+
             Bitmap bmp = new Bitmap((int)(rect.Width), (int)(rect.Height ));
 
             using (Graphics g = Graphics.FromImage(bmp))
             {
                 g.Clear(Color.White);
 
-                using (GraphicsPathIterator iterator = new GraphicsPathIterator(document.Path))
+                for (int i = 0; i < paths.Count; i++)
                 {
-                    iterator.NextSubpath(out int startIndex, out int endIndex, out bool isClosed);
-
-                    using (GraphicsPath path = new GraphicsPath(
-                        document.Path.PathPoints.Take(endIndex).ToArray(),
-                        document.Path.PathTypes.Take(endIndex).ToArray(),
-                        document.Path.FillMode))
-                    {
-                        path.Transform(new Matrix(rect, new PointF[] {
-                            new PointF(0, 0),
-                            new PointF(rect.Width, 0),
-                            new PointF(0, rect.Height)
-                        }));
-
-                        using (Matrix mx = new Matrix(1, 0, 0, 1, 0, 0)) path.Flatten(mx, 0.1f);
-
-                        //g.DrawPath(new Pen(Brushes.Black, 10), path);
-                        g.DrawLines(new Pen(Brushes.Black, 10), path.PathPoints);
-                    }
+                    g.DrawLines(new Pen(PickBrush(), 2), paths[i].PathPoints);
                 }
             }
 
             pictureBox1.Image = bmp;
+        }
+
+        static int random = 0;
+        private Brush PickBrush()
+        {
+            Brush result = Brushes.Transparent;
+
+            Random rnd = new Random();
+
+            Type brushesType = typeof(Brushes);
+
+            PropertyInfo[] properties = brushesType.GetProperties();
+
+            //int random = rnd.Next(properties.Length);
+            result = (Brush)properties[random].GetValue(null, null);
+            random++;
+
+            return result;
         }
     }
 }

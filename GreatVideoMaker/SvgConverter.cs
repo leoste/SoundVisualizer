@@ -17,6 +17,7 @@ namespace GreatVideoMaker
 
             RectangleF rect = document.Path.GetBounds();
 
+            List<GraphicsPath> paths = new List<GraphicsPath>();
             using (GraphicsPathIterator iterator = new GraphicsPathIterator(document.Path))
             {
                 iterator.NextSubpath(out int startIndex, out int endIndex, out bool isClosed);
@@ -27,12 +28,14 @@ namespace GreatVideoMaker
 
                 path = new GraphicsPath(newPathPoints, newPathTypes, document.Path.FillMode);
 
-                path.Transform(new Matrix(rect, new PointF[] {
-                    new PointF(0, 0),
-                    new PointF(rect.Width, 0),
-                    new PointF(0, rect.Height)
-                }));
+                paths.Add(path);
             }
+
+            /*path.Transform(new Matrix(rect, new PointF[] {
+                new PointF(0, 0),
+                new PointF(rect.Width, 0),
+                new PointF(0, rect.Height)
+            }));*/
 
             return path;
         }

@@ -20,7 +20,7 @@ namespace GreatVideoMaker
     class VideoRenderer : Processer
     {
         private string filepath;
-        private string svgpath;
+        private string svgFilepath;
         private SoundAnalyzer sound;
         private Size frameSize;
         private int barRelation;
@@ -34,7 +34,7 @@ namespace GreatVideoMaker
         public event EventHandler<ProgressEventArgs> OnProgress;
         public event EventHandler OnComplete;
 
-        public VideoRenderer(SoundAnalyzer sound, string filepath, string svgpath, Size frameSize,
+        public VideoRenderer(SoundAnalyzer sound, string filepath, string svgFilepath, Size frameSize,
             int barRelation = 128,
             float colorStartDegree = 0, // 216, 160
             float colorLengthDegree = 180, // 60, 60
@@ -44,7 +44,7 @@ namespace GreatVideoMaker
             int maxNoteBorder = 48)
         {
             this.filepath = filepath;
-            this.svgpath = svgpath;
+            this.svgFilepath = svgFilepath;
             this.sound = sound;
             this.frameSize = frameSize;
             this.barRelation = barRelation;
@@ -128,7 +128,7 @@ namespace GreatVideoMaker
 
             // maybe want to do curve fluxuations or something cool
             PointF[] curvePoints;
-            SvgDocument document = SvgDocument.Open(svgpath);
+            SvgDocument document = SvgDocument.Open(svgFilepath);
             using (GraphicsPath path = SvgConverter.ToGraphicsPath(document))
             {
 

@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace GreatVideoMaker
 {
+    //morphs given points to locations on a curve, retaining the horizontal distance of the points from each other.
     class CurveMorpher
     {
         private readonly double rad90deg = 1.5707963267948966192313216916398;
@@ -24,32 +25,29 @@ namespace GreatVideoMaker
         public VectorMatrix Matrix { get { return matrix; } }
         public PointF[] BaseCurve { get { return curve; } }
 
-        public CurveMorpher(PointF[] sourcePoints, PointF[] morphedPoints)
+        public CurveMorpher(PointF[] sourcePoints, PointF[] morphedPoints, double curveLength, double[] curveLengths, bool isCurve = true)
         {
             this.sourcePoints = sourcePoints;
             this.morphingPoints = morphedPoints;
+            this.curveLength = curveLength;
+            this.curveLengths = curveLengths;
 
-            // calculate base curve from source points
-            using (GraphicsPath path = new GraphicsPath())
+            if (isCurve)
             {
-                path.AddCurve(this.sourcePoints);
-                using (Matrix mx = new Matrix(1, 0, 0, 1, 0, 0))
+                // calculate base curve from source points
+                using (GraphicsPath path = new GraphicsPath())
                 {
-                    path.Flatten(mx, 0.1f);
-                    curve = path.PathPoints;
+                    path.AddLines(this.sourcePoints);
+                    using (Matrix mx = new Matrix(1, 0, 0, 1, 0, 0))
+                    {
+                        path.Flatten(mx, 0.1f);
+                        curve = path.PathPoints;
+                    }
                 }
             }
-
-            // calculate length of the curve
-            curveLength = 0;
-            curveLengths = new double[curve.Length - 1];
-            for (int i = 0; i < curveLengths.Length; i++)
+            else
             {
-                PointF a = curve[i];
-                PointF b = curve[i + 1];
-
-                curveLengths[i] = Math.Sqrt(Math.Pow(b.X - a.X, 2) + Math.Pow(b.Y - a.Y, 2));
-                curveLength += curveLengths[i];
+                curve = sourcePoints;
             }
 
             // calculate equal distance points on the curve

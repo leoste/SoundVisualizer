@@ -13,12 +13,14 @@ using System.Drawing.Drawing2D;
 using System.Collections.Concurrent;
 using System.ComponentModel;
 using System.Threading;
+using Svg;
 
 namespace GreatVideoMaker
 {
     class VideoRenderer : Processer
     {
         private string filepath;
+        private string svgFilepath;
         private SoundAnalyzer sound;
         private Size frameSize;
         private int barRelation;
@@ -32,7 +34,7 @@ namespace GreatVideoMaker
         public event EventHandler<ProgressEventArgs> OnProgress;
         public event EventHandler OnComplete;
 
-        public VideoRenderer(SoundAnalyzer sound, string filepath, Size frameSize,
+        public VideoRenderer(SoundAnalyzer sound, string filepath, string svgFilepath, Size frameSize,
             int barRelation = 128,
             float colorStartDegree = 0, // 216, 160
             float colorLengthDegree = 180, // 60, 60
@@ -42,6 +44,7 @@ namespace GreatVideoMaker
             int maxNoteBorder = 48)
         {
             this.filepath = filepath;
+            this.svgFilepath = svgFilepath;
             this.sound = sound;
             this.frameSize = frameSize;
             this.barRelation = barRelation;
@@ -123,6 +126,28 @@ namespace GreatVideoMaker
             // anti-spaz measures
             float decayCountMargin = (float)decayExponent / decayTime;
 
+            // maybe want to do curve fluxuations or something cool
+            PointF[] curvePoints;
+            SvgDocument document = SvgDocument.Open(svgFilepath);
+            using (GraphicsPath path = SvgConverter.ToGraphicsPath(document))
+            {
+
+                float unit = frameSize.Width / 7;
+                path.Transform(new Matrix(path.GetBounds(), new PointF[] {
+                    new PointF(unit, unit),
+                    new PointF(frameSize.Width - unit, unit),
+                    new PointF(unit, frameSize.Height - unit)
+                }));
+                using (Matrix mx = new Matrix(1, 0, 0, 1, 0, 0))
+                {
+                    path.Flatten(mx, 0.1f);
+                    curvePoints = path.PathPoints;
+                }
+            }
+            // calculate length of the curve
+            CurveOperations.CalculateLength(curvePoints, out double curveLength, out double[] curveLengths);
+            double definition = frameSize.Width / barRelation * frameSize.Width / curveLength;
+
             // this function IS also threadsafe now!!! doesnt modify anything anymore
             PointF[] GetSourcePoints(int index)
             {
@@ -157,42 +182,9 @@ namespace GreatVideoMaker
             // this function IS threadsafe!!! doesnt modify anything
             BitmapVideoFrameWrapper GetFrame(PointF[] sourcePoints)
             {
-                // generate real points that will be drawn. essentially we have now filled in the missing gaps that there otherwise would be
-                // but also minimized amount of points at higher end where a lot of them share the same space (so more efficient rendering)
-                PointF[] uniformPoints;
-                using (GraphicsPath path = new GraphicsPath())
-                {
-                    path.AddCurve(sourcePoints);
-                    using (Matrix mx = new Matrix(1, 0, 0, 1, 0, 0))
-                    {
-                        path.Flatten(mx, 0.1f);
-                        uniformPoints = path.PathPoints;
-                    }
-                }
+                PointF[] uniformPoints = CurveOperations.SpecifyHorizontally(sourcePoints, definition);
 
-                // BAD. shouldnt have to recalculate this curve for each frame, maybe something can be done? but maybe its not a big deal cause
-                // maybe want to do curve fluxuations anyway or something cool
-                PointF[] curvePoints;
-                using (GraphicsPath path = new GraphicsPath())
-                {
-                    path.AddEllipse(0.8f * frameSize.Width, 0.8f * frameSize.Height, -0.6f * frameSize.Width, -0.6f * frameSize.Height);
-                    /*path.AddCurve(new PointF[] {
-                        new PointF(245, 175),
-                        new PointF(335, 70),
-                        new PointF(420, 175),
-                        new PointF(245, 420),
-                        new PointF(70, 175),
-                        new PointF(145, 70),
-                        new PointF(245, 175)
-                    });*/
-                    using (Matrix mx = new Matrix(1, 0, 0, 1, 0, 0))
-                    {
-                        path.Flatten(mx, 0.1f);
-                        curvePoints = path.PathPoints;
-                    }
-                }
-
-                CurveMorpher curve = new CurveMorpher(curvePoints, uniformPoints);
+                CurveMorpher curve = new CurveMorpher(curvePoints, uniformPoints, curveLength, curveLengths, false);
 
                 // i dont use "using" cause bitmap needs to stay for a while until its really used, then i dispose it
                 Bitmap bitmap = new Bitmap(frameSize.Width, frameSize.Height);
@@ -219,11 +211,15 @@ namespace GreatVideoMaker
             int takeIndex = 0;
             int takes = sound.Frames.Length;
             object lockLock = new object();
-            AutoResetEvent[] lockEvents = new AutoResetEvent[takes];
-            for (int i = 0; i < lockEvents.Length; i++)
-            {
-                lockEvents[i] = new AutoResetEvent(false);
-            }
+
+            // prevent memory usage exploding when renderer hangs up
+            int frameRenderBuffer = RenderInfo.ProcessorCount * 2;
+            AutoResetEvent[] loopLocks = new AutoResetEvent[takes];
+            AutoResetEvent[] workLocks = new AutoResetEvent[takes];
+
+            for (int i = 0; i < takes; i++) loopLocks[i] = new AutoResetEvent(false);
+            for (int i = 0; i < frameRenderBuffer; i++) workLocks[i] = new AutoResetEvent(true);
+            for (int i = frameRenderBuffer; i < workLocks.Length; i++) workLocks[i] = new AutoResetEvent(false);
 
             void Bgw_DoWork(object sender, DoWorkEventArgs e)
             {
@@ -246,12 +242,18 @@ namespace GreatVideoMaker
 
                     if (quit) break;
 
+                    // wait for permission from main loop so memory wouldnt explode
+                    workLocks[index].WaitOne();
+                    workLocks[index].Dispose();
+
                     PointF[] sourcePoints = GetSourcePoints(index);
                     BitmapVideoFrameWrapper wrapper = GetFrame(sourcePoints);
 
                     bool success = dictionary.TryAdd(index, wrapper);
                     AnalyzeSuccess(success);
-                    lockEvents[index].Set();
+
+                    // allow frame to be used
+                    loopLocks[index].Set();
                 }
             }
 
@@ -286,13 +288,15 @@ namespace GreatVideoMaker
 
             for (int i = 0; i < takes; i++)
             {
-                lockEvents[i].WaitOne();
-                lockEvents[i].Dispose();
+                loopLocks[i].WaitOne();
+                loopLocks[i].Dispose();
                 BitmapVideoFrameWrapper wrapper;
                 bool success = dictionary.TryRemove(i, out wrapper);
                 AnalyzeSuccess(success);
                 yield return wrapper;
                 wrapper.Dispose();
+                int setIndex = i + frameRenderBuffer;
+                if (setIndex < takes) workLocks[setIndex].Set();
             }
         }
 

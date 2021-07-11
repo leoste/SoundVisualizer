@@ -199,6 +199,7 @@ namespace GreatVideoMaker
                         Fourier.ForwardReal(buffers[index], count, FourierOptions.NoScaling);
 
                         //buffer processing for next things
+                        PointF[] notesCurve = new PointF[count];
                         for (int k = 0; k < count; k++)
                         {
                             float abs = Math.Abs(buffers[index][k]) / count;
@@ -206,11 +207,15 @@ namespace GreatVideoMaker
                             if (abs < MinimumAmplitude) MinimumAmplitude = abs;
 
                             frequencies[k] = abs; //frequencies are just the necessary bytes from the buffer (for now)
+                            notesCurve[k] = new PointF(distances[k], abs);
                         }
+
+                        PointF[] notes = CurveOperations.SpecifyHorizontally(notesCurve, 0.1);
 
                         // honestly dont need to give buffers
                         //frames[frameIndex].buffer = buffer;
                         Frames[index].frequencies = frequencies;
+                        Frames[index].notes = notes;
 
                         if (OnProgress != null) OnProgress.Invoke(this, new ProgressEventArgs(index, takes));
                     }
@@ -253,6 +258,7 @@ namespace GreatVideoMaker
     {
         //public float[] buffer;
         public float[] frequencies; //basically done did a logarithmic
+        public PointF[] notes;
     }
 
     public struct NoteSpan

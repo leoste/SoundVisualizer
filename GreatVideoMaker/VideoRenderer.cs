@@ -21,6 +21,8 @@ namespace GreatVideoMaker
     {
         private string filepath;
         private string svgFilepath;
+        private string imageFilepath;
+        private string title;
         private SoundAnalyzer sound;
         private Size frameSize;
         private int barRelation;
@@ -34,7 +36,7 @@ namespace GreatVideoMaker
         public event EventHandler<ProgressEventArgs> OnProgress;
         public event EventHandler OnComplete;
 
-        public VideoRenderer(SoundAnalyzer sound, string filepath, string svgFilepath, Size frameSize,
+        public VideoRenderer(SoundAnalyzer sound, string filepath, string svgFilepath, string imageFilepath, string title, Size frameSize,
             int barRelation = 128,
             float colorStartDegree = 0, // 216, 160
             float colorLengthDegree = 180, // 60, 60
@@ -45,6 +47,8 @@ namespace GreatVideoMaker
         {
             this.filepath = filepath;
             this.svgFilepath = svgFilepath;
+            this.imageFilepath = imageFilepath;
+            this.title = title;
             this.sound = sound;
             this.frameSize = frameSize;
             this.barRelation = barRelation;
@@ -179,6 +183,19 @@ namespace GreatVideoMaker
                 return sourcePoints;
             }
 
+            Bitmap background = new Bitmap(frameSize.Width, frameSize.Height);
+            using (Image image = Image.FromFile(imageFilepath))
+            {
+                double scale = Math.Min((double)frameSize.Width / image.Width, (double)frameSize.Height / image.Height);
+                int scaleWidth = (int)(image.Width * scale);
+                int scaleHeight = (int)(image.Height * scale);
+                using (Graphics g = Graphics.FromImage(background))
+                {
+                    g.Clear(Color.Black);
+                    g.DrawImage(image, (frameSize.Width - scaleWidth) / 2, (frameSize.Height - scaleHeight) / 2, scaleWidth, scaleHeight);
+                }
+            }
+
             // this function IS threadsafe!!! doesnt modify anything
             BitmapVideoFrameWrapper GetFrame(PointF[] sourcePoints)
             {
@@ -187,11 +204,13 @@ namespace GreatVideoMaker
                 CurveMorpher curve = new CurveMorpher(curvePoints, uniformPoints, curveLength, curveLengths, false);
 
                 // i dont use "using" cause bitmap needs to stay for a while until its really used, then i dispose it
-                Bitmap bitmap = new Bitmap(frameSize.Width, frameSize.Height);
+                Bitmap bitmap;
+                lock (background)
+                {
+                    bitmap = (Bitmap)background.Clone();
+                }
                 using (Graphics g = Graphics.FromImage(bitmap))
                 {
-                    g.Clear(Color.Black);
-
                     for (int k = 0; k < uniformPoints.Length; k++)
                     {
                         Color c = colors[(int)uniformPoints[k].X];

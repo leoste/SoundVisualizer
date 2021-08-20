@@ -193,6 +193,17 @@ namespace GreatVideoMaker
                 {
                     g.Clear(Color.Black);
                     g.DrawImage(image, (frameSize.Width - scaleWidth) / 2, (frameSize.Height - scaleHeight) / 2, scaleWidth, scaleHeight);
+
+                    float em = frameSize.Width / 35;
+                    Font font = new Font(FontFamily.GenericSansSerif, em, FontStyle.Bold);
+                    SizeF size = g.MeasureString(title, font);
+                    Brush fore = Brushes.White;
+                    Brush back = Brushes.Black;
+                    float textX = frameSize.Width / 2 - size.Width / 2;
+                    float textY = frameSize.Height / 2 - size.Height / 2;
+
+                    g.DrawString(title, font, back, textX + em / 14f, textY + em / 14f);
+                    g.DrawString(title, font, fore, textX, textY);
                 }
             }
 

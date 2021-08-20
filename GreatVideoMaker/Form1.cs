@@ -31,10 +31,21 @@ namespace GreatVideoMaker
             set { label17.Text = value; }
         }
 
+        private string ImagePath
+        {
+            get { return label18.Text; }
+            set { label18.Text = value; }
+        }
+
         private string VideoPath
         {
             get { return label2.Text; }
             set { label2.Text = value; }
+        }
+        private string Title
+        {
+            get { return textBox1.Text; }
+            set { textBox1.Text = value; }
         }
         private int ProcessorCount
         {
@@ -93,7 +104,7 @@ namespace GreatVideoMaker
         {
             Invoke((MethodInvoker)delegate
             {
-                int test = 0;            
+                
             });
         }
 
@@ -150,7 +161,7 @@ namespace GreatVideoMaker
 
         private void button3_Click(object sender, EventArgs e)
         {
-            video = new VideoRenderer(audio, VideoPath, SvgPath, FrameSize,
+            video = new VideoRenderer(audio, VideoPath, SvgPath, ImagePath, Title, FrameSize,
                 BarRelation,
                 ColorStartDegree,
                 ColorLengthDegree,
@@ -169,6 +180,14 @@ namespace GreatVideoMaker
         private void numericUpDown12_ValueChanged(object sender, EventArgs e)
         {
             RenderInfo.ProcessorCount = (int)numericUpDown12.Value;
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            if (openFileDialog3.ShowDialog() == DialogResult.OK)
+            {
+                ImagePath = openFileDialog3.FileName;
+            }
         }
     }
 }

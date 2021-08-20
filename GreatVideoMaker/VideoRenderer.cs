@@ -180,6 +180,11 @@ namespace GreatVideoMaker
                     float h = baseh * scaley;
                     sourcePoints[k] = new PointF(x[correctedIndex], h);
                 }
+
+                // really bad hackfix that loses very slight definition and is inaccurate, but....
+                // visually isnt that different + its easier than reworking everything to not have this issue
+                sourcePoints[0].X = 0;
+
                 return sourcePoints;
             }
 

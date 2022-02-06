@@ -135,13 +135,18 @@ namespace GreatVideoMaker
             SvgDocument document = SvgDocument.Open(svgFilepath);
             using (GraphicsPath path = SvgConverter.ToGraphicsPath(document))
             {
-
                 float unit = frameSize.Width / 7;
-                path.Transform(new Matrix(path.GetBounds(), new PointF[] {
+                PointF[] option1 = new PointF[] {
                     new PointF(unit, unit),
                     new PointF(frameSize.Width - unit, unit),
                     new PointF(unit, frameSize.Height - unit)
-                }));
+                };
+                PointF[] option2 = new PointF[] {
+                    new PointF(document.Bounds.X, document.Bounds.Y),
+                    new PointF(document.Bounds.X + document.Bounds.Width, document.Bounds.Y),
+                    new PointF(document.Bounds.X, document.Bounds.Y + document.Bounds.Height)
+                };
+                path.Transform(new Matrix(path.GetBounds(), option2));;
                 using (Matrix mx = new Matrix(1, 0, 0, 1, 0, 0))
                 {
                     path.Flatten(mx, 0.1f);

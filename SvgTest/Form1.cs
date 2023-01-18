@@ -19,7 +19,7 @@ namespace SvgTest
         {
             InitializeComponent();
 
-            string filename = "D:\\josuemb_house-silhouette.svg"; // put something here to test, cant be bothered to make fancy tester
+            string filename = "D:\\randomsound\\bbb-real-background.svg"; // put something here to test, cant be bothered to make fancy tester
 
             SvgDocument document = SvgDocument.Open(filename);
             RectangleF rect = document.Path.GetBounds();

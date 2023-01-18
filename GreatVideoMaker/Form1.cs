@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -187,6 +188,62 @@ namespace GreatVideoMaker
             if (openFileDialog3.ShowDialog() == DialogResult.OK)
             {
                 ImagePath = openFileDialog3.FileName;
+            }
+        }
+
+        private void savePresetToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (saveFileDialog2.ShowDialog() == DialogResult.OK)
+            {
+                List<string> lines = new List<string>();
+
+                lines.Add(numericUpDown12.Value.ToString());
+                lines.Add(label1.Text);
+                lines.Add(label17.Text);
+                lines.Add(label18.Text);
+                lines.Add(numericUpDown1.Value.ToString());
+                lines.Add(numericUpDown2.Value.ToString());
+                lines.Add(comboBox1.Text);
+                lines.Add(label2.Text);
+                lines.Add(numericUpDown9.Value.ToString());
+                lines.Add(numericUpDown8.Value.ToString());
+                lines.Add(numericUpDown4.Value.ToString());
+                lines.Add(numericUpDown3.Value.ToString());
+                lines.Add(numericUpDown5.Value.ToString());
+                lines.Add(numericUpDown6.Value.ToString());
+                lines.Add(numericUpDown7.Value.ToString());
+                lines.Add(numericUpDown11.Value.ToString());
+                lines.Add(numericUpDown10.Value.ToString());
+                lines.Add(textBox1.Text);
+
+                File.WriteAllLines(saveFileDialog2.FileName, lines);
+            }
+        }
+
+        private void loadPresetToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (openFileDialog4.ShowDialog() == DialogResult.OK)
+            {
+                string[] lines = File.ReadAllLines(openFileDialog4.FileName);
+
+                numericUpDown12.Value = decimal.Parse(lines[0]);
+                label1.Text = lines[1];
+                label17.Text = lines[2];
+                label18.Text = lines[3];
+                numericUpDown1.Value = decimal.Parse(lines[4]);
+                numericUpDown2.Value = decimal.Parse(lines[5]);
+                comboBox1.Text = lines[6];
+                label12.Text = lines[7];
+                numericUpDown9.Value = decimal.Parse(lines[8]);
+                numericUpDown8.Value = decimal.Parse(lines[9]);
+                numericUpDown4.Value = decimal.Parse(lines[10]);
+                numericUpDown3.Value = decimal.Parse(lines[11]);
+                numericUpDown5.Value = decimal.Parse(lines[12]);
+                numericUpDown6.Value = decimal.Parse(lines[13]);
+                numericUpDown7.Value = decimal.Parse(lines[14]);
+                numericUpDown11.Value = decimal.Parse(lines[15]);
+                numericUpDown10.Value = decimal.Parse(lines[16]);
+                textBox1.Text = lines[17];
             }
         }
     }

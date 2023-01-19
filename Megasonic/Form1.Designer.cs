@@ -41,9 +41,12 @@
             this.label11 = new System.Windows.Forms.Label();
             this.sourcePicture = new System.Windows.Forms.PictureBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
+            this.numericUpDown11 = new System.Windows.Forms.NumericUpDown();
             this.label1 = new System.Windows.Forms.Label();
+            this.numericUpDown10 = new System.Windows.Forms.NumericUpDown();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.soundAnalyzeButton = new System.Windows.Forms.Button();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
@@ -73,6 +76,8 @@
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.sourcePicture)).BeginInit();
             this.groupBox2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown11)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown10)).BeginInit();
             this.groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown9)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown7)).BeginInit();
@@ -181,17 +186,22 @@
             // 
             // sourcePicture
             // 
+            this.sourcePicture.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.sourcePicture.Location = new System.Drawing.Point(132, 132);
             this.sourcePicture.Name = "sourcePicture";
             this.sourcePicture.Size = new System.Drawing.Size(588, 336);
+            this.sourcePicture.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.sourcePicture.TabIndex = 0;
             this.sourcePicture.TabStop = false;
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.comboBox1);
             this.groupBox2.Controls.Add(this.label3);
             this.groupBox2.Controls.Add(this.label2);
+            this.groupBox2.Controls.Add(this.numericUpDown11);
             this.groupBox2.Controls.Add(this.label1);
+            this.groupBox2.Controls.Add(this.numericUpDown10);
             this.groupBox2.Controls.Add(this.progressBar1);
             this.groupBox2.Controls.Add(this.soundAnalyzeButton);
             this.groupBox2.Controls.Add(this.soundLabel);
@@ -203,11 +213,19 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Sound Source File";
             // 
+            // comboBox1
+            // 
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Location = new System.Drawing.Point(252, 180);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(228, 33);
+            this.comboBox1.TabIndex = 22;
+            // 
             // label3
             // 
             this.label3.Location = new System.Drawing.Point(12, 180);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(108, 36);
+            this.label3.Size = new System.Drawing.Size(228, 36);
             this.label3.TabIndex = 9;
             this.label3.Text = "window";
             this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -216,19 +234,33 @@
             // 
             this.label2.Location = new System.Drawing.Point(12, 132);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(108, 36);
+            this.label2.Size = new System.Drawing.Size(228, 36);
             this.label2.TabIndex = 8;
             this.label2.Text = "lookahead";
             this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // numericUpDown11
+            // 
+            this.numericUpDown11.Location = new System.Drawing.Point(252, 132);
+            this.numericUpDown11.Name = "numericUpDown11";
+            this.numericUpDown11.Size = new System.Drawing.Size(228, 31);
+            this.numericUpDown11.TabIndex = 21;
             // 
             // label1
             // 
             this.label1.Location = new System.Drawing.Point(12, 84);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(108, 36);
+            this.label1.Size = new System.Drawing.Size(228, 36);
             this.label1.TabIndex = 7;
             this.label1.Text = "framerate";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // numericUpDown10
+            // 
+            this.numericUpDown10.Location = new System.Drawing.Point(252, 84);
+            this.numericUpDown10.Name = "numericUpDown10";
+            this.numericUpDown10.Size = new System.Drawing.Size(228, 31);
+            this.numericUpDown10.TabIndex = 20;
             // 
             // progressBar1
             // 
@@ -388,9 +420,11 @@
             // 
             // outputPicture
             // 
+            this.outputPicture.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.outputPicture.Location = new System.Drawing.Point(132, 372);
             this.outputPicture.Name = "outputPicture";
             this.outputPicture.Size = new System.Drawing.Size(588, 336);
+            this.outputPicture.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.outputPicture.TabIndex = 11;
             this.outputPicture.TabStop = false;
             // 
@@ -471,6 +505,8 @@
             this.groupBox1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.sourcePicture)).EndInit();
             this.groupBox2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown11)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown10)).EndInit();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown9)).EndInit();
@@ -530,5 +566,8 @@
         private NumericUpDown numericUpDown1;
         private NumericUpDown numericUpDown9;
         private TextBox textBox1;
+        private ComboBox comboBox1;
+        private NumericUpDown numericUpDown11;
+        private NumericUpDown numericUpDown10;
     }
 }

@@ -20,6 +20,12 @@ namespace Tools
                 byte[] newPathTypes = document.Path.PathTypes.Take(takeCount).ToArray();
 
                 path = new GraphicsPath(newPathPoints, newPathTypes, document.Path.FillMode);
+
+                path.Transform(new Matrix(rect, new PointF[] {
+                    new PointF(0, 0),
+                    new PointF(rect.Width, 0),
+                    new PointF(0, rect.Height)
+                }));
             }
 
             return path;

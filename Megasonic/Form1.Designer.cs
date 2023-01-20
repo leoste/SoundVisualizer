@@ -40,6 +40,9 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.label11 = new System.Windows.Forms.Label();
             this.sourcePicture = new System.Windows.Forms.PictureBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.frameWidthNumeric = new System.Windows.Forms.NumericUpDown();
+            this.frameHeightNumeric = new System.Windows.Forms.NumericUpDown();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.label3 = new System.Windows.Forms.Label();
@@ -61,8 +64,6 @@
             this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
             this.numericUpDown6 = new System.Windows.Forms.NumericUpDown();
             this.numericUpDown2 = new System.Windows.Forms.NumericUpDown();
-            this.numericUpDown3 = new System.Windows.Forms.NumericUpDown();
-            this.numericUpDown4 = new System.Windows.Forms.NumericUpDown();
             this.label12 = new System.Windows.Forms.Label();
             this.outputPicture = new System.Windows.Forms.PictureBox();
             this.progressBar2 = new System.Windows.Forms.ProgressBar();
@@ -71,10 +72,11 @@
             this.label9 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.videoButton = new System.Windows.Forms.Button();
-            this.label4 = new System.Windows.Forms.Label();
             this.videoDialog = new System.Windows.Forms.SaveFileDialog();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.sourcePicture)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.frameWidthNumeric)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.frameHeightNumeric)).BeginInit();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown11)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown10)).BeginInit();
@@ -86,8 +88,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown6)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown3)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown4)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.outputPicture)).BeginInit();
             this.SuspendLayout();
             // 
@@ -168,16 +168,19 @@
             this.groupBox1.Controls.Add(this.lineLabel);
             this.groupBox1.Controls.Add(this.imageLabel);
             this.groupBox1.Controls.Add(this.lineButton);
+            this.groupBox1.Controls.Add(this.label4);
+            this.groupBox1.Controls.Add(this.frameWidthNumeric);
+            this.groupBox1.Controls.Add(this.frameHeightNumeric);
             this.groupBox1.Location = new System.Drawing.Point(12, 12);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(732, 480);
+            this.groupBox1.Size = new System.Drawing.Size(732, 528);
             this.groupBox1.TabIndex = 12;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Video Source Files";
             // 
             // label11
             // 
-            this.label11.Location = new System.Drawing.Point(12, 132);
+            this.label11.Location = new System.Drawing.Point(12, 180);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(108, 36);
             this.label11.TabIndex = 10;
@@ -187,12 +190,67 @@
             // sourcePicture
             // 
             this.sourcePicture.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.sourcePicture.Location = new System.Drawing.Point(132, 132);
+            this.sourcePicture.Location = new System.Drawing.Point(132, 180);
             this.sourcePicture.Name = "sourcePicture";
             this.sourcePicture.Size = new System.Drawing.Size(588, 336);
             this.sourcePicture.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.sourcePicture.TabIndex = 0;
             this.sourcePicture.TabStop = false;
+            // 
+            // label4
+            // 
+            this.label4.Location = new System.Drawing.Point(12, 132);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(228, 36);
+            this.label4.TabIndex = 10;
+            this.label4.Text = "frame width, height";
+            this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // frameWidthNumeric
+            // 
+            this.frameWidthNumeric.Location = new System.Drawing.Point(252, 132);
+            this.frameWidthNumeric.Maximum = new decimal(new int[] {
+            3940,
+            0,
+            0,
+            0});
+            this.frameWidthNumeric.Minimum = new decimal(new int[] {
+            240,
+            0,
+            0,
+            0});
+            this.frameWidthNumeric.Name = "frameWidthNumeric";
+            this.frameWidthNumeric.Size = new System.Drawing.Size(108, 31);
+            this.frameWidthNumeric.TabIndex = 19;
+            this.frameWidthNumeric.Value = new decimal(new int[] {
+            1280,
+            0,
+            0,
+            0});
+            this.frameWidthNumeric.ValueChanged += new System.EventHandler(this.frameWidthNumeric_ValueChanged);
+            // 
+            // frameHeightNumeric
+            // 
+            this.frameHeightNumeric.Location = new System.Drawing.Point(372, 132);
+            this.frameHeightNumeric.Maximum = new decimal(new int[] {
+            3940,
+            0,
+            0,
+            0});
+            this.frameHeightNumeric.Minimum = new decimal(new int[] {
+            240,
+            0,
+            0,
+            0});
+            this.frameHeightNumeric.Name = "frameHeightNumeric";
+            this.frameHeightNumeric.Size = new System.Drawing.Size(108, 31);
+            this.frameHeightNumeric.TabIndex = 20;
+            this.frameHeightNumeric.Value = new decimal(new int[] {
+            720,
+            0,
+            0,
+            0});
+            this.frameHeightNumeric.ValueChanged += new System.EventHandler(this.frameHeightNumeric_ValueChanged);
             // 
             // groupBox2
             // 
@@ -206,7 +264,7 @@
             this.groupBox2.Controls.Add(this.soundAnalyzeButton);
             this.groupBox2.Controls.Add(this.soundLabel);
             this.groupBox2.Controls.Add(this.soundButton);
-            this.groupBox2.Location = new System.Drawing.Point(12, 504);
+            this.groupBox2.Location = new System.Drawing.Point(12, 552);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(732, 324);
             this.groupBox2.TabIndex = 25;
@@ -293,8 +351,6 @@
             this.groupBox3.Controls.Add(this.numericUpDown1);
             this.groupBox3.Controls.Add(this.numericUpDown6);
             this.groupBox3.Controls.Add(this.numericUpDown2);
-            this.groupBox3.Controls.Add(this.numericUpDown3);
-            this.groupBox3.Controls.Add(this.numericUpDown4);
             this.groupBox3.Controls.Add(this.label12);
             this.groupBox3.Controls.Add(this.outputPicture);
             this.groupBox3.Controls.Add(this.progressBar2);
@@ -303,39 +359,38 @@
             this.groupBox3.Controls.Add(this.label9);
             this.groupBox3.Controls.Add(this.label5);
             this.groupBox3.Controls.Add(this.videoButton);
-            this.groupBox3.Controls.Add(this.label4);
             this.groupBox3.Enabled = false;
             this.groupBox3.Location = new System.Drawing.Point(756, 12);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(732, 816);
+            this.groupBox3.Size = new System.Drawing.Size(732, 768);
             this.groupBox3.TabIndex = 26;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Video Output File";
             // 
             // numericUpDown9
             // 
-            this.numericUpDown9.Location = new System.Drawing.Point(252, 276);
+            this.numericUpDown9.Location = new System.Drawing.Point(252, 228);
             this.numericUpDown9.Name = "numericUpDown9";
             this.numericUpDown9.Size = new System.Drawing.Size(228, 31);
             this.numericUpDown9.TabIndex = 26;
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(252, 324);
+            this.textBox1.Location = new System.Drawing.Point(252, 276);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(228, 31);
             this.textBox1.TabIndex = 25;
             // 
             // numericUpDown7
             // 
-            this.numericUpDown7.Location = new System.Drawing.Point(372, 132);
+            this.numericUpDown7.Location = new System.Drawing.Point(372, 84);
             this.numericUpDown7.Name = "numericUpDown7";
             this.numericUpDown7.Size = new System.Drawing.Size(108, 31);
             this.numericUpDown7.TabIndex = 24;
             // 
             // label8
             // 
-            this.label8.Location = new System.Drawing.Point(12, 180);
+            this.label8.Location = new System.Drawing.Point(12, 132);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(228, 36);
             this.label8.TabIndex = 14;
@@ -344,14 +399,14 @@
             // 
             // numericUpDown5
             // 
-            this.numericUpDown5.Location = new System.Drawing.Point(372, 180);
+            this.numericUpDown5.Location = new System.Drawing.Point(372, 132);
             this.numericUpDown5.Name = "numericUpDown5";
             this.numericUpDown5.Size = new System.Drawing.Size(108, 31);
             this.numericUpDown5.TabIndex = 22;
             // 
             // label6
             // 
-            this.label6.Location = new System.Drawing.Point(12, 228);
+            this.label6.Location = new System.Drawing.Point(12, 180);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(228, 36);
             this.label6.TabIndex = 12;
@@ -360,7 +415,7 @@
             // 
             // label7
             // 
-            this.label7.Location = new System.Drawing.Point(12, 276);
+            this.label7.Location = new System.Drawing.Point(12, 228);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(228, 36);
             this.label7.TabIndex = 13;
@@ -369,49 +424,35 @@
             // 
             // numericUpDown8
             // 
-            this.numericUpDown8.Location = new System.Drawing.Point(252, 132);
+            this.numericUpDown8.Location = new System.Drawing.Point(252, 84);
             this.numericUpDown8.Name = "numericUpDown8";
             this.numericUpDown8.Size = new System.Drawing.Size(108, 31);
             this.numericUpDown8.TabIndex = 23;
             // 
             // numericUpDown1
             // 
-            this.numericUpDown1.Location = new System.Drawing.Point(252, 228);
+            this.numericUpDown1.Location = new System.Drawing.Point(252, 180);
             this.numericUpDown1.Name = "numericUpDown1";
             this.numericUpDown1.Size = new System.Drawing.Size(108, 31);
             this.numericUpDown1.TabIndex = 17;
             // 
             // numericUpDown6
             // 
-            this.numericUpDown6.Location = new System.Drawing.Point(252, 180);
+            this.numericUpDown6.Location = new System.Drawing.Point(252, 132);
             this.numericUpDown6.Name = "numericUpDown6";
             this.numericUpDown6.Size = new System.Drawing.Size(108, 31);
             this.numericUpDown6.TabIndex = 21;
             // 
             // numericUpDown2
             // 
-            this.numericUpDown2.Location = new System.Drawing.Point(372, 228);
+            this.numericUpDown2.Location = new System.Drawing.Point(372, 180);
             this.numericUpDown2.Name = "numericUpDown2";
             this.numericUpDown2.Size = new System.Drawing.Size(108, 31);
             this.numericUpDown2.TabIndex = 18;
             // 
-            // numericUpDown3
-            // 
-            this.numericUpDown3.Location = new System.Drawing.Point(372, 84);
-            this.numericUpDown3.Name = "numericUpDown3";
-            this.numericUpDown3.Size = new System.Drawing.Size(108, 31);
-            this.numericUpDown3.TabIndex = 20;
-            // 
-            // numericUpDown4
-            // 
-            this.numericUpDown4.Location = new System.Drawing.Point(252, 84);
-            this.numericUpDown4.Name = "numericUpDown4";
-            this.numericUpDown4.Size = new System.Drawing.Size(108, 31);
-            this.numericUpDown4.TabIndex = 19;
-            // 
             // label12
             // 
-            this.label12.Location = new System.Drawing.Point(12, 372);
+            this.label12.Location = new System.Drawing.Point(12, 324);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(108, 36);
             this.label12.TabIndex = 12;
@@ -421,7 +462,7 @@
             // outputPicture
             // 
             this.outputPicture.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.outputPicture.Location = new System.Drawing.Point(132, 372);
+            this.outputPicture.Location = new System.Drawing.Point(132, 324);
             this.outputPicture.Name = "outputPicture";
             this.outputPicture.Size = new System.Drawing.Size(588, 336);
             this.outputPicture.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -430,14 +471,14 @@
             // 
             // progressBar2
             // 
-            this.progressBar2.Location = new System.Drawing.Point(12, 768);
+            this.progressBar2.Location = new System.Drawing.Point(12, 720);
             this.progressBar2.Name = "progressBar2";
             this.progressBar2.Size = new System.Drawing.Size(708, 34);
             this.progressBar2.TabIndex = 11;
             // 
             // label10
             // 
-            this.label10.Location = new System.Drawing.Point(12, 324);
+            this.label10.Location = new System.Drawing.Point(12, 276);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(228, 36);
             this.label10.TabIndex = 16;
@@ -447,7 +488,7 @@
             // videoRenderButton
             // 
             this.videoRenderButton.Enabled = false;
-            this.videoRenderButton.Location = new System.Drawing.Point(12, 720);
+            this.videoRenderButton.Location = new System.Drawing.Point(12, 672);
             this.videoRenderButton.Name = "videoRenderButton";
             this.videoRenderButton.Size = new System.Drawing.Size(708, 36);
             this.videoRenderButton.TabIndex = 10;
@@ -457,7 +498,7 @@
             // 
             // label9
             // 
-            this.label9.Location = new System.Drawing.Point(12, 132);
+            this.label9.Location = new System.Drawing.Point(12, 84);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(228, 36);
             this.label9.TabIndex = 15;
@@ -483,15 +524,6 @@
             this.videoButton.UseVisualStyleBackColor = true;
             this.videoButton.Click += new System.EventHandler(this.videoButton_Click);
             // 
-            // label4
-            // 
-            this.label4.Location = new System.Drawing.Point(12, 84);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(228, 36);
-            this.label4.TabIndex = 10;
-            this.label4.Text = "frame width, height";
-            this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 25F);
@@ -504,6 +536,8 @@
             this.Text = "Form1";
             this.groupBox1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.sourcePicture)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.frameWidthNumeric)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.frameHeightNumeric)).EndInit();
             this.groupBox2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown11)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown10)).EndInit();
@@ -516,8 +550,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown6)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown3)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown4)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.outputPicture)).EndInit();
             this.ResumeLayout(false);
 
@@ -560,8 +592,8 @@
         private NumericUpDown numericUpDown8;
         private NumericUpDown numericUpDown5;
         private NumericUpDown numericUpDown6;
-        private NumericUpDown numericUpDown3;
-        private NumericUpDown numericUpDown4;
+        private NumericUpDown frameHeightNumeric;
+        private NumericUpDown frameWidthNumeric;
         private NumericUpDown numericUpDown2;
         private NumericUpDown numericUpDown1;
         private NumericUpDown numericUpDown9;

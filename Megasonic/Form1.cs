@@ -1,5 +1,7 @@
 using Svg;
 using System.Drawing.Drawing2D;
+using System.IO;
+using System.Reflection.Metadata;
 using Tools;
 
 namespace Megasonic
@@ -18,28 +20,47 @@ namespace Megasonic
             videoConditions.ConditionsMetEvent += VideoConditions_ConditionsMetEvent;
             videoRenderConditions.ConditionsMetEvent += VideoRenderConditions_ConditionsMetEvent;
             videoPreviewConditions.ConditionsMetEvent += VideoPreviewConditions_ConditionsMetEvent;
+        }
 
-            LineFile = "J:\\heli\\FL Studio Projects\\my music\\Album 2nd\\final version\\rockable\\ccc-silhouette 720px reversed then line.svg";
-            ImageFile = "J:\\heli\\FL Studio Projects\\my music\\Album 2nd\\final version\\rockable\\ccc 720px.png";
+        private void UpdateVideoPreview()
+        {
+            int w = (int)frameWidthNumeric.Value;
+            int h = (int)frameHeightNumeric.Value;
+
+            Bitmap bitmap = new Bitmap(w, h);
+
+            using (Graphics g = Graphics.FromImage(bitmap))
+            {
+                using (Image image = Image.FromFile(ImageFile))
+                {
+                    g.DrawImage(image, 0, 0, w, h);
+                }
+
+                SvgDocument document = SvgDocument.Open(LineFile);
+                GraphicsPath path = SvgConverter.ToGraphicsPath(document);
+
+                float xRatio = w / document.Width;
+                float yRatio = h / document.Height;
+
+                Matrix mx = new Matrix(path.GetBounds(), new PointF[] {
+                    new PointF(document.Bounds.X * xRatio, document.Bounds.Y * yRatio),
+                    new PointF((document.Bounds.X + document.Bounds.Width) * xRatio, document.Bounds.Y * yRatio),
+                    new PointF(document.Bounds.X * xRatio, (document.Bounds.Y + document.Bounds.Height) * yRatio)
+                });
+                
+                path.Transform(mx);
+
+                //using (Matrix mx = new Matrix(1, 0, 0, 1, 0, 0)) path.Flatten(mx, 0.1f);
+                g.DrawLines(new Pen(Brushes.Red, 5), path.PathPoints);
+            }
+
+            sourcePicture.Image?.Dispose();
+            sourcePicture.Image = bitmap;
         }
 
         private void VideoPreviewConditions_ConditionsMetEvent(object? sender, EventArgs e)
         {
-            using (Image image = Image.FromFile(ImageFile))
-            {
-                Bitmap bitmap = new Bitmap(image);
-
-                GraphicsPath path = Tools.SvgConverter.ToGraphicsPath(SvgDocument.Open(LineFile));
-
-                using (Matrix mx = new Matrix(1, 0, 0, 1, 0, 0)) path.Flatten(mx, 0.1f);
-
-                using (Graphics g = Graphics.FromImage(bitmap))
-                {
-                    g.DrawLines(new Pen(Brushes.Red, 5), path.PathPoints);
-                }
-
-                sourcePicture.Image = bitmap;
-            }
+            UpdateVideoPreview();
         }
 
         private void SoundAnalyzeConditions_ConditionsMetEvent(object? sender, EventArgs e)
@@ -103,6 +124,16 @@ namespace Megasonic
         {
             groupBox3.Enabled = false;
             videoRenderButton.Enabled = false;
+        }
+
+        private void frameWidthNumeric_ValueChanged(object sender, EventArgs e)
+        {
+            UpdateVideoPreview();
+        }
+
+        private void frameHeightNumeric_ValueChanged(object sender, EventArgs e)
+        {
+            UpdateVideoPreview();
         }
     }
 }

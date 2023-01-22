@@ -2,12 +2,114 @@ using Svg;
 using System.Drawing.Drawing2D;
 using System.IO;
 using System.Reflection.Metadata;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Tools;
 
 namespace Megasonic
 {
     public partial class Form1 : Form
     {
+        // TODO
+        // instead of just setting true, set false if new text is blank?
+
+        string ImageFile
+        {
+            get { return imageButton.Text; }
+            set
+            {
+                imageButton.Text = value;
+                videoConditions.ImageSelected = true;
+                videoPreviewConditions.ImageSelected = true;
+            }
+        }
+
+        string SoundFile
+        {
+            get { return soundButton.Text; }
+            set
+            {
+                soundButton.Text = value;
+                soundAnalyzeConditions.SoundSelected = true;
+            }
+        }
+
+        string LineFile
+        {
+            get { return lineButton.Text; }
+            set
+            {
+                lineButton.Text = value;
+                videoConditions.LineSelected = true;
+                videoPreviewConditions.LineSelected = true;
+            }
+        }
+
+        string VideoFile
+        {
+            get { return videoButton.Text; }
+            set
+            {
+                videoButton.Text = value;
+            }
+        }
+
+        ProjectSettings CurrentProjectSettings
+        {
+            get
+            {
+                return new ProjectSettings()
+                {
+                    VideoSourceSettings = new VideoSourceSettings()
+                    {
+                        ImageFile = imageButton.Text,
+                        LineFile = lineButton.Text,
+                        FrameSize = new Size((int)frameWidthNumeric.Value, (int)frameHeightNumeric.Value)
+                    },
+                    SoundSourceSettings = new SoundSourceSettings()
+                    {
+                       SoundFile = soundButton.Text,
+                       Framerate = (int)framerateNumeric.Value,
+                       Lookahead = (int)lookaheadNumeric.Value,
+                       Window = windowCombobox.Text
+                    },
+                    VideoOutputSettings = new VideoOutputSettings()
+                    {
+                        VideoFile = videoButton.Text,
+                        NoteRange = new Range((int)noteRangeStartNumeric.Value, (int)noteRangeEndNumeric.Value),
+                        DecayExponent = (int)decayExponentNumeric.Value,
+                        DecayTime = (int)decayTimeNumeric.Value,
+                        ColorStart = (int)colorStartNumeric.Value,
+                        ColorLength = (int)colorLengthNumeric.Value,
+                        BarWidth = (int)barWidthNumeric.Value,
+                        Title = titleTextbox.Text
+                    }
+                };
+            }
+            set
+            {
+                ImageFile = value.VideoSourceSettings.ImageFile;
+                LineFile = value.VideoSourceSettings.LineFile;
+                frameWidthNumeric.Value = value.VideoSourceSettings.FrameSize.Width;
+                frameHeightNumeric.Value = value.VideoSourceSettings.FrameSize.Height;
+
+                SoundFile = value.SoundSourceSettings.SoundFile;
+                framerateNumeric.Value = value.SoundSourceSettings.Framerate;
+                lookaheadNumeric.Value = value.SoundSourceSettings.Lookahead;
+                windowCombobox.Text = value.SoundSourceSettings.Window;
+
+                VideoFile = value.VideoOutputSettings.VideoFile;
+                noteRangeStartNumeric.Value = value.VideoOutputSettings.NoteRange.Start.Value;
+                noteRangeEndNumeric.Value = value.VideoOutputSettings.NoteRange.End.Value;
+                decayExponentNumeric.Value = value.VideoOutputSettings.DecayExponent;
+                decayTimeNumeric.Value = value.VideoOutputSettings.DecayTime;
+                colorStartNumeric.Value = value.VideoOutputSettings.ColorStart;
+                colorLengthNumeric.Value = value.VideoOutputSettings.ColorLength;
+                barWidthNumeric.Value = value.VideoOutputSettings.BarWidth;
+                titleTextbox.Text = value.VideoOutputSettings.Title;
+            }
+        }
+
         SoundAnalyzeConditions soundAnalyzeConditions = new SoundAnalyzeConditions();
         VideoConditions videoConditions = new VideoConditions();
         VideoRenderConditions videoRenderConditions = new VideoRenderConditions();
@@ -115,7 +217,7 @@ namespace Megasonic
         {
             if (videoDialog.ShowDialog() == DialogResult.OK)
             {
-                videoButton.Text = videoDialog.FileName;
+                VideoFile = videoDialog.FileName;
                 videoRenderConditions.VideoSelected = true;
             }            
         }
@@ -134,6 +236,38 @@ namespace Megasonic
         private void frameHeightNumeric_ValueChanged(object sender, EventArgs e)
         {
             UpdateVideoPreview();
+        }
+
+        private void openToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (openProjectDialog.ShowDialog() == DialogResult.OK)
+            {
+                string jsonString = File.ReadAllText(openProjectDialog.FileName);
+                ProjectSettings settings;
+
+                try
+                {
+                    settings = JsonSerializer.Deserialize<ProjectSettings>(jsonString);                    
+                }
+                catch
+                {
+                    return;
+                }
+
+                if (settings != null)
+                {
+                    CurrentProjectSettings = settings;
+                }
+            }
+        }
+
+        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (saveProjectDialog.ShowDialog() == DialogResult.OK)
+            {
+                string jsonString = JsonSerializer.Serialize(CurrentProjectSettings);
+                File.WriteAllText(saveProjectDialog.FileName, jsonString);
+            }
         }
     }
 }

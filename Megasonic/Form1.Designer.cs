@@ -173,11 +173,12 @@
             this.groupBox1.Controls.Add(this.label14);
             this.groupBox1.Controls.Add(this.titleTextbox);
             this.groupBox1.Controls.Add(this.label11);
-            this.groupBox1.Controls.Add(this.noteRangeEndNumeric);
-            this.groupBox1.Controls.Add(this.sourcePicture);
             this.groupBox1.Controls.Add(this.label8);
-            this.groupBox1.Controls.Add(this.imageButton);
+            this.groupBox1.Controls.Add(this.decayExponentNumeric);
+            this.groupBox1.Controls.Add(this.noteRangeEndNumeric);
             this.groupBox1.Controls.Add(this.decayTimeNumeric);
+            this.groupBox1.Controls.Add(this.sourcePicture);
+            this.groupBox1.Controls.Add(this.imageButton);
             this.groupBox1.Controls.Add(this.lineLabel);
             this.groupBox1.Controls.Add(this.label6);
             this.groupBox1.Controls.Add(this.imageLabel);
@@ -187,7 +188,6 @@
             this.groupBox1.Controls.Add(this.frameWidthNumeric);
             this.groupBox1.Controls.Add(this.colorStartNumeric);
             this.groupBox1.Controls.Add(this.frameHeightNumeric);
-            this.groupBox1.Controls.Add(this.decayExponentNumeric);
             this.groupBox1.Controls.Add(this.label9);
             this.groupBox1.Controls.Add(this.colorLengthNumeric);
             this.groupBox1.Controls.Add(this.label10);
@@ -202,7 +202,7 @@
             // 
             // barWidthNumeric
             // 
-            this.barWidthNumeric.Location = new System.Drawing.Point(252, 660);
+            this.barWidthNumeric.Location = new System.Drawing.Point(252, 612);
             this.barWidthNumeric.Name = "barWidthNumeric";
             this.barWidthNumeric.Size = new System.Drawing.Size(228, 31);
             this.barWidthNumeric.TabIndex = 26;
@@ -218,7 +218,7 @@
             // 
             // titleTextbox
             // 
-            this.titleTextbox.Location = new System.Drawing.Point(252, 708);
+            this.titleTextbox.Location = new System.Drawing.Point(252, 660);
             this.titleTextbox.Name = "titleTextbox";
             this.titleTextbox.Size = new System.Drawing.Size(228, 31);
             this.titleTextbox.TabIndex = 25;
@@ -251,7 +251,7 @@
             // 
             // label8
             // 
-            this.label8.Location = new System.Drawing.Point(12, 564);
+            this.label8.Location = new System.Drawing.Point(12, 1044);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(228, 36);
             this.label8.TabIndex = 14;
@@ -260,14 +260,14 @@
             // 
             // decayTimeNumeric
             // 
-            this.decayTimeNumeric.Location = new System.Drawing.Point(372, 564);
+            this.decayTimeNumeric.Location = new System.Drawing.Point(372, 1044);
             this.decayTimeNumeric.Name = "decayTimeNumeric";
             this.decayTimeNumeric.Size = new System.Drawing.Size(108, 31);
             this.decayTimeNumeric.TabIndex = 22;
             // 
             // label6
             // 
-            this.label6.Location = new System.Drawing.Point(12, 612);
+            this.label6.Location = new System.Drawing.Point(12, 564);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(228, 36);
             this.label6.TabIndex = 12;
@@ -276,7 +276,7 @@
             // 
             // label7
             // 
-            this.label7.Location = new System.Drawing.Point(12, 660);
+            this.label7.Location = new System.Drawing.Point(12, 612);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(228, 36);
             this.label7.TabIndex = 13;
@@ -315,7 +315,7 @@
             // 
             // colorStartNumeric
             // 
-            this.colorStartNumeric.Location = new System.Drawing.Point(252, 612);
+            this.colorStartNumeric.Location = new System.Drawing.Point(252, 564);
             this.colorStartNumeric.Name = "colorStartNumeric";
             this.colorStartNumeric.Size = new System.Drawing.Size(108, 31);
             this.colorStartNumeric.TabIndex = 17;
@@ -345,7 +345,7 @@
             // 
             // decayExponentNumeric
             // 
-            this.decayExponentNumeric.Location = new System.Drawing.Point(252, 564);
+            this.decayExponentNumeric.Location = new System.Drawing.Point(252, 1044);
             this.decayExponentNumeric.Name = "decayExponentNumeric";
             this.decayExponentNumeric.Size = new System.Drawing.Size(108, 31);
             this.decayExponentNumeric.TabIndex = 21;
@@ -361,14 +361,14 @@
             // 
             // colorLengthNumeric
             // 
-            this.colorLengthNumeric.Location = new System.Drawing.Point(372, 612);
+            this.colorLengthNumeric.Location = new System.Drawing.Point(372, 564);
             this.colorLengthNumeric.Name = "colorLengthNumeric";
             this.colorLengthNumeric.Size = new System.Drawing.Size(108, 31);
             this.colorLengthNumeric.TabIndex = 18;
             // 
             // label10
             // 
-            this.label10.Location = new System.Drawing.Point(12, 708);
+            this.label10.Location = new System.Drawing.Point(12, 660);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(228, 36);
             this.label10.TabIndex = 16;
@@ -377,7 +377,7 @@
             // 
             // label12
             // 
-            this.label12.Location = new System.Drawing.Point(12, 756);
+            this.label12.Location = new System.Drawing.Point(12, 708);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(108, 36);
             this.label12.TabIndex = 12;
@@ -387,7 +387,7 @@
             // outputPicture
             // 
             this.outputPicture.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.outputPicture.Location = new System.Drawing.Point(132, 756);
+            this.outputPicture.Location = new System.Drawing.Point(132, 708);
             this.outputPicture.Name = "outputPicture";
             this.outputPicture.Size = new System.Drawing.Size(588, 324);
             this.outputPicture.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;

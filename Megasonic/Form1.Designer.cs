@@ -38,10 +38,26 @@
             this.imageDialog = new System.Windows.Forms.OpenFileDialog();
             this.lineDialog = new System.Windows.Forms.OpenFileDialog();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.barWidthNumeric = new System.Windows.Forms.NumericUpDown();
+            this.label14 = new System.Windows.Forms.Label();
+            this.titleTextbox = new System.Windows.Forms.TextBox();
             this.label11 = new System.Windows.Forms.Label();
+            this.noteRangeEndNumeric = new System.Windows.Forms.NumericUpDown();
             this.sourcePicture = new System.Windows.Forms.PictureBox();
+            this.label8 = new System.Windows.Forms.Label();
+            this.decayTimeNumeric = new System.Windows.Forms.NumericUpDown();
+            this.label6 = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
+            this.noteRangeStartNumeric = new System.Windows.Forms.NumericUpDown();
             this.frameWidthNumeric = new System.Windows.Forms.NumericUpDown();
+            this.colorStartNumeric = new System.Windows.Forms.NumericUpDown();
             this.frameHeightNumeric = new System.Windows.Forms.NumericUpDown();
+            this.decayExponentNumeric = new System.Windows.Forms.NumericUpDown();
+            this.label9 = new System.Windows.Forms.Label();
+            this.colorLengthNumeric = new System.Windows.Forms.NumericUpDown();
+            this.label10 = new System.Windows.Forms.Label();
+            this.label12 = new System.Windows.Forms.Label();
+            this.outputPicture = new System.Windows.Forms.PictureBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.label13 = new System.Windows.Forms.Label();
             this.windowCombobox = new System.Windows.Forms.ComboBox();
@@ -52,23 +68,8 @@
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.soundAnalyzeButton = new System.Windows.Forms.Button();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.barWidthNumeric = new System.Windows.Forms.NumericUpDown();
-            this.titleTextbox = new System.Windows.Forms.TextBox();
-            this.noteRangeEndNumeric = new System.Windows.Forms.NumericUpDown();
-            this.label8 = new System.Windows.Forms.Label();
-            this.decayTimeNumeric = new System.Windows.Forms.NumericUpDown();
-            this.label6 = new System.Windows.Forms.Label();
-            this.label7 = new System.Windows.Forms.Label();
-            this.noteRangeStartNumeric = new System.Windows.Forms.NumericUpDown();
-            this.colorStartNumeric = new System.Windows.Forms.NumericUpDown();
-            this.decayExponentNumeric = new System.Windows.Forms.NumericUpDown();
-            this.colorLengthNumeric = new System.Windows.Forms.NumericUpDown();
-            this.label12 = new System.Windows.Forms.Label();
-            this.outputPicture = new System.Windows.Forms.PictureBox();
             this.progressBar2 = new System.Windows.Forms.ProgressBar();
-            this.label10 = new System.Windows.Forms.Label();
             this.videoRenderButton = new System.Windows.Forms.Button();
-            this.label9 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.videoButton = new System.Windows.Forms.Button();
             this.videoDialog = new System.Windows.Forms.SaveFileDialog();
@@ -78,23 +79,22 @@
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openProjectDialog = new System.Windows.Forms.OpenFileDialog();
             this.saveProjectDialog = new System.Windows.Forms.SaveFileDialog();
-            this.label14 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.barWidthNumeric)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.noteRangeEndNumeric)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.sourcePicture)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.decayTimeNumeric)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.noteRangeStartNumeric)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.frameWidthNumeric)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.colorStartNumeric)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.frameHeightNumeric)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.decayExponentNumeric)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.colorLengthNumeric)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.outputPicture)).BeginInit();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.lookaheadNumeric)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.framerateNumeric)).BeginInit();
             this.groupBox3.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.barWidthNumeric)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.noteRangeEndNumeric)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.decayTimeNumeric)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.noteRangeStartNumeric)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.colorStartNumeric)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.decayExponentNumeric)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.colorLengthNumeric)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.outputPicture)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -169,21 +169,59 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.barWidthNumeric);
             this.groupBox1.Controls.Add(this.label14);
+            this.groupBox1.Controls.Add(this.titleTextbox);
             this.groupBox1.Controls.Add(this.label11);
+            this.groupBox1.Controls.Add(this.noteRangeEndNumeric);
             this.groupBox1.Controls.Add(this.sourcePicture);
+            this.groupBox1.Controls.Add(this.label8);
             this.groupBox1.Controls.Add(this.imageButton);
+            this.groupBox1.Controls.Add(this.decayTimeNumeric);
             this.groupBox1.Controls.Add(this.lineLabel);
+            this.groupBox1.Controls.Add(this.label6);
             this.groupBox1.Controls.Add(this.imageLabel);
+            this.groupBox1.Controls.Add(this.label7);
             this.groupBox1.Controls.Add(this.lineButton);
+            this.groupBox1.Controls.Add(this.noteRangeStartNumeric);
             this.groupBox1.Controls.Add(this.frameWidthNumeric);
+            this.groupBox1.Controls.Add(this.colorStartNumeric);
             this.groupBox1.Controls.Add(this.frameHeightNumeric);
+            this.groupBox1.Controls.Add(this.decayExponentNumeric);
+            this.groupBox1.Controls.Add(this.label9);
+            this.groupBox1.Controls.Add(this.colorLengthNumeric);
+            this.groupBox1.Controls.Add(this.label10);
+            this.groupBox1.Controls.Add(this.label12);
+            this.groupBox1.Controls.Add(this.outputPicture);
             this.groupBox1.Location = new System.Drawing.Point(12, 48);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(732, 528);
+            this.groupBox1.Size = new System.Drawing.Size(732, 1092);
             this.groupBox1.TabIndex = 12;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Video Source Files";
+            // 
+            // barWidthNumeric
+            // 
+            this.barWidthNumeric.Location = new System.Drawing.Point(252, 660);
+            this.barWidthNumeric.Name = "barWidthNumeric";
+            this.barWidthNumeric.Size = new System.Drawing.Size(228, 31);
+            this.barWidthNumeric.TabIndex = 26;
+            // 
+            // label14
+            // 
+            this.label14.Location = new System.Drawing.Point(12, 132);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(228, 36);
+            this.label14.TabIndex = 21;
+            this.label14.Text = "frame width, height";
+            this.label14.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // titleTextbox
+            // 
+            this.titleTextbox.Location = new System.Drawing.Point(252, 708);
+            this.titleTextbox.Name = "titleTextbox";
+            this.titleTextbox.Size = new System.Drawing.Size(228, 31);
+            this.titleTextbox.TabIndex = 25;
             // 
             // label11
             // 
@@ -191,18 +229,66 @@
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(108, 36);
             this.label11.TabIndex = 10;
-            this.label11.Text = "preview";
+            this.label11.Text = "preview 1";
             this.label11.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // noteRangeEndNumeric
+            // 
+            this.noteRangeEndNumeric.Location = new System.Drawing.Point(372, 516);
+            this.noteRangeEndNumeric.Name = "noteRangeEndNumeric";
+            this.noteRangeEndNumeric.Size = new System.Drawing.Size(108, 31);
+            this.noteRangeEndNumeric.TabIndex = 24;
             // 
             // sourcePicture
             // 
             this.sourcePicture.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.sourcePicture.Location = new System.Drawing.Point(132, 180);
             this.sourcePicture.Name = "sourcePicture";
-            this.sourcePicture.Size = new System.Drawing.Size(588, 336);
+            this.sourcePicture.Size = new System.Drawing.Size(588, 324);
             this.sourcePicture.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.sourcePicture.TabIndex = 0;
             this.sourcePicture.TabStop = false;
+            // 
+            // label8
+            // 
+            this.label8.Location = new System.Drawing.Point(12, 564);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(228, 36);
+            this.label8.TabIndex = 14;
+            this.label8.Text = "decay exponent, time";
+            this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // decayTimeNumeric
+            // 
+            this.decayTimeNumeric.Location = new System.Drawing.Point(372, 564);
+            this.decayTimeNumeric.Name = "decayTimeNumeric";
+            this.decayTimeNumeric.Size = new System.Drawing.Size(108, 31);
+            this.decayTimeNumeric.TabIndex = 22;
+            // 
+            // label6
+            // 
+            this.label6.Location = new System.Drawing.Point(12, 612);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(228, 36);
+            this.label6.TabIndex = 12;
+            this.label6.Text = "color start, length";
+            this.label6.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // label7
+            // 
+            this.label7.Location = new System.Drawing.Point(12, 660);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(228, 36);
+            this.label7.TabIndex = 13;
+            this.label7.Text = "bar relative width (1/x)";
+            this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // noteRangeStartNumeric
+            // 
+            this.noteRangeStartNumeric.Location = new System.Drawing.Point(252, 516);
+            this.noteRangeStartNumeric.Name = "noteRangeStartNumeric";
+            this.noteRangeStartNumeric.Size = new System.Drawing.Size(108, 31);
+            this.noteRangeStartNumeric.TabIndex = 23;
             // 
             // frameWidthNumeric
             // 
@@ -227,6 +313,13 @@
             0});
             this.frameWidthNumeric.ValueChanged += new System.EventHandler(this.frameWidthNumeric_ValueChanged);
             // 
+            // colorStartNumeric
+            // 
+            this.colorStartNumeric.Location = new System.Drawing.Point(252, 612);
+            this.colorStartNumeric.Name = "colorStartNumeric";
+            this.colorStartNumeric.Size = new System.Drawing.Size(108, 31);
+            this.colorStartNumeric.TabIndex = 17;
+            // 
             // frameHeightNumeric
             // 
             this.frameHeightNumeric.Location = new System.Drawing.Point(372, 132);
@@ -250,6 +343,57 @@
             0});
             this.frameHeightNumeric.ValueChanged += new System.EventHandler(this.frameHeightNumeric_ValueChanged);
             // 
+            // decayExponentNumeric
+            // 
+            this.decayExponentNumeric.Location = new System.Drawing.Point(252, 564);
+            this.decayExponentNumeric.Name = "decayExponentNumeric";
+            this.decayExponentNumeric.Size = new System.Drawing.Size(108, 31);
+            this.decayExponentNumeric.TabIndex = 21;
+            // 
+            // label9
+            // 
+            this.label9.Location = new System.Drawing.Point(12, 516);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(228, 36);
+            this.label9.TabIndex = 15;
+            this.label9.Text = "note range";
+            this.label9.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // colorLengthNumeric
+            // 
+            this.colorLengthNumeric.Location = new System.Drawing.Point(372, 612);
+            this.colorLengthNumeric.Name = "colorLengthNumeric";
+            this.colorLengthNumeric.Size = new System.Drawing.Size(108, 31);
+            this.colorLengthNumeric.TabIndex = 18;
+            // 
+            // label10
+            // 
+            this.label10.Location = new System.Drawing.Point(12, 708);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(228, 36);
+            this.label10.TabIndex = 16;
+            this.label10.Text = "title";
+            this.label10.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // label12
+            // 
+            this.label12.Location = new System.Drawing.Point(12, 756);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(108, 36);
+            this.label12.TabIndex = 12;
+            this.label12.Text = "preview 2";
+            this.label12.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // outputPicture
+            // 
+            this.outputPicture.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.outputPicture.Location = new System.Drawing.Point(132, 756);
+            this.outputPicture.Name = "outputPicture";
+            this.outputPicture.Size = new System.Drawing.Size(588, 324);
+            this.outputPicture.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.outputPicture.TabIndex = 11;
+            this.outputPicture.TabStop = false;
+            // 
             // groupBox2
             // 
             this.groupBox2.Controls.Add(this.label13);
@@ -262,7 +406,7 @@
             this.groupBox2.Controls.Add(this.soundAnalyzeButton);
             this.groupBox2.Controls.Add(this.soundLabel);
             this.groupBox2.Controls.Add(this.soundButton);
-            this.groupBox2.Location = new System.Drawing.Point(12, 588);
+            this.groupBox2.Location = new System.Drawing.Point(756, 48);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(732, 324);
             this.groupBox2.TabIndex = 25;
@@ -364,170 +508,35 @@
             // 
             // groupBox3
             // 
-            this.groupBox3.Controls.Add(this.barWidthNumeric);
-            this.groupBox3.Controls.Add(this.titleTextbox);
-            this.groupBox3.Controls.Add(this.noteRangeEndNumeric);
-            this.groupBox3.Controls.Add(this.label8);
-            this.groupBox3.Controls.Add(this.decayTimeNumeric);
-            this.groupBox3.Controls.Add(this.label6);
-            this.groupBox3.Controls.Add(this.label7);
-            this.groupBox3.Controls.Add(this.noteRangeStartNumeric);
-            this.groupBox3.Controls.Add(this.colorStartNumeric);
-            this.groupBox3.Controls.Add(this.decayExponentNumeric);
-            this.groupBox3.Controls.Add(this.colorLengthNumeric);
-            this.groupBox3.Controls.Add(this.label12);
-            this.groupBox3.Controls.Add(this.outputPicture);
             this.groupBox3.Controls.Add(this.progressBar2);
-            this.groupBox3.Controls.Add(this.label10);
             this.groupBox3.Controls.Add(this.videoRenderButton);
-            this.groupBox3.Controls.Add(this.label9);
             this.groupBox3.Controls.Add(this.label5);
             this.groupBox3.Controls.Add(this.videoButton);
             this.groupBox3.Enabled = false;
-            this.groupBox3.Location = new System.Drawing.Point(756, 48);
+            this.groupBox3.Location = new System.Drawing.Point(756, 384);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(732, 864);
+            this.groupBox3.Size = new System.Drawing.Size(732, 180);
             this.groupBox3.TabIndex = 26;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Video Output File";
             // 
-            // barWidthNumeric
-            // 
-            this.barWidthNumeric.Location = new System.Drawing.Point(252, 228);
-            this.barWidthNumeric.Name = "barWidthNumeric";
-            this.barWidthNumeric.Size = new System.Drawing.Size(228, 31);
-            this.barWidthNumeric.TabIndex = 26;
-            // 
-            // titleTextbox
-            // 
-            this.titleTextbox.Location = new System.Drawing.Point(252, 276);
-            this.titleTextbox.Name = "titleTextbox";
-            this.titleTextbox.Size = new System.Drawing.Size(228, 31);
-            this.titleTextbox.TabIndex = 25;
-            // 
-            // noteRangeEndNumeric
-            // 
-            this.noteRangeEndNumeric.Location = new System.Drawing.Point(372, 84);
-            this.noteRangeEndNumeric.Name = "noteRangeEndNumeric";
-            this.noteRangeEndNumeric.Size = new System.Drawing.Size(108, 31);
-            this.noteRangeEndNumeric.TabIndex = 24;
-            // 
-            // label8
-            // 
-            this.label8.Location = new System.Drawing.Point(12, 132);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(228, 36);
-            this.label8.TabIndex = 14;
-            this.label8.Text = "decay exponent, time";
-            this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // decayTimeNumeric
-            // 
-            this.decayTimeNumeric.Location = new System.Drawing.Point(372, 132);
-            this.decayTimeNumeric.Name = "decayTimeNumeric";
-            this.decayTimeNumeric.Size = new System.Drawing.Size(108, 31);
-            this.decayTimeNumeric.TabIndex = 22;
-            // 
-            // label6
-            // 
-            this.label6.Location = new System.Drawing.Point(12, 180);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(228, 36);
-            this.label6.TabIndex = 12;
-            this.label6.Text = "color start, length";
-            this.label6.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // label7
-            // 
-            this.label7.Location = new System.Drawing.Point(12, 228);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(228, 36);
-            this.label7.TabIndex = 13;
-            this.label7.Text = "bar relative width (1/x)";
-            this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // noteRangeStartNumeric
-            // 
-            this.noteRangeStartNumeric.Location = new System.Drawing.Point(252, 84);
-            this.noteRangeStartNumeric.Name = "noteRangeStartNumeric";
-            this.noteRangeStartNumeric.Size = new System.Drawing.Size(108, 31);
-            this.noteRangeStartNumeric.TabIndex = 23;
-            // 
-            // colorStartNumeric
-            // 
-            this.colorStartNumeric.Location = new System.Drawing.Point(252, 180);
-            this.colorStartNumeric.Name = "colorStartNumeric";
-            this.colorStartNumeric.Size = new System.Drawing.Size(108, 31);
-            this.colorStartNumeric.TabIndex = 17;
-            // 
-            // decayExponentNumeric
-            // 
-            this.decayExponentNumeric.Location = new System.Drawing.Point(252, 132);
-            this.decayExponentNumeric.Name = "decayExponentNumeric";
-            this.decayExponentNumeric.Size = new System.Drawing.Size(108, 31);
-            this.decayExponentNumeric.TabIndex = 21;
-            // 
-            // colorLengthNumeric
-            // 
-            this.colorLengthNumeric.Location = new System.Drawing.Point(372, 180);
-            this.colorLengthNumeric.Name = "colorLengthNumeric";
-            this.colorLengthNumeric.Size = new System.Drawing.Size(108, 31);
-            this.colorLengthNumeric.TabIndex = 18;
-            // 
-            // label12
-            // 
-            this.label12.Location = new System.Drawing.Point(12, 324);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(108, 36);
-            this.label12.TabIndex = 12;
-            this.label12.Text = "preview";
-            this.label12.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // outputPicture
-            // 
-            this.outputPicture.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.outputPicture.Location = new System.Drawing.Point(132, 324);
-            this.outputPicture.Name = "outputPicture";
-            this.outputPicture.Size = new System.Drawing.Size(588, 336);
-            this.outputPicture.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.outputPicture.TabIndex = 11;
-            this.outputPicture.TabStop = false;
-            // 
             // progressBar2
             // 
-            this.progressBar2.Location = new System.Drawing.Point(12, 816);
+            this.progressBar2.Location = new System.Drawing.Point(12, 132);
             this.progressBar2.Name = "progressBar2";
             this.progressBar2.Size = new System.Drawing.Size(708, 34);
             this.progressBar2.TabIndex = 11;
             // 
-            // label10
-            // 
-            this.label10.Location = new System.Drawing.Point(12, 276);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(228, 36);
-            this.label10.TabIndex = 16;
-            this.label10.Text = "title";
-            this.label10.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
             // videoRenderButton
             // 
             this.videoRenderButton.Enabled = false;
-            this.videoRenderButton.Location = new System.Drawing.Point(12, 768);
+            this.videoRenderButton.Location = new System.Drawing.Point(12, 84);
             this.videoRenderButton.Name = "videoRenderButton";
             this.videoRenderButton.Size = new System.Drawing.Size(708, 36);
             this.videoRenderButton.TabIndex = 10;
             this.videoRenderButton.Text = "Render";
             this.videoRenderButton.UseVisualStyleBackColor = true;
             this.videoRenderButton.Click += new System.EventHandler(this.videoRenderButton_Click);
-            // 
-            // label9
-            // 
-            this.label9.Location = new System.Drawing.Point(12, 84);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(228, 36);
-            this.label9.TabIndex = 15;
-            this.label9.Text = "note range";
-            this.label9.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // label5
             // 
@@ -596,15 +605,6 @@
             this.saveProjectDialog.FileName = "untitled";
             this.saveProjectDialog.Filter = "MegaSonic Project Files|*.meso";
             // 
-            // label14
-            // 
-            this.label14.Location = new System.Drawing.Point(12, 132);
-            this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(228, 36);
-            this.label14.TabIndex = 21;
-            this.label14.Text = "frame width, height";
-            this.label14.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 25F);
@@ -618,22 +618,22 @@
             this.Name = "Form1";
             this.Text = "Form1";
             this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.barWidthNumeric)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.noteRangeEndNumeric)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.sourcePicture)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.decayTimeNumeric)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.noteRangeStartNumeric)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.frameWidthNumeric)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.colorStartNumeric)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.frameHeightNumeric)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.decayExponentNumeric)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.colorLengthNumeric)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.outputPicture)).EndInit();
             this.groupBox2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.lookaheadNumeric)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.framerateNumeric)).EndInit();
             this.groupBox3.ResumeLayout(false);
-            this.groupBox3.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.barWidthNumeric)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.noteRangeEndNumeric)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.decayTimeNumeric)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.noteRangeStartNumeric)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.colorStartNumeric)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.decayExponentNumeric)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.colorLengthNumeric)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.outputPicture)).EndInit();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);

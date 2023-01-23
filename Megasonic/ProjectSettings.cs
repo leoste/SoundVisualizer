@@ -23,7 +23,7 @@ namespace Megasonic
     class SoundSourceSettings
     {
         public string SoundFile { get; set; } = "";
-        public int Framerate { get; set; }
+        public int FrameRate { get; set; }
         public int Lookahead { get; set; }
         public string Window { get; set; } = "";
     }

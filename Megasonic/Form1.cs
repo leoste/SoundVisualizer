@@ -1,3 +1,4 @@
+using Microsoft.VisualBasic.Devices;
 using Svg;
 using System.Drawing.Drawing2D;
 using System.IO;
@@ -54,6 +55,79 @@ namespace Megasonic
             }
         }
 
+        int FrameRate
+        {
+            get { return (int)framerateNumeric.Value; }
+            set { framerateNumeric.Value = value; }
+        }
+
+        Size FrameSize
+        {
+            get { return new Size((int)frameWidthNumeric.Value, (int)frameHeightNumeric.Value); }
+            set { 
+                frameWidthNumeric.Value = value.Width;
+                frameHeightNumeric.Value = value.Height;
+            }
+        }
+
+        int Lookahead
+        {
+            get { return (int)lookaheadNumeric.Value; }
+            set { lookaheadNumeric.Value = value; }
+        }
+
+        string Window
+        {
+            get { return windowCombobox.Text; }
+            set { windowCombobox.Text = value; }
+        }
+
+        Range NoteRange
+        {
+            get { return new Range((int)noteRangeStartNumeric.Value, (int)noteRangeEndNumeric.Value); }
+            set
+            {
+                noteRangeStartNumeric.Value = value.Start.Value;
+                noteRangeEndNumeric.Value = value.End.Value;
+            }
+        }
+
+        int DecayExponent
+        {
+            get { return (int)decayExponentNumeric.Value; }
+            set { decayExponentNumeric.Value = value; }
+        }
+
+        int DecayTime
+        {
+            get { return (int)decayTimeNumeric.Value; }
+            set { decayTimeNumeric.Value = value; }
+        }
+
+        int ColorStart
+        {
+            get { return (int)colorStartNumeric.Value; }
+            set { colorStartNumeric.Value = value; }
+        }
+
+        int ColorLength
+        {
+            get { return (int)colorLengthNumeric.Value; }
+            set { colorLengthNumeric.Value = value; }
+        }
+
+        int BarWidth
+        {
+            get { return (int)barWidthNumeric.Value; }
+            set { barWidthNumeric.Value = value; }
+        }
+
+        string Title
+        {
+            get { return titleTextbox.Text; }
+            set { titleTextbox.Text = value; }
+        }
+
         ProjectSettings CurrentProjectSettings
         {
             get
@@ -62,27 +136,27 @@ namespace Megasonic
                 {
                     VideoSourceSettings = new VideoSourceSettings()
                     {
-                        ImageFile = imageButton.Text,
-                        LineFile = lineButton.Text,
-                        FrameSize = new Size((int)frameWidthNumeric.Value, (int)frameHeightNumeric.Value)
+                        ImageFile = ImageFile,
+                        LineFile = LineFile,
+                        FrameSize = FrameSize
                     },
                     SoundSourceSettings = new SoundSourceSettings()
                     {
-                       SoundFile = soundButton.Text,
-                       Framerate = (int)framerateNumeric.Value,
-                       Lookahead = (int)lookaheadNumeric.Value,
-                       Window = windowCombobox.Text
+                       SoundFile = SoundFile,
+                       FrameRate = FrameRate,
+                       Lookahead = Lookahead,
+                       Window = Window
                     },
                     VideoOutputSettings = new VideoOutputSettings()
                     {
                         VideoFile = videoButton.Text,
-                        NoteRange = new Range((int)noteRangeStartNumeric.Value, (int)noteRangeEndNumeric.Value),
-                        DecayExponent = (int)decayExponentNumeric.Value,
-                        DecayTime = (int)decayTimeNumeric.Value,
-                        ColorStart = (int)colorStartNumeric.Value,
-                        ColorLength = (int)colorLengthNumeric.Value,
-                        BarWidth = (int)barWidthNumeric.Value,
-                        Title = titleTextbox.Text
+                        NoteRange = NoteRange,
+                        DecayExponent = DecayExponent,
+                        DecayTime = DecayTime,
+                        ColorStart = ColorStart,
+                        ColorLength = ColorLength,
+                        BarWidth = BarWidth,
+                        Title = Title
                     }
                 };
             }
@@ -90,23 +164,21 @@ namespace Megasonic
             {
                 ImageFile = value.VideoSourceSettings.ImageFile;
                 LineFile = value.VideoSourceSettings.LineFile;
-                frameWidthNumeric.Value = value.VideoSourceSettings.FrameSize.Width;
-                frameHeightNumeric.Value = value.VideoSourceSettings.FrameSize.Height;
+                FrameSize = value.VideoSourceSettings.FrameSize;
 
                 SoundFile = value.SoundSourceSettings.SoundFile;
-                framerateNumeric.Value = value.SoundSourceSettings.Framerate;
-                lookaheadNumeric.Value = value.SoundSourceSettings.Lookahead;
-                windowCombobox.Text = value.SoundSourceSettings.Window;
+                FrameRate = value.SoundSourceSettings.FrameRate;
+                Lookahead = value.SoundSourceSettings.Lookahead;
+                Window = value.SoundSourceSettings.Window;
 
                 VideoFile = value.VideoOutputSettings.VideoFile;
-                noteRangeStartNumeric.Value = value.VideoOutputSettings.NoteRange.Start.Value;
-                noteRangeEndNumeric.Value = value.VideoOutputSettings.NoteRange.End.Value;
-                decayExponentNumeric.Value = value.VideoOutputSettings.DecayExponent;
-                decayTimeNumeric.Value = value.VideoOutputSettings.DecayTime;
-                colorStartNumeric.Value = value.VideoOutputSettings.ColorStart;
-                colorLengthNumeric.Value = value.VideoOutputSettings.ColorLength;
-                barWidthNumeric.Value = value.VideoOutputSettings.BarWidth;
-                titleTextbox.Text = value.VideoOutputSettings.Title;
+                NoteRange = value.VideoOutputSettings.NoteRange;
+                DecayExponent = value.VideoOutputSettings.DecayExponent;
+                DecayTime = value.VideoOutputSettings.DecayTime;
+                ColorStart = value.VideoOutputSettings.ColorStart;
+                ColorLength = value.VideoOutputSettings.ColorLength;
+                BarWidth = value.VideoOutputSettings.BarWidth;
+                Title = value.VideoOutputSettings.Title;
             }
         }
 
@@ -115,13 +187,25 @@ namespace Megasonic
         VideoRenderConditions videoRenderConditions = new VideoRenderConditions();
         VideoPreviewConditions videoPreviewConditions = new VideoPreviewConditions();
 
+        SoundAnalyzer sound;
+        VideoRenderer video;
+
         public Form1()
         {
             InitializeComponent();
+
             soundAnalyzeConditions.ConditionsMetEvent += SoundAnalyzeConditions_ConditionsMetEvent;
             videoConditions.ConditionsMetEvent += VideoConditions_ConditionsMetEvent;
             videoRenderConditions.ConditionsMetEvent += VideoRenderConditions_ConditionsMetEvent;
             videoPreviewConditions.ConditionsMetEvent += VideoPreviewConditions_ConditionsMetEvent;
+
+            windowCombobox.BeginUpdate();
+            foreach (string window in SoundAnalyzer.GetWindows())
+            {
+                windowCombobox.Items.Add(window);
+            }
+            windowCombobox.SelectedIndex = 3;
+            windowCombobox.EndUpdate();
         }
 
         private void UpdateVideoPreview()
@@ -194,7 +278,7 @@ namespace Megasonic
         {
             if (imageDialog.ShowDialog(this) == DialogResult.OK)
             {
-                ImageFile = imageDialog.FileName;                
+                ImageFile = imageDialog.FileName;
             }
         }
 
@@ -210,7 +294,29 @@ namespace Megasonic
         {
             groupBox2.Enabled = false;
             soundAnalyzeButton.Enabled = false;
-            videoConditions.SoundAnalyzed = true;
+
+            sound = new SoundAnalyzer(SoundFile, FrameRate, Lookahead, Window);
+            sound.OnProgress += Audio_OnProgress;
+            sound.OnComplete += Audio_OnComplete;
+            sound.StartProcess();
+        }
+
+        private void Audio_OnComplete(object sender, EventArgs e)
+        {
+            Invoke((MethodInvoker)delegate
+            {
+                videoConditions.SoundAnalyzed = true;
+            });
+        }
+
+        private void Audio_OnProgress(object sender, ProgressEventArgs e)
+        {
+            Invoke((MethodInvoker)delegate
+            {
+                progressBar1.Maximum = e.Total;
+                progressBar1.Value = e.Value;
+                //label3.Text = $"{e.Value}/{e.Total}"; // TODO figure out where to display this
+            });
         }
 
         private void videoButton_Click(object sender, EventArgs e)

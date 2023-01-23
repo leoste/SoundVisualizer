@@ -40,12 +40,11 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.label11 = new System.Windows.Forms.Label();
             this.sourcePicture = new System.Windows.Forms.PictureBox();
-            this.label4 = new System.Windows.Forms.Label();
             this.frameWidthNumeric = new System.Windows.Forms.NumericUpDown();
             this.frameHeightNumeric = new System.Windows.Forms.NumericUpDown();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.label13 = new System.Windows.Forms.Label();
             this.windowCombobox = new System.Windows.Forms.ComboBox();
-            this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.lookaheadNumeric = new System.Windows.Forms.NumericUpDown();
             this.label1 = new System.Windows.Forms.Label();
@@ -79,6 +78,7 @@
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openProjectDialog = new System.Windows.Forms.OpenFileDialog();
             this.saveProjectDialog = new System.Windows.Forms.SaveFileDialog();
+            this.label14 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.sourcePicture)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.frameWidthNumeric)).BeginInit();
@@ -169,13 +169,13 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.label14);
             this.groupBox1.Controls.Add(this.label11);
             this.groupBox1.Controls.Add(this.sourcePicture);
             this.groupBox1.Controls.Add(this.imageButton);
             this.groupBox1.Controls.Add(this.lineLabel);
             this.groupBox1.Controls.Add(this.imageLabel);
             this.groupBox1.Controls.Add(this.lineButton);
-            this.groupBox1.Controls.Add(this.label4);
             this.groupBox1.Controls.Add(this.frameWidthNumeric);
             this.groupBox1.Controls.Add(this.frameHeightNumeric);
             this.groupBox1.Location = new System.Drawing.Point(12, 48);
@@ -203,15 +203,6 @@
             this.sourcePicture.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.sourcePicture.TabIndex = 0;
             this.sourcePicture.TabStop = false;
-            // 
-            // label4
-            // 
-            this.label4.Location = new System.Drawing.Point(12, 132);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(228, 36);
-            this.label4.TabIndex = 10;
-            this.label4.Text = "frame width, height";
-            this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // frameWidthNumeric
             // 
@@ -261,8 +252,8 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.label13);
             this.groupBox2.Controls.Add(this.windowCombobox);
-            this.groupBox2.Controls.Add(this.label3);
             this.groupBox2.Controls.Add(this.label2);
             this.groupBox2.Controls.Add(this.lookaheadNumeric);
             this.groupBox2.Controls.Add(this.label1);
@@ -278,6 +269,15 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Sound Source File";
             // 
+            // label13
+            // 
+            this.label13.Location = new System.Drawing.Point(12, 180);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(228, 36);
+            this.label13.TabIndex = 23;
+            this.label13.Text = "window (for FFT)";
+            this.label13.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
             // windowCombobox
             // 
             this.windowCombobox.FormattingEnabled = true;
@@ -285,15 +285,6 @@
             this.windowCombobox.Name = "windowCombobox";
             this.windowCombobox.Size = new System.Drawing.Size(228, 33);
             this.windowCombobox.TabIndex = 22;
-            // 
-            // label3
-            // 
-            this.label3.Location = new System.Drawing.Point(12, 180);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(228, 36);
-            this.label3.TabIndex = 9;
-            this.label3.Text = "window (for FFT)";
-            this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // label2
             // 
@@ -605,6 +596,15 @@
             this.saveProjectDialog.FileName = "untitled";
             this.saveProjectDialog.Filter = "MegaSonic Project Files|*.meso";
             // 
+            // label14
+            // 
+            this.label14.Location = new System.Drawing.Point(12, 132);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(228, 36);
+            this.label14.TabIndex = 21;
+            this.label14.Text = "frame width, height";
+            this.label14.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 25F);
@@ -654,7 +654,6 @@
         private GroupBox groupBox1;
         private PictureBox sourcePicture;
         private GroupBox groupBox2;
-        private Label label3;
         private Label label2;
         private Label label1;
         private ProgressBar progressBar1;
@@ -667,7 +666,6 @@
         private Label label6;
         private Label label5;
         private Button videoButton;
-        private Label label4;
         private ProgressBar progressBar2;
         private Button videoRenderButton;
         private Label label11;
@@ -693,5 +691,7 @@
         private ToolStripMenuItem saveToolStripMenuItem;
         private OpenFileDialog openProjectDialog;
         private SaveFileDialog saveProjectDialog;
+        private Label label13;
+        private Label label14;
     }
 }

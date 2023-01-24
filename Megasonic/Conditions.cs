@@ -109,43 +109,4 @@ namespace Megasonic
 
         public override event EventHandler? ConditionsMetEvent;
     }
-
-    class VideoPreviewConditions : Conditions
-    {
-        private bool imageSelected = false;
-        private bool lineSelected = false;
-        public bool ImageSelected
-        {
-            get { return imageSelected; }
-            set
-            {
-                imageSelected = value;
-                TryInvoke();
-            }
-        }
-        public bool LineSelected
-        {
-            get { return lineSelected; }
-            set
-            {
-                lineSelected = value;
-                TryInvoke();
-            }
-        }
-
-        public override event EventHandler? ConditionsMetEvent;
-
-        private void TryInvoke()
-        {
-            if (ImageSelected && LineSelected)
-            {
-                ConditionsMetEvent?.Invoke(this, new EventArgs());
-            }
-        }
-
-        public VideoPreviewConditions()
-        {
-
-        }
-    }
 }

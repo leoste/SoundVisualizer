@@ -1,6 +1,6 @@
 ﻿namespace Tools
 {
-    interface Processer
+    interface Processer : IDisposable
     {
         void StartProcess();
         event EventHandler<ProgressEventArgs>? OnProgress;

@@ -31,7 +31,8 @@ namespace Megasonic
     class VideoOutputSettings
     {
         public string VideoFile { get; set; } = "";
-        public Range NoteRange { get; set; } = new Range();
+        public int NoteRangeStart { get; set; }
+        public int NoteRangeEnd { get; set; }
         public int DecayExponent { get; set; }
         public int DecayTime { get; set; }
         public int ColorStart { get; set; }

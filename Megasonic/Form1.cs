@@ -1,7 +1,9 @@
+using MathNet.Numerics.Statistics;
 using Microsoft.VisualBasic.Devices;
 using Svg;
 using System.Drawing.Drawing2D;
 using System.IO;
+using System.Numerics;
 using System.Reflection.Metadata;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -21,7 +23,6 @@ namespace Megasonic
             {
                 imageButton.Text = value;
                 videoConditions.ImageSelected = true;
-                videoPreviewConditions.ImageSelected = true;
             }
         }
 
@@ -42,7 +43,6 @@ namespace Megasonic
             {
                 lineButton.Text = value;
                 videoConditions.LineSelected = true;
-                videoPreviewConditions.LineSelected = true;
             }
         }
 
@@ -52,6 +52,7 @@ namespace Megasonic
             set
             {
                 videoButton.Text = value;
+                videoRenderConditions.VideoSelected = true;
             }
         }
 
@@ -82,14 +83,15 @@ namespace Megasonic
             set { windowCombobox.Text = value; }
         }
 
-        Range NoteRange
+        int NoteRangeStart
         {
-            get { return new Range((int)noteRangeStartNumeric.Value, (int)noteRangeEndNumeric.Value); }
-            set
-            {
-                noteRangeStartNumeric.Value = value.Start.Value;
-                noteRangeEndNumeric.Value = value.End.Value;
-            }
+            get { return (int)noteRangeStartNumeric.Value; }
+            set { noteRangeStartNumeric.Value = value; }
+        }
+        int NoteRangeEnd
+        {
+            get { return (int)noteRangeEndNumeric.Value; }
+            set { noteRangeEndNumeric.Value = value; }
         }
 
         int DecayExponent
@@ -150,7 +152,8 @@ namespace Megasonic
                     VideoOutputSettings = new VideoOutputSettings()
                     {
                         VideoFile = videoButton.Text,
-                        NoteRange = NoteRange,
+                        NoteRangeStart = NoteRangeStart,
+                        NoteRangeEnd = NoteRangeEnd,
                         DecayExponent = DecayExponent,
                         DecayTime = DecayTime,
                         ColorStart = ColorStart,
@@ -172,7 +175,8 @@ namespace Megasonic
                 Window = value.SoundSourceSettings.Window;
 
                 VideoFile = value.VideoOutputSettings.VideoFile;
-                NoteRange = value.VideoOutputSettings.NoteRange;
+                NoteRangeStart = value.VideoOutputSettings.NoteRangeStart;
+                NoteRangeEnd = value.VideoOutputSettings.NoteRangeEnd;
                 DecayExponent = value.VideoOutputSettings.DecayExponent;
                 DecayTime = value.VideoOutputSettings.DecayTime;
                 ColorStart = value.VideoOutputSettings.ColorStart;
@@ -185,7 +189,6 @@ namespace Megasonic
         SoundAnalyzeConditions soundAnalyzeConditions = new SoundAnalyzeConditions();
         VideoConditions videoConditions = new VideoConditions();
         VideoRenderConditions videoRenderConditions = new VideoRenderConditions();
-        VideoPreviewConditions videoPreviewConditions = new VideoPreviewConditions();
 
         SoundAnalyzer sound;
         VideoRenderer video;
@@ -197,7 +200,6 @@ namespace Megasonic
             soundAnalyzeConditions.ConditionsMetEvent += SoundAnalyzeConditions_ConditionsMetEvent;
             videoConditions.ConditionsMetEvent += VideoConditions_ConditionsMetEvent;
             videoRenderConditions.ConditionsMetEvent += VideoRenderConditions_ConditionsMetEvent;
-            videoPreviewConditions.ConditionsMetEvent += VideoPreviewConditions_ConditionsMetEvent;
 
             windowCombobox.BeginUpdate();
             foreach (string window in SoundAnalyzer.GetWindows())
@@ -210,42 +212,31 @@ namespace Megasonic
 
         private void UpdateVideoPreview()
         {
-            int w = (int)frameWidthNumeric.Value;
-            int h = (int)frameHeightNumeric.Value;
-
-            Bitmap bitmap = new Bitmap(w, h);
+            Bitmap bitmap = video.Background;
+            PointF[] curvePoints = video.CurvePoints;
 
             using (Graphics g = Graphics.FromImage(bitmap))
             {
-                using (Image image = Image.FromFile(ImageFile))
-                {
-                    g.DrawImage(image, 0, 0, w, h);
-                }
-
-                SvgDocument document = SvgDocument.Open(LineFile);
-                GraphicsPath path = SvgConverter.ToGraphicsPath(document);
-
-                float xRatio = w / document.Width;
-                float yRatio = h / document.Height;
-
-                Matrix mx = new Matrix(path.GetBounds(), new PointF[] {
-                    new PointF(document.Bounds.X * xRatio, document.Bounds.Y * yRatio),
-                    new PointF((document.Bounds.X + document.Bounds.Width) * xRatio, document.Bounds.Y * yRatio),
-                    new PointF(document.Bounds.X * xRatio, (document.Bounds.Y + document.Bounds.Height) * yRatio)
-                });
-                
-                path.Transform(mx);
-
-                //using (Matrix mx = new Matrix(1, 0, 0, 1, 0, 0)) path.Flatten(mx, 0.1f);
-                g.DrawLines(new Pen(Brushes.Red, 5), path.PathPoints);
+                g.DrawLines(new Pen(Brushes.Red, 5), curvePoints);
             }
 
             sourcePicture.Image?.Dispose();
             sourcePicture.Image = bitmap;
         }
 
-        private void VideoPreviewConditions_ConditionsMetEvent(object? sender, EventArgs e)
+        void RefreshVideoRenderer()
         {
+            video?.Dispose();
+
+            video = new VideoRenderer(sound, VideoFile, LineFile, ImageFile, Title, FrameSize,
+                BarWidth,
+                ColorStart,
+                ColorLength,
+                DecayExponent,
+                DecayTime,
+                NoteRangeStart,
+                NoteRangeEnd);
+
             UpdateVideoPreview();
         }
 
@@ -256,9 +247,24 @@ namespace Megasonic
 
         private void VideoConditions_ConditionsMetEvent(object? sender, EventArgs e)
         {
+            groupBox4.Enabled = true;
             groupBox3.Enabled = true;
             groupBox1.Enabled = false;
             groupBox2.Enabled = false;
+
+            foreach (Control control in groupBox4.Controls)
+            {
+                if (control is NumericUpDown numericUpDown)
+                {
+                    numericUpDown.ValueChanged += ParametersChanged;
+                }
+                else if (control is TextBox textBox)
+                {
+                    textBox.TextChanged += ParametersChanged;
+                }
+            }
+
+            RefreshVideoRenderer();
         }
 
         private void VideoRenderConditions_ConditionsMetEvent(object? sender, EventArgs e)
@@ -301,7 +307,7 @@ namespace Megasonic
             sound.StartProcess();
         }
 
-        private void Audio_OnComplete(object sender, EventArgs e)
+        private void Audio_OnComplete(object? sender, EventArgs e)
         {
             Invoke((MethodInvoker)delegate
             {
@@ -309,7 +315,7 @@ namespace Megasonic
             });
         }
 
-        private void Audio_OnProgress(object sender, ProgressEventArgs e)
+        private void Audio_OnProgress(object? sender, ProgressEventArgs e)
         {
             Invoke((MethodInvoker)delegate
             {
@@ -332,16 +338,28 @@ namespace Megasonic
         {
             groupBox3.Enabled = false;
             videoRenderButton.Enabled = false;
+
+            video.OnProgress += Video_OnProgress;
+            video.OnComplete += Video_OnComplete;
+            video.StartProcess();
         }
 
-        private void frameWidthNumeric_ValueChanged(object sender, EventArgs e)
+        private void Video_OnComplete(object? sender, EventArgs e)
         {
-            UpdateVideoPreview();
+            Invoke((MethodInvoker)delegate
+            {
+                MessageBox.Show("Video rendered");
+            });
         }
 
-        private void frameHeightNumeric_ValueChanged(object sender, EventArgs e)
+        private void Video_OnProgress(object? sender, ProgressEventArgs e)
         {
-            UpdateVideoPreview();
+            Invoke((MethodInvoker)delegate
+            {
+                progressBar2.Maximum = Math.Max(e.Total, e.Value);
+                progressBar2.Value = e.Value;
+                //label4.Text = $"{e.Value}/{e.Total}"; // TODO figure out where to show this
+            });
         }
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
@@ -374,6 +392,18 @@ namespace Megasonic
                 string jsonString = JsonSerializer.Serialize(CurrentProjectSettings);
                 File.WriteAllText(saveProjectDialog.FileName, jsonString);
             }
+        }
+
+        void ParametersChanged(object? sender, EventArgs e)
+        {
+            applyPropertiesButton.Enabled = true;
+        }
+
+        private void applyPropertiesButton_Click(object sender, EventArgs e)
+        {
+            applyPropertiesButton.Enabled = false;
+
+            RefreshVideoRenderer();
         }
     }
 }

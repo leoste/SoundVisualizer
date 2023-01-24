@@ -14,6 +14,10 @@ using System.Collections.Concurrent;
 using System.ComponentModel;
 using System.Threading;
 using Svg;
+using FFMpegCore.Enums;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrayNotify;
+using System.Reflection.Metadata;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Tools
 {
@@ -35,6 +39,9 @@ namespace Tools
 
         public event EventHandler<ProgressEventArgs>? OnProgress;
         public event EventHandler? OnComplete;
+
+        public PointF[] CurvePoints { get { return curvePoints; } }
+        public Bitmap Background { get { return new Bitmap(background); } }
 
         public VideoRenderer(SoundAnalyzer sound, string filepath, string svgFilepath, string imageFilepath, string title, Size frameSize,
             int barRelation = 128,
@@ -58,30 +65,98 @@ namespace Tools
             this.decayTime = decayTime;
             this.minNoteBorder = minNoteBorder;
             this.maxNoteBorder = maxNoteBorder;
+
+            Prepare();
         }
 
-        IEnumerable<IVideoFrame> CreateFrames()
+        float columnRelation;
+        float scaleThingy;
+
+        float halfHeight;
+        float columnWidth;
+        float columnHalfWidth;
+        float noteMinoffset;
+        float noteMaxOffset;
+        float visibleNoteSpan;
+        bool startIsntSet;
+        bool endIsntSet;
+
+        float scalex;
+        float basey;
+        float scaley;
+        //float scalealpha;
+
+        Color[] colors;
+        float colorRelation;
+
+        float[] x;
+        int startIndex;
+        int endIndex;
+
+        int visibleLength;
+
+        float decayCountMargin;
+
+        PointF[] curvePoints;
+        double curveLength;
+        double[] curveLengths;
+        double definition;
+
+        Bitmap background;
+        private bool disposedValue;
+
+        public PointF[] GenerateCurvePoints()
         {
-            float columnRelation = 1f / barRelation;
-            float scaleThingy = colorLengthDegree / 6;
+            // maybe want to do curve fluxuations or something cool            
+            SvgDocument document = SvgDocument.Open(svgFilepath);
 
-            float halfHeight = frameSize.Height / 2f;
-            float columnWidth = frameSize.Width * columnRelation;
-            float columnHalfWidth = columnWidth / 2;
-            float noteMinoffset = -(sound.MinimumNote - minNoteBorder);
-            float noteMaxOffset = (sound.MaximumNote - maxNoteBorder);
-            float visibleNoteSpan = sound.NotesTotalLength - noteMinoffset - noteMaxOffset;
-            bool startIsntSet = true;
-            bool endIsntSet = true;
+            int w = frameSize.Width;
+            int h = frameSize.Height;
+            float xRatio = w / document.Width;
+            float yRatio = h / document.Height;
 
-            float scalex = frameSize.Width / visibleNoteSpan;
-            float basey = (sound.MaximumAmplitude - sound.MinimumAmplitude);
-            float scaley = frameSize.Width / 7f / basey; //width is 7x height ...
-            //float scalealpha = 255 / basey;
+            using (GraphicsPath path = SvgConverter.ToGraphicsPath(document))
+            {
+                Matrix mx = new Matrix(path.GetBounds(), new PointF[] {
+                    new PointF(document.Bounds.X * xRatio, document.Bounds.Y * yRatio),
+                    new PointF((document.Bounds.X + document.Bounds.Width) * xRatio, document.Bounds.Y * yRatio),
+                    new PointF(document.Bounds.X * xRatio, (document.Bounds.Y + document.Bounds.Height) * yRatio)
+                });
+                path.Transform(mx);
+
+                using (Matrix flatteningMx = new Matrix(1, 0, 0, 1, 0, 0))
+                {
+                    path.Flatten(flatteningMx, 0.1f);
+                    return path.PathPoints;
+                }
+            }
+        }
+        
+        // TODO: split into soft and hard prepare. soft prepare is really lightweight and runs on initialization, hard prepare runs only when render button clicked.
+        // sound processing related stuff is hard preparations. taking them away from initialization means that need to make different intermediate picture rendering
+        // methods to still allow for previews.
+        void Prepare()
+        {
+            columnRelation = 1f / barRelation;
+            scaleThingy = colorLengthDegree / 6;
+
+            halfHeight = frameSize.Height / 2f;
+            columnWidth = frameSize.Width * columnRelation;
+            columnHalfWidth = columnWidth / 2;
+            noteMinoffset = -(sound.MinimumNote - minNoteBorder);
+            noteMaxOffset = (sound.MaximumNote - maxNoteBorder);
+            visibleNoteSpan = sound.NotesTotalLength - noteMinoffset - noteMaxOffset;
+            startIsntSet = true;
+            endIsntSet = true;
+
+            scalex = frameSize.Width / visibleNoteSpan;
+            basey = (sound.MaximumAmplitude - sound.MinimumAmplitude);
+            scaley = frameSize.Width / 7f / basey; //width is 7x height ...
+            //scalealpha = 255 / basey;
 
             //color preparation for image calculation            
-            Color[] colors = new Color[frameSize.Width]; //theres only really point in calculating color for each pixel
-            float colorRelation = visibleNoteSpan / colors.Length;
+            colors = new Color[frameSize.Width]; //theres only really point in calculating color for each pixel
+            colorRelation = visibleNoteSpan / colors.Length;
             Hsv hsv = new Hsv
             {
                 S = 1,
@@ -101,9 +176,9 @@ namespace Tools
             }
 
             //calculate x, find edges for notes that are actually visible
-            float[] x = new float[sound.FrequencyCount];
-            int startIndex = 0; //index of first note we can start on
-            int endIndex = sound.FrequencyCount; // index of last note used
+            x = new float[sound.FrequencyCount];
+            startIndex = 0; //index of first note we can start on
+            endIndex = sound.FrequencyCount; // index of last note used
             for (int i = 0; i < sound.FrequencyCount; i++)
             {
                 x[i] = (sound.NoteSpans[i].start - sound.MinimumNote - noteMinoffset) * scalex - columnHalfWidth;
@@ -125,127 +200,111 @@ namespace Tools
                 }
             }
 
-            int visibleLength = endIndex - startIndex;
+            visibleLength = endIndex - startIndex;
 
             // anti-spaz measures
-            float decayCountMargin = (float)decayExponent / decayTime;
+            decayCountMargin = (float)decayExponent / decayTime;
 
-            // maybe want to do curve fluxuations or something cool
-            PointF[] curvePoints;
-            SvgDocument document = SvgDocument.Open(svgFilepath);
-            using (GraphicsPath path = SvgConverter.ToGraphicsPath(document))
-            {
-                float unit = frameSize.Width / 7;
-                PointF[] option1 = new PointF[] {
-                    new PointF(unit, unit),
-                    new PointF(frameSize.Width - unit, unit),
-                    new PointF(unit, frameSize.Height - unit)
-                };
-                PointF[] option2 = new PointF[] {
-                    new PointF(document.Bounds.X, document.Bounds.Y),
-                    new PointF(document.Bounds.X + document.Bounds.Width, document.Bounds.Y),
-                    new PointF(document.Bounds.X, document.Bounds.Y + document.Bounds.Height)
-                };
-                path.Transform(new Matrix(path.GetBounds(), option2));;
-                using (Matrix mx = new Matrix(1, 0, 0, 1, 0, 0))
-                {
-                    path.Flatten(mx, 0.1f);
-                    curvePoints = path.PathPoints;
-                }
-            }
+            curvePoints = GenerateCurvePoints();
+
             // calculate length of the curve
-            CurveOperations.CalculateLength(curvePoints, out double curveLength, out double[] curveLengths);
-            double definition = frameSize.Width / barRelation * frameSize.Width / curveLength;
+            CurveOperations.CalculateLength(curvePoints, out curveLength, out curveLengths);
+            definition = frameSize.Width / barRelation * frameSize.Width / curveLength;
 
-            // this function IS also threadsafe now!!! doesnt modify anything anymore
-            PointF[] GetSourcePoints(int index)
+            background = new Bitmap(frameSize.Width, frameSize.Height);
+
+            using (Graphics g = Graphics.FromImage(background))
             {
-                // first get the points that we do know
-                PointF[] sourcePoints = new PointF[visibleLength];
-                for (int k = 0; k < visibleLength; k++)
+                using (System.Drawing.Image image = System.Drawing.Image.FromFile(imageFilepath))
                 {
-                    int correctedIndex = k + startIndex;
-                    float baseh = sound.Frames[index].frequencies[correctedIndex];
+                    double scale = Math.Min((double)frameSize.Width / image.Width, (double)frameSize.Height / image.Height);
+                    int scaleWidth = (int)(image.Width * scale);
+                    int scaleHeight = (int)(image.Height * scale);
 
-                    for (int l = 1; l < Math.Min(index, decayTime); l++)
-                    {
-                        float oldBaseh = sound.Frames[index - l].frequencies[correctedIndex];
-                        if (oldBaseh >= baseh)
-                        {
-                            float decayCounts_k = decayExponent - l * decayCountMargin;
-                            float decays_k = (float)Math.Log(decayCounts_k, decayExponent) * oldBaseh;
-
-                            if (decays_k > baseh)
-                            {
-                                baseh = decays_k;
-                            }
-                        }
-                    }
-
-                    float h = baseh * scaley;
-                    sourcePoints[k] = new PointF(x[correctedIndex], h);
-                }
-
-                // really bad hackfix that loses very slight definition and is inaccurate, but....
-                // visually isnt that different + its easier than reworking everything to not have this issue
-                sourcePoints[0].X = 0;
-
-                return sourcePoints;
-            }
-
-            Bitmap background = new Bitmap(frameSize.Width, frameSize.Height);
-            using (Image image = Image.FromFile(imageFilepath))
-            {
-                double scale = Math.Min((double)frameSize.Width / image.Width, (double)frameSize.Height / image.Height);
-                int scaleWidth = (int)(image.Width * scale);
-                int scaleHeight = (int)(image.Height * scale);
-                using (Graphics g = Graphics.FromImage(background))
-                {
                     g.Clear(Color.Black);
                     g.DrawImage(image, (frameSize.Width - scaleWidth) / 2, (frameSize.Height - scaleHeight) / 2, scaleWidth, scaleHeight);
-
-                    float em = frameSize.Width / 35;
-                    Font font = new Font(FontFamily.GenericSansSerif, em, FontStyle.Bold);
-                    SizeF size = g.MeasureString(title, font);
-                    Brush fore = Brushes.White;
-                    Brush back = Brushes.Black;
-                    float textX = frameSize.Width / 2 - size.Width / 2;
-                    float textY = frameSize.Height / 2 - size.Height / 2;
-
-                    g.DrawString(title, font, back, textX + em / 14f, textY + em / 14f);
-                    g.DrawString(title, font, fore, textX, textY);
                 }
+
+                float em = frameSize.Width / 35;
+                Font font = new Font(FontFamily.GenericSansSerif, em, FontStyle.Bold);
+                SizeF size = g.MeasureString(title, font);
+                Brush fore = Brushes.White;
+                Brush back = Brushes.Black;
+                float textX = frameSize.Width / 2 - size.Width / 2;
+                float textY = frameSize.Height / 2 - size.Height / 2;
+
+                g.DrawString(title, font, back, textX + em / 14f, textY + em / 14f);
+                g.DrawString(title, font, fore, textX, textY);
             }
+        }
 
-            // this function IS threadsafe!!! doesnt modify anything
-            BitmapVideoFrameWrapper GetFrame(PointF[] sourcePoints)
+        // this function IS also threadsafe now!!! doesnt modify anything anymore
+        PointF[] GetSourcePoints(int index)
+        {
+            // first get the points that we do know
+            PointF[] sourcePoints = new PointF[visibleLength];
+            for (int k = 0; k < visibleLength; k++)
             {
-                PointF[] uniformPoints = CurveOperations.SpecifyHorizontally(sourcePoints, definition);
+                int correctedIndex = k + startIndex;
+                float baseh = sound.Frames[index].frequencies[correctedIndex];
 
-                CurveMorpher curve = new CurveMorpher(curvePoints, uniformPoints, curveLength, curveLengths, false);
-
-                // i dont use "using" cause bitmap needs to stay for a while until its really used, then i dispose it
-                Bitmap bitmap;
-                lock (background)
+                for (int l = 1; l < Math.Min(index, decayTime); l++)
                 {
-                    bitmap = (Bitmap)background.Clone();
-                }
-                using (Graphics g = Graphics.FromImage(bitmap))
-                {
-                    for (int k = 0; k < uniformPoints.Length; k++)
+                    float oldBaseh = sound.Frames[index - l].frequencies[correctedIndex];
+                    if (oldBaseh >= baseh)
                     {
-                        Color c = colors[(int)uniformPoints[k].X];
-                        Brush brush = new SolidBrush(c);
+                        float decayCounts_k = decayExponent - l * decayCountMargin;
+                        float decays_k = (float)Math.Log(decayCounts_k, decayExponent) * oldBaseh;
 
-                        PointF a = curve.Matrix.Points[k];
-                        PointF b = curve.Matrix.GetSecondPoint(k, uniformPoints[k].Y);
-                        g.DrawLine(new Pen(brush, columnWidth), a, b);
+                        if (decays_k > baseh)
+                        {
+                            baseh = decays_k;
+                        }
                     }
                 }
-                BitmapVideoFrameWrapper wrapper = new BitmapVideoFrameWrapper(bitmap);
-                return wrapper;
+
+                float h = baseh * scaley;
+                sourcePoints[k] = new PointF(x[correctedIndex], h);
             }
 
+            // really bad hackfix that loses very slight definition and is inaccurate, but....
+            // visually isnt that different + its easier than reworking everything to not have this issue
+            sourcePoints[0].X = 0;
+
+            return sourcePoints;
+        }
+
+        // this function IS threadsafe!!! doesnt modify anything
+        BitmapVideoFrameWrapper GetFrame(PointF[] sourcePoints)
+        {
+            PointF[] uniformPoints = CurveOperations.SpecifyHorizontally(sourcePoints, definition);
+
+            CurveMorpher curve = new CurveMorpher(curvePoints, uniformPoints, curveLength, curveLengths, false);
+
+            // i dont use "using" cause bitmap needs to stay for a while until its really used, then i dispose it
+            Bitmap bitmap;
+            lock (background)
+            {
+                bitmap = (Bitmap)background.Clone();
+            }
+            using (Graphics g = Graphics.FromImage(bitmap))
+            {
+                for (int k = 0; k < uniformPoints.Length; k++)
+                {
+                    Color c = colors[(int)uniformPoints[k].X];
+                    Brush brush = new SolidBrush(c);
+
+                    PointF a = curve.Matrix.Points[k];
+                    PointF b = curve.Matrix.GetSecondPoint(k, uniformPoints[k].Y);
+                    g.DrawLine(new Pen(brush, columnWidth), a, b);
+                }
+            }
+            BitmapVideoFrameWrapper wrapper = new BitmapVideoFrameWrapper(bitmap);
+            return wrapper;
+        }
+
+        IEnumerable<IVideoFrame> CreateFrames()
+        {
             ConcurrentDictionary<int, BitmapVideoFrameWrapper> dictionary = new ConcurrentDictionary<int, BitmapVideoFrameWrapper>();
             List<BackgroundWorker> bgws = new List<BackgroundWorker>();
             int takeIndex = 0;
@@ -343,13 +402,21 @@ namespace Tools
         public void StartProcess()
         {
             Task task = new Task(() =>
-            {
+            {                
                 //CreateFrames().ToList(); // artificial "rendering" for testing
                 var videoFramesSource = new RawVideoPipeSource(CreateFrames()) { FrameRate = sound.FrameRate };
                 FFMpegArguments
                     .FromPipeInput(videoFramesSource)
                     .AddFileInput(new FileInfo(sound.SourceFilePath))
-                    .OutputToFile(filepath)
+                    .OutputToFile(filepath, true, options => options
+                        .WithVideoCodec(VideoCodec.LibX264)
+                        .WithConstantRateFactor(21)
+                        .WithAudioCodec(AudioCodec.Aac)
+                        .WithVariableBitrate(4)
+                        .WithVideoFilters(filterOptions => filterOptions
+                            .Scale(frameSize)
+                        )
+                    )
                     .NotifyOnProgress(new Action<TimeSpan>((TimeSpan t) => {
                         OnProgress?.Invoke(this,
                             new ProgressEventArgs((int)t.TotalSeconds, (int)sound.TotalLength.TotalSeconds));
@@ -359,6 +426,36 @@ namespace Tools
                 OnComplete?.Invoke(this, EventArgs.Empty);
             });
             task.Start();
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    // TODO: dispose managed state (managed objects)
+                    background.Dispose();
+                }
+
+                // TODO: free unmanaged resources (unmanaged objects) and override finalizer
+                // TODO: set large fields to null
+                disposedValue = true;
+            }
+        }
+
+        // // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
+        // ~VideoRenderer()
+        // {
+        //     // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+        //     Dispose(disposing: false);
+        // }
+
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }

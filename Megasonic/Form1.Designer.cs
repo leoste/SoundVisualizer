@@ -38,21 +38,21 @@
             this.imageDialog = new System.Windows.Forms.OpenFileDialog();
             this.lineDialog = new System.Windows.Forms.OpenFileDialog();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.barWidthNumeric = new System.Windows.Forms.NumericUpDown();
             this.label14 = new System.Windows.Forms.Label();
+            this.frameWidthNumeric = new System.Windows.Forms.NumericUpDown();
+            this.frameHeightNumeric = new System.Windows.Forms.NumericUpDown();
+            this.barWidthNumeric = new System.Windows.Forms.NumericUpDown();
             this.titleTextbox = new System.Windows.Forms.TextBox();
             this.label11 = new System.Windows.Forms.Label();
-            this.noteRangeEndNumeric = new System.Windows.Forms.NumericUpDown();
-            this.sourcePicture = new System.Windows.Forms.PictureBox();
             this.label8 = new System.Windows.Forms.Label();
+            this.decayExponentNumeric = new System.Windows.Forms.NumericUpDown();
+            this.noteRangeEndNumeric = new System.Windows.Forms.NumericUpDown();
             this.decayTimeNumeric = new System.Windows.Forms.NumericUpDown();
+            this.sourcePicture = new System.Windows.Forms.PictureBox();
             this.label6 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
             this.noteRangeStartNumeric = new System.Windows.Forms.NumericUpDown();
-            this.frameWidthNumeric = new System.Windows.Forms.NumericUpDown();
             this.colorStartNumeric = new System.Windows.Forms.NumericUpDown();
-            this.frameHeightNumeric = new System.Windows.Forms.NumericUpDown();
-            this.decayExponentNumeric = new System.Windows.Forms.NumericUpDown();
             this.label9 = new System.Windows.Forms.Label();
             this.colorLengthNumeric = new System.Windows.Forms.NumericUpDown();
             this.label10 = new System.Windows.Forms.Label();
@@ -79,16 +79,18 @@
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openProjectDialog = new System.Windows.Forms.OpenFileDialog();
             this.saveProjectDialog = new System.Windows.Forms.SaveFileDialog();
+            this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.applyPropertiesButton = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.barWidthNumeric)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.noteRangeEndNumeric)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.sourcePicture)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.decayTimeNumeric)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.noteRangeStartNumeric)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.frameWidthNumeric)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.colorStartNumeric)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.frameHeightNumeric)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.barWidthNumeric)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.decayExponentNumeric)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.noteRangeEndNumeric)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.decayTimeNumeric)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.sourcePicture)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.noteRangeStartNumeric)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.colorStartNumeric)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.colorLengthNumeric)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.outputPicture)).BeginInit();
             this.groupBox2.SuspendLayout();
@@ -96,6 +98,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.framerateNumeric)).BeginInit();
             this.groupBox3.SuspendLayout();
             this.menuStrip1.SuspendLayout();
+            this.groupBox4.SuspendLayout();
             this.SuspendLayout();
             // 
             // soundButton
@@ -169,43 +172,19 @@
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.barWidthNumeric);
             this.groupBox1.Controls.Add(this.label14);
-            this.groupBox1.Controls.Add(this.titleTextbox);
-            this.groupBox1.Controls.Add(this.label11);
-            this.groupBox1.Controls.Add(this.label8);
-            this.groupBox1.Controls.Add(this.decayExponentNumeric);
-            this.groupBox1.Controls.Add(this.noteRangeEndNumeric);
-            this.groupBox1.Controls.Add(this.decayTimeNumeric);
-            this.groupBox1.Controls.Add(this.sourcePicture);
             this.groupBox1.Controls.Add(this.imageButton);
             this.groupBox1.Controls.Add(this.lineLabel);
-            this.groupBox1.Controls.Add(this.label6);
             this.groupBox1.Controls.Add(this.imageLabel);
-            this.groupBox1.Controls.Add(this.label7);
             this.groupBox1.Controls.Add(this.lineButton);
-            this.groupBox1.Controls.Add(this.noteRangeStartNumeric);
             this.groupBox1.Controls.Add(this.frameWidthNumeric);
-            this.groupBox1.Controls.Add(this.colorStartNumeric);
             this.groupBox1.Controls.Add(this.frameHeightNumeric);
-            this.groupBox1.Controls.Add(this.label9);
-            this.groupBox1.Controls.Add(this.colorLengthNumeric);
-            this.groupBox1.Controls.Add(this.label10);
-            this.groupBox1.Controls.Add(this.label12);
-            this.groupBox1.Controls.Add(this.outputPicture);
             this.groupBox1.Location = new System.Drawing.Point(12, 48);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(732, 1092);
+            this.groupBox1.Size = new System.Drawing.Size(732, 180);
             this.groupBox1.TabIndex = 12;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Video Source Files";
-            // 
-            // barWidthNumeric
-            // 
-            this.barWidthNumeric.Location = new System.Drawing.Point(252, 612);
-            this.barWidthNumeric.Name = "barWidthNumeric";
-            this.barWidthNumeric.Size = new System.Drawing.Size(228, 31);
-            this.barWidthNumeric.TabIndex = 26;
             // 
             // label14
             // 
@@ -216,85 +195,11 @@
             this.label14.Text = "frame width, height";
             this.label14.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // titleTextbox
-            // 
-            this.titleTextbox.Location = new System.Drawing.Point(252, 660);
-            this.titleTextbox.Name = "titleTextbox";
-            this.titleTextbox.Size = new System.Drawing.Size(228, 31);
-            this.titleTextbox.TabIndex = 25;
-            // 
-            // label11
-            // 
-            this.label11.Location = new System.Drawing.Point(12, 180);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(108, 36);
-            this.label11.TabIndex = 10;
-            this.label11.Text = "preview 1";
-            this.label11.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // noteRangeEndNumeric
-            // 
-            this.noteRangeEndNumeric.Location = new System.Drawing.Point(372, 516);
-            this.noteRangeEndNumeric.Name = "noteRangeEndNumeric";
-            this.noteRangeEndNumeric.Size = new System.Drawing.Size(108, 31);
-            this.noteRangeEndNumeric.TabIndex = 24;
-            // 
-            // sourcePicture
-            // 
-            this.sourcePicture.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.sourcePicture.Location = new System.Drawing.Point(132, 180);
-            this.sourcePicture.Name = "sourcePicture";
-            this.sourcePicture.Size = new System.Drawing.Size(588, 324);
-            this.sourcePicture.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.sourcePicture.TabIndex = 0;
-            this.sourcePicture.TabStop = false;
-            // 
-            // label8
-            // 
-            this.label8.Location = new System.Drawing.Point(12, 1044);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(228, 36);
-            this.label8.TabIndex = 14;
-            this.label8.Text = "decay exponent, time";
-            this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // decayTimeNumeric
-            // 
-            this.decayTimeNumeric.Location = new System.Drawing.Point(372, 1044);
-            this.decayTimeNumeric.Name = "decayTimeNumeric";
-            this.decayTimeNumeric.Size = new System.Drawing.Size(108, 31);
-            this.decayTimeNumeric.TabIndex = 22;
-            // 
-            // label6
-            // 
-            this.label6.Location = new System.Drawing.Point(12, 564);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(228, 36);
-            this.label6.TabIndex = 12;
-            this.label6.Text = "color start, length";
-            this.label6.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // label7
-            // 
-            this.label7.Location = new System.Drawing.Point(12, 612);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(228, 36);
-            this.label7.TabIndex = 13;
-            this.label7.Text = "bar relative width (1/x)";
-            this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // noteRangeStartNumeric
-            // 
-            this.noteRangeStartNumeric.Location = new System.Drawing.Point(252, 516);
-            this.noteRangeStartNumeric.Name = "noteRangeStartNumeric";
-            this.noteRangeStartNumeric.Size = new System.Drawing.Size(108, 31);
-            this.noteRangeStartNumeric.TabIndex = 23;
-            // 
             // frameWidthNumeric
             // 
             this.frameWidthNumeric.Location = new System.Drawing.Point(252, 132);
             this.frameWidthNumeric.Maximum = new decimal(new int[] {
-            3940,
+            3840,
             0,
             0,
             0});
@@ -311,20 +216,12 @@
             0,
             0,
             0});
-            this.frameWidthNumeric.ValueChanged += new System.EventHandler(this.frameWidthNumeric_ValueChanged);
-            // 
-            // colorStartNumeric
-            // 
-            this.colorStartNumeric.Location = new System.Drawing.Point(252, 564);
-            this.colorStartNumeric.Name = "colorStartNumeric";
-            this.colorStartNumeric.Size = new System.Drawing.Size(108, 31);
-            this.colorStartNumeric.TabIndex = 17;
             // 
             // frameHeightNumeric
             // 
             this.frameHeightNumeric.Location = new System.Drawing.Point(372, 132);
             this.frameHeightNumeric.Maximum = new decimal(new int[] {
-            3940,
+            3840,
             0,
             0,
             0});
@@ -341,18 +238,185 @@
             0,
             0,
             0});
-            this.frameHeightNumeric.ValueChanged += new System.EventHandler(this.frameHeightNumeric_ValueChanged);
+            // 
+            // barWidthNumeric
+            // 
+            this.barWidthNumeric.Location = new System.Drawing.Point(252, 516);
+            this.barWidthNumeric.Maximum = new decimal(new int[] {
+            3840,
+            0,
+            0,
+            0});
+            this.barWidthNumeric.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.barWidthNumeric.Name = "barWidthNumeric";
+            this.barWidthNumeric.Size = new System.Drawing.Size(228, 31);
+            this.barWidthNumeric.TabIndex = 26;
+            this.barWidthNumeric.Value = new decimal(new int[] {
+            128,
+            0,
+            0,
+            0});
+            // 
+            // titleTextbox
+            // 
+            this.titleTextbox.Location = new System.Drawing.Point(252, 36);
+            this.titleTextbox.Name = "titleTextbox";
+            this.titleTextbox.Size = new System.Drawing.Size(228, 31);
+            this.titleTextbox.TabIndex = 25;
+            // 
+            // label11
+            // 
+            this.label11.Location = new System.Drawing.Point(12, 84);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(108, 36);
+            this.label11.TabIndex = 10;
+            this.label11.Text = "preview 1";
+            this.label11.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // label8
+            // 
+            this.label8.Location = new System.Drawing.Point(12, 900);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(228, 36);
+            this.label8.TabIndex = 14;
+            this.label8.Text = "decay exponent, time (fr)";
+            this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // decayExponentNumeric
             // 
-            this.decayExponentNumeric.Location = new System.Drawing.Point(252, 1044);
+            this.decayExponentNumeric.Location = new System.Drawing.Point(252, 900);
+            this.decayExponentNumeric.Maximum = new decimal(new int[] {
+            60,
+            0,
+            0,
+            0});
+            this.decayExponentNumeric.Minimum = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
             this.decayExponentNumeric.Name = "decayExponentNumeric";
             this.decayExponentNumeric.Size = new System.Drawing.Size(108, 31);
             this.decayExponentNumeric.TabIndex = 21;
+            this.decayExponentNumeric.Value = new decimal(new int[] {
+            8,
+            0,
+            0,
+            0});
+            // 
+            // noteRangeEndNumeric
+            // 
+            this.noteRangeEndNumeric.Location = new System.Drawing.Point(372, 420);
+            this.noteRangeEndNumeric.Maximum = new decimal(new int[] {
+            108,
+            0,
+            0,
+            0});
+            this.noteRangeEndNumeric.Minimum = new decimal(new int[] {
+            108,
+            0,
+            0,
+            -2147483648});
+            this.noteRangeEndNumeric.Name = "noteRangeEndNumeric";
+            this.noteRangeEndNumeric.Size = new System.Drawing.Size(108, 31);
+            this.noteRangeEndNumeric.TabIndex = 24;
+            this.noteRangeEndNumeric.Value = new decimal(new int[] {
+            42,
+            0,
+            0,
+            0});
+            // 
+            // decayTimeNumeric
+            // 
+            this.decayTimeNumeric.Location = new System.Drawing.Point(372, 900);
+            this.decayTimeNumeric.Maximum = new decimal(new int[] {
+            60,
+            0,
+            0,
+            0});
+            this.decayTimeNumeric.Name = "decayTimeNumeric";
+            this.decayTimeNumeric.Size = new System.Drawing.Size(108, 31);
+            this.decayTimeNumeric.TabIndex = 22;
+            this.decayTimeNumeric.Value = new decimal(new int[] {
+            8,
+            0,
+            0,
+            0});
+            // 
+            // sourcePicture
+            // 
+            this.sourcePicture.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.sourcePicture.Location = new System.Drawing.Point(132, 84);
+            this.sourcePicture.Name = "sourcePicture";
+            this.sourcePicture.Size = new System.Drawing.Size(588, 324);
+            this.sourcePicture.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.sourcePicture.TabIndex = 0;
+            this.sourcePicture.TabStop = false;
+            // 
+            // label6
+            // 
+            this.label6.Location = new System.Drawing.Point(12, 468);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(228, 36);
+            this.label6.TabIndex = 12;
+            this.label6.Text = "color start, length";
+            this.label6.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // label7
+            // 
+            this.label7.Location = new System.Drawing.Point(12, 516);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(228, 36);
+            this.label7.TabIndex = 13;
+            this.label7.Text = "bar relative width (1/x)";
+            this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // noteRangeStartNumeric
+            // 
+            this.noteRangeStartNumeric.Location = new System.Drawing.Point(252, 420);
+            this.noteRangeStartNumeric.Maximum = new decimal(new int[] {
+            108,
+            0,
+            0,
+            0});
+            this.noteRangeStartNumeric.Minimum = new decimal(new int[] {
+            108,
+            0,
+            0,
+            -2147483648});
+            this.noteRangeStartNumeric.Name = "noteRangeStartNumeric";
+            this.noteRangeStartNumeric.Size = new System.Drawing.Size(108, 31);
+            this.noteRangeStartNumeric.TabIndex = 23;
+            this.noteRangeStartNumeric.Value = new decimal(new int[] {
+            30,
+            0,
+            0,
+            -2147483648});
+            // 
+            // colorStartNumeric
+            // 
+            this.colorStartNumeric.Location = new System.Drawing.Point(252, 468);
+            this.colorStartNumeric.Maximum = new decimal(new int[] {
+            360,
+            0,
+            0,
+            0});
+            this.colorStartNumeric.Name = "colorStartNumeric";
+            this.colorStartNumeric.Size = new System.Drawing.Size(108, 31);
+            this.colorStartNumeric.TabIndex = 17;
+            this.colorStartNumeric.Value = new decimal(new int[] {
+            160,
+            0,
+            0,
+            0});
             // 
             // label9
             // 
-            this.label9.Location = new System.Drawing.Point(12, 516);
+            this.label9.Location = new System.Drawing.Point(12, 420);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(228, 36);
             this.label9.TabIndex = 15;
@@ -361,14 +425,24 @@
             // 
             // colorLengthNumeric
             // 
-            this.colorLengthNumeric.Location = new System.Drawing.Point(372, 564);
+            this.colorLengthNumeric.Location = new System.Drawing.Point(372, 468);
+            this.colorLengthNumeric.Maximum = new decimal(new int[] {
+            360,
+            0,
+            0,
+            0});
             this.colorLengthNumeric.Name = "colorLengthNumeric";
             this.colorLengthNumeric.Size = new System.Drawing.Size(108, 31);
             this.colorLengthNumeric.TabIndex = 18;
+            this.colorLengthNumeric.Value = new decimal(new int[] {
+            60,
+            0,
+            0,
+            0});
             // 
             // label10
             // 
-            this.label10.Location = new System.Drawing.Point(12, 660);
+            this.label10.Location = new System.Drawing.Point(12, 36);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(228, 36);
             this.label10.TabIndex = 16;
@@ -377,7 +451,7 @@
             // 
             // label12
             // 
-            this.label12.Location = new System.Drawing.Point(12, 708);
+            this.label12.Location = new System.Drawing.Point(12, 564);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(108, 36);
             this.label12.TabIndex = 12;
@@ -387,7 +461,7 @@
             // outputPicture
             // 
             this.outputPicture.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.outputPicture.Location = new System.Drawing.Point(132, 708);
+            this.outputPicture.Location = new System.Drawing.Point(132, 564);
             this.outputPicture.Name = "outputPicture";
             this.outputPicture.Size = new System.Drawing.Size(588, 324);
             this.outputPicture.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -406,7 +480,7 @@
             this.groupBox2.Controls.Add(this.soundAnalyzeButton);
             this.groupBox2.Controls.Add(this.soundLabel);
             this.groupBox2.Controls.Add(this.soundButton);
-            this.groupBox2.Location = new System.Drawing.Point(756, 48);
+            this.groupBox2.Location = new System.Drawing.Point(12, 240);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(732, 324);
             this.groupBox2.TabIndex = 25;
@@ -436,14 +510,14 @@
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(228, 36);
             this.label2.TabIndex = 8;
-            this.label2.Text = "lookahead (frames)";
+            this.label2.Text = "lookahead (fr)";
             this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // lookaheadNumeric
             // 
             this.lookaheadNumeric.Location = new System.Drawing.Point(252, 132);
             this.lookaheadNumeric.Maximum = new decimal(new int[] {
-            29,
+            60,
             0,
             0,
             0});
@@ -513,7 +587,7 @@
             this.groupBox3.Controls.Add(this.label5);
             this.groupBox3.Controls.Add(this.videoButton);
             this.groupBox3.Enabled = false;
-            this.groupBox3.Location = new System.Drawing.Point(756, 384);
+            this.groupBox3.Location = new System.Drawing.Point(12, 576);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(732, 180);
             this.groupBox3.TabIndex = 26;
@@ -559,6 +633,7 @@
             // 
             // videoDialog
             // 
+            this.videoDialog.FileName = "untitled";
             this.videoDialog.Filter = "Video files|*.mp4";
             // 
             // menuStrip1
@@ -568,7 +643,7 @@
             this.fileToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(2178, 33);
+            this.menuStrip1.Size = new System.Drawing.Size(1501, 33);
             this.menuStrip1.TabIndex = 28;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -605,11 +680,51 @@
             this.saveProjectDialog.FileName = "untitled";
             this.saveProjectDialog.Filter = "MegaSonic Project Files|*.meso";
             // 
+            // groupBox4
+            // 
+            this.groupBox4.Controls.Add(this.applyPropertiesButton);
+            this.groupBox4.Controls.Add(this.barWidthNumeric);
+            this.groupBox4.Controls.Add(this.label11);
+            this.groupBox4.Controls.Add(this.outputPicture);
+            this.groupBox4.Controls.Add(this.label6);
+            this.groupBox4.Controls.Add(this.titleTextbox);
+            this.groupBox4.Controls.Add(this.label12);
+            this.groupBox4.Controls.Add(this.label8);
+            this.groupBox4.Controls.Add(this.label10);
+            this.groupBox4.Controls.Add(this.colorLengthNumeric);
+            this.groupBox4.Controls.Add(this.decayExponentNumeric);
+            this.groupBox4.Controls.Add(this.label9);
+            this.groupBox4.Controls.Add(this.noteRangeEndNumeric);
+            this.groupBox4.Controls.Add(this.colorStartNumeric);
+            this.groupBox4.Controls.Add(this.decayTimeNumeric);
+            this.groupBox4.Controls.Add(this.noteRangeStartNumeric);
+            this.groupBox4.Controls.Add(this.sourcePicture);
+            this.groupBox4.Controls.Add(this.label7);
+            this.groupBox4.Enabled = false;
+            this.groupBox4.Location = new System.Drawing.Point(756, 48);
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Size = new System.Drawing.Size(732, 996);
+            this.groupBox4.TabIndex = 29;
+            this.groupBox4.TabStop = false;
+            this.groupBox4.Text = "Parameters";
+            // 
+            // applyPropertiesButton
+            // 
+            this.applyPropertiesButton.Enabled = false;
+            this.applyPropertiesButton.Location = new System.Drawing.Point(12, 948);
+            this.applyPropertiesButton.Name = "applyPropertiesButton";
+            this.applyPropertiesButton.Size = new System.Drawing.Size(708, 36);
+            this.applyPropertiesButton.TabIndex = 12;
+            this.applyPropertiesButton.Text = "Apply Changes";
+            this.applyPropertiesButton.UseVisualStyleBackColor = true;
+            this.applyPropertiesButton.Click += new System.EventHandler(this.applyPropertiesButton_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(2178, 1367);
+            this.ClientSize = new System.Drawing.Size(1501, 1056);
+            this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
@@ -618,16 +733,15 @@
             this.Name = "Form1";
             this.Text = "Form1";
             this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.barWidthNumeric)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.noteRangeEndNumeric)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.sourcePicture)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.decayTimeNumeric)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.noteRangeStartNumeric)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.frameWidthNumeric)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.colorStartNumeric)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.frameHeightNumeric)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.barWidthNumeric)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.decayExponentNumeric)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.noteRangeEndNumeric)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.decayTimeNumeric)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.sourcePicture)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.noteRangeStartNumeric)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.colorStartNumeric)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.colorLengthNumeric)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.outputPicture)).EndInit();
             this.groupBox2.ResumeLayout(false);
@@ -636,6 +750,8 @@
             this.groupBox3.ResumeLayout(false);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
+            this.groupBox4.ResumeLayout(false);
+            this.groupBox4.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -693,5 +809,7 @@
         private SaveFileDialog saveProjectDialog;
         private Label label13;
         private Label label14;
+        private GroupBox groupBox4;
+        private Button applyPropertiesButton;
     }
 }

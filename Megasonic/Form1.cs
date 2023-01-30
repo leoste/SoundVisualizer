@@ -212,6 +212,9 @@ namespace Megasonic
 
         private void UpdateVideoPreview()
         {
+            preview1.Image?.Dispose();
+            preview2.Image?.Dispose();
+
             Bitmap bitmap = video.Background;
             PointF[] curvePoints = video.CurvePoints;
 
@@ -220,8 +223,11 @@ namespace Megasonic
                 g.DrawLines(new Pen(Brushes.Red, 5), curvePoints);
             }
 
-            sourcePicture.Image?.Dispose();
-            sourcePicture.Image = bitmap;
+            preview1.Image = bitmap;
+
+            Bitmap bitmap2 = video.GetFrame(video.GetSourcePoints(video.MaxIndex / 2)).Source;
+            preview2.Image = bitmap2;
+
         }
 
         void RefreshVideoRenderer()

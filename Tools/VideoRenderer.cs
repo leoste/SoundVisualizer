@@ -42,6 +42,7 @@ namespace Tools
 
         public PointF[] CurvePoints { get { return curvePoints; } }
         public Bitmap Background { get { return new Bitmap(background); } }
+        public int MaxIndex { get; private set; }
 
         public VideoRenderer(SoundAnalyzer sound, string filepath, string svgFilepath, string imageFilepath, string title, Size frameSize,
             int barRelation = 128,
@@ -65,6 +66,8 @@ namespace Tools
             this.decayTime = decayTime;
             this.minNoteBorder = minNoteBorder;
             this.maxNoteBorder = maxNoteBorder;
+
+            MaxIndex = sound.Frames.Length;
 
             Prepare();
         }
@@ -106,7 +109,7 @@ namespace Tools
         private bool disposedValue;
 
         public PointF[] GenerateCurvePoints()
-        {
+        {            
             // maybe want to do curve fluxuations or something cool            
             SvgDocument document = SvgDocument.Open(svgFilepath);
 
@@ -239,7 +242,7 @@ namespace Tools
         }
 
         // this function IS also threadsafe now!!! doesnt modify anything anymore
-        PointF[] GetSourcePoints(int index)
+        public PointF[] GetSourcePoints(int index)
         {
             // first get the points that we do know
             PointF[] sourcePoints = new PointF[visibleLength];
@@ -275,7 +278,7 @@ namespace Tools
         }
 
         // this function IS threadsafe!!! doesnt modify anything
-        BitmapVideoFrameWrapper GetFrame(PointF[] sourcePoints)
+        public BitmapVideoFrameWrapper GetFrame(PointF[] sourcePoints)
         {
             PointF[] uniformPoints = CurveOperations.SpecifyHorizontally(sourcePoints, definition);
 
@@ -308,7 +311,7 @@ namespace Tools
             ConcurrentDictionary<int, BitmapVideoFrameWrapper> dictionary = new ConcurrentDictionary<int, BitmapVideoFrameWrapper>();
             List<BackgroundWorker> bgws = new List<BackgroundWorker>();
             int takeIndex = 0;
-            int takes = sound.Frames.Length;
+            int takes = MaxIndex;
             object lockLock = new object();
 
             // prevent memory usage exploding when renderer hangs up

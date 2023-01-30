@@ -48,7 +48,7 @@
             this.decayExponentNumeric = new System.Windows.Forms.NumericUpDown();
             this.noteRangeEndNumeric = new System.Windows.Forms.NumericUpDown();
             this.decayTimeNumeric = new System.Windows.Forms.NumericUpDown();
-            this.sourcePicture = new System.Windows.Forms.PictureBox();
+            this.preview1 = new System.Windows.Forms.PictureBox();
             this.label6 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
             this.noteRangeStartNumeric = new System.Windows.Forms.NumericUpDown();
@@ -57,7 +57,7 @@
             this.colorLengthNumeric = new System.Windows.Forms.NumericUpDown();
             this.label10 = new System.Windows.Forms.Label();
             this.label12 = new System.Windows.Forms.Label();
-            this.outputPicture = new System.Windows.Forms.PictureBox();
+            this.preview2 = new System.Windows.Forms.PictureBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.label13 = new System.Windows.Forms.Label();
             this.windowCombobox = new System.Windows.Forms.ComboBox();
@@ -88,11 +88,11 @@
             ((System.ComponentModel.ISupportInitialize)(this.decayExponentNumeric)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.noteRangeEndNumeric)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.decayTimeNumeric)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.sourcePicture)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.preview1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.noteRangeStartNumeric)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.colorStartNumeric)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.colorLengthNumeric)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.outputPicture)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.preview2)).BeginInit();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.lookaheadNumeric)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.framerateNumeric)).BeginInit();
@@ -347,15 +347,15 @@
             0,
             0});
             // 
-            // sourcePicture
+            // preview1
             // 
-            this.sourcePicture.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.sourcePicture.Location = new System.Drawing.Point(132, 84);
-            this.sourcePicture.Name = "sourcePicture";
-            this.sourcePicture.Size = new System.Drawing.Size(588, 324);
-            this.sourcePicture.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.sourcePicture.TabIndex = 0;
-            this.sourcePicture.TabStop = false;
+            this.preview1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.preview1.Location = new System.Drawing.Point(132, 84);
+            this.preview1.Name = "preview1";
+            this.preview1.Size = new System.Drawing.Size(588, 324);
+            this.preview1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.preview1.TabIndex = 0;
+            this.preview1.TabStop = false;
             // 
             // label6
             // 
@@ -458,15 +458,15 @@
             this.label12.Text = "preview 2";
             this.label12.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // outputPicture
+            // preview2
             // 
-            this.outputPicture.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.outputPicture.Location = new System.Drawing.Point(132, 564);
-            this.outputPicture.Name = "outputPicture";
-            this.outputPicture.Size = new System.Drawing.Size(588, 324);
-            this.outputPicture.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.outputPicture.TabIndex = 11;
-            this.outputPicture.TabStop = false;
+            this.preview2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.preview2.Location = new System.Drawing.Point(132, 564);
+            this.preview2.Name = "preview2";
+            this.preview2.Size = new System.Drawing.Size(588, 324);
+            this.preview2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.preview2.TabIndex = 11;
+            this.preview2.TabStop = false;
             // 
             // groupBox2
             // 
@@ -685,7 +685,7 @@
             this.groupBox4.Controls.Add(this.applyPropertiesButton);
             this.groupBox4.Controls.Add(this.barWidthNumeric);
             this.groupBox4.Controls.Add(this.label11);
-            this.groupBox4.Controls.Add(this.outputPicture);
+            this.groupBox4.Controls.Add(this.preview2);
             this.groupBox4.Controls.Add(this.label6);
             this.groupBox4.Controls.Add(this.titleTextbox);
             this.groupBox4.Controls.Add(this.label12);
@@ -698,7 +698,7 @@
             this.groupBox4.Controls.Add(this.colorStartNumeric);
             this.groupBox4.Controls.Add(this.decayTimeNumeric);
             this.groupBox4.Controls.Add(this.noteRangeStartNumeric);
-            this.groupBox4.Controls.Add(this.sourcePicture);
+            this.groupBox4.Controls.Add(this.preview1);
             this.groupBox4.Controls.Add(this.label7);
             this.groupBox4.Enabled = false;
             this.groupBox4.Location = new System.Drawing.Point(756, 48);
@@ -739,11 +739,11 @@
             ((System.ComponentModel.ISupportInitialize)(this.decayExponentNumeric)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.noteRangeEndNumeric)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.decayTimeNumeric)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.sourcePicture)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.preview1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.noteRangeStartNumeric)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.colorStartNumeric)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.colorLengthNumeric)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.outputPicture)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.preview2)).EndInit();
             this.groupBox2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.lookaheadNumeric)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.framerateNumeric)).EndInit();
@@ -768,7 +768,7 @@
         private OpenFileDialog imageDialog;
         private OpenFileDialog lineDialog;
         private GroupBox groupBox1;
-        private PictureBox sourcePicture;
+        private PictureBox preview1;
         private GroupBox groupBox2;
         private Label label2;
         private Label label1;
@@ -786,7 +786,7 @@
         private Button videoRenderButton;
         private Label label11;
         private Label label12;
-        private PictureBox outputPicture;
+        private PictureBox preview2;
         private SaveFileDialog videoDialog;
         private NumericUpDown noteRangeEndNumeric;
         private NumericUpDown noteRangeStartNumeric;

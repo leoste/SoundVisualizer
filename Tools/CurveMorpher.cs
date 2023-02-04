@@ -11,7 +11,7 @@ namespace Tools
     //morphs given points to locations on a curve, retaining the horizontal distance of the points from each other.
     class CurveMorpher
     {
-        private readonly double rad90deg = 1.5707963267948966192313216916398;
+        private readonly double rad90deg = 1.5707963267948966192313216916398; // 90 degrees in radians
 
         private PointF[] sourcePoints;
         private PointF[] morphingPoints;
@@ -67,6 +67,14 @@ namespace Tools
             int dividedIndex = 0;
             int lastCurveIndex = 0;
 
+            double Get3PointAngle(PointF left, PointF middle, PointF right)
+            {
+                double leftAngle = Math.Atan2(middle.Y - left.Y, middle.X - left.X);
+                double rightAngle = Math.Atan2(right.Y - middle.Y, right.X - middle.X);
+                double angle = (leftAngle + rightAngle) / 2 - rad90deg;
+                return angle;
+            }
+
             while (dividedIndex < segmentPointCount)
             {
                 double currentGoal = (double)morphingPoints[dividedIndex].X / morphingPoints[morphingPoints.Length - 1].X * curveLength;
@@ -90,18 +98,31 @@ namespace Tools
                     );
                     points[dividedIndex] = c;
 
-                    double leftAngle = Math.Atan2(c.Y - a.Y, c.X - a.X);
-                    double rightAngle = Math.Atan2(b.Y - c.Y, b.X - c.X);
-                    double angle = (leftAngle + rightAngle) / 2 - rad90deg; // 90 degrees in radians
-                    angles[dividedIndex] = angle;
+                    angles[dividedIndex] = Get3PointAngle(a, c, b);
 
                     dividedIndex++;
                 }
             }
 
-            /*// corners dont get calculated in algorithm, for points its pointless for angles cant do 3 point calculation, only 2
+            // corners dont get calculated in algorithm, for points its pointless for angles cant do 3 point calculation, only 2
+            // TODO: Need to think of good way to make first point relate to last point, same way like all points usually relate
             points[0] = curve[0];
-            angles[0] = Math.Atan2(points[1].Y - points[0].Y, points[1].X - points[0].X) - rad90deg;*/
+            // This would theoretically make the connection between two parts seamless
+            angles[0] = Get3PointAngle(points[segmentPointCount - 1], points[0], points[1]);
+
+            // very crude angle limiter. but true version would do it gracefully not a hard limit block.
+            for (int i = 1 + 1; i < angles.Length; i++)
+            {
+                double maxDiff = rad90deg / 720;
+                if (angles[i] - angles[i - 1] > maxDiff)
+                {
+                    angles[i] = angles[i - 1] + maxDiff;
+                }
+                else if (angles[i] - angles[i - 1] < -maxDiff)
+                {
+                    angles[i] = angles[i - 1] - maxDiff;
+                }
+            }
 
             matrix = new VectorMatrix(points, angles);
         }

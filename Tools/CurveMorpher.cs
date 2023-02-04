@@ -1,5 +1,4 @@
-﻿using ExCSS;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -52,10 +51,10 @@ namespace Tools
             }
 
             // calculate equal distance points on the curve
-            matrix = DivideCurve();
+            DivideCurve();
         }
 
-        VectorMatrix DivideCurve()
+        void DivideCurve()
         {
             int segmentPointCount = morphingPoints.Length;
 
@@ -64,8 +63,8 @@ namespace Tools
 
             double currentPos = 0;
             double lastLength = 0;
-            int dividedIndex = 0;
             int curveIndex = 0;
+            int dividedIndex = 0;
             int lastCurveIndex = 0;
 
             while (dividedIndex < segmentPointCount)
@@ -104,7 +103,7 @@ namespace Tools
             points[0] = curve[0];
             angles[0] = Math.Atan2(points[1].Y - points[0].Y, points[1].X - points[0].X) - rad90deg;*/
 
-            return new VectorMatrix(points, angles);
+            matrix = new VectorMatrix(points, angles);
         }
 
         public class VectorMatrix

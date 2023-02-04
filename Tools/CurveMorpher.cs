@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ExCSS;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -6,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GreatVideoMaker
+namespace Tools
 {
     //morphs given points to locations on a curve, retaining the horizontal distance of the points from each other.
     class CurveMorpher
@@ -51,10 +52,10 @@ namespace GreatVideoMaker
             }
 
             // calculate equal distance points on the curve
-            DivideCurve();
+            matrix = DivideCurve();
         }
 
-        void DivideCurve()
+        VectorMatrix DivideCurve()
         {
             int segmentPointCount = morphingPoints.Length;
 
@@ -64,10 +65,9 @@ namespace GreatVideoMaker
             double currentPos = 0;
             double lastLength = 0;
             int curveIndex = 0;
-            int dividedIndex = 0;
             int lastCurveIndex = 0;
 
-            while (dividedIndex < segmentPointCount)
+            for (int dividedIndex = 0; dividedIndex < segmentPointCount; dividedIndex++)
             {
                 double currentGoal = (double)morphingPoints[dividedIndex].X / morphingPoints[morphingPoints.Length - 1].X * curveLength;
 
@@ -103,7 +103,7 @@ namespace GreatVideoMaker
             points[0] = curve[0];
             angles[0] = Math.Atan2(points[1].Y - points[0].Y, points[1].X - points[0].X) - rad90deg;*/
 
-            matrix = new VectorMatrix(points, angles);
+            return new VectorMatrix(points, angles);
         }
 
         public class VectorMatrix

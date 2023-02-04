@@ -7,21 +7,36 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using MathNet.Numerics.IntegralTransforms;
 using NAudio.Wave;
 
-namespace GreatVideoMaker
+namespace Tools
 {
-    class SoundAnalyzer : Processer
+    public class SoundAnalyzer : Processer
     {
         private static double baseFrequency = 440;
 
-        private string windowName;
-        
-        public event EventHandler<ProgressEventArgs> OnProgress;
-        public event EventHandler OnComplete;
+        public static IEnumerable<string> GetWindows()
+        {
+            MethodInfo[] methodInfos = typeof(MathNet.Numerics.Window).GetMethods();
 
-        public Frame[] Frames { get; private set; }
+            for (int i = 0; i < methodInfos.Length; i++)
+            {
+                if (methodInfos[i].ReturnType == typeof(double[]))
+                {
+                    yield return methodInfos[i].Name;
+                }                    
+            }
+        }
+
+        private string windowName;
+        private bool disposedValue;
+
+        public event EventHandler<ProgressEventArgs>? OnProgress;
+        public event EventHandler? OnComplete;
+
+        public Frame[]? Frames { get; private set; }
         public int SampleRate { get; private set; }
         public TimeSpan TotalLength { get; private set; }
         public string SourceFilePath { get; private set; }
@@ -32,7 +47,7 @@ namespace GreatVideoMaker
         public float NotesTotalLength { get; private set; }
         public float MinimumNote { get; private set; }
         public float MaximumNote { get; private set; }
-        public NoteSpan[] NoteSpans { get; private set; } // how many notes does each frequency cover
+        public NoteSpan[]? NoteSpans { get; private set; } // how many notes does each frequency cover
         public int LookAround { get; private set; } //take future and past frames into consideration (get more fidelity)
         public int FrequencyCount { get; private set; }
         
@@ -212,7 +227,7 @@ namespace GreatVideoMaker
                         //frames[frameIndex].buffer = buffer;
                         Frames[index].frequencies = frequencies;
 
-                        if (OnProgress != null) OnProgress.Invoke(this, new ProgressEventArgs(index, takes));
+                        OnProgress?.Invoke(this, new ProgressEventArgs(index, takes));
                     }
                     else break;
                 }
@@ -223,7 +238,7 @@ namespace GreatVideoMaker
 
         private void DeclareComplete()
         {
-            if (OnComplete != null) OnComplete.Invoke(this, EventArgs.Empty);
+            OnComplete?.Invoke(this, EventArgs.Empty);
         }
 
         private float GetNoteDistance(int comparedFrequency)
@@ -246,6 +261,35 @@ namespace GreatVideoMaker
             result = (int)(exponented * baseFrequency);
 
             return result;
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    // TODO: dispose managed state (managed objects)
+                }
+
+                // TODO: free unmanaged resources (unmanaged objects) and override finalizer
+                // TODO: set large fields to null
+                disposedValue = true;
+            }
+        }
+
+        // // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
+        // ~SoundAnalyzer()
+        // {
+        //     // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+        //     Dispose(disposing: false);
+        // }
+
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 

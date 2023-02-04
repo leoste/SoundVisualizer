@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GreatVideoMaker
+namespace Tools
 {
     //another name idea was CurveElaborator
     class CurveOperations

@@ -64,10 +64,11 @@ namespace Tools
 
             double currentPos = 0;
             double lastLength = 0;
+            int dividedIndex = 0;
             int curveIndex = 0;
             int lastCurveIndex = 0;
 
-            for (int dividedIndex = 0; dividedIndex < segmentPointCount; dividedIndex++)
+            while (dividedIndex < segmentPointCount)
             {
                 double currentGoal = (double)morphingPoints[dividedIndex].X / morphingPoints[morphingPoints.Length - 1].X * curveLength;
 

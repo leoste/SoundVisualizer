@@ -81,6 +81,8 @@
             this.saveProjectDialog = new System.Windows.Forms.SaveFileDialog();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.applyPropertiesButton = new System.Windows.Forms.Button();
+            this.barMaxAngleNumeric = new System.Windows.Forms.NumericUpDown();
+            this.label3 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.frameWidthNumeric)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.frameHeightNumeric)).BeginInit();
@@ -99,6 +101,7 @@
             this.groupBox3.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.groupBox4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.barMaxAngleNumeric)).BeginInit();
             this.SuspendLayout();
             // 
             // soundButton
@@ -279,7 +282,7 @@
             // 
             // label8
             // 
-            this.label8.Location = new System.Drawing.Point(12, 900);
+            this.label8.Location = new System.Drawing.Point(12, 948);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(228, 36);
             this.label8.TabIndex = 14;
@@ -288,7 +291,7 @@
             // 
             // decayExponentNumeric
             // 
-            this.decayExponentNumeric.Location = new System.Drawing.Point(252, 900);
+            this.decayExponentNumeric.Location = new System.Drawing.Point(252, 948);
             this.decayExponentNumeric.Maximum = new decimal(new int[] {
             60,
             0,
@@ -332,7 +335,7 @@
             // 
             // decayTimeNumeric
             // 
-            this.decayTimeNumeric.Location = new System.Drawing.Point(372, 900);
+            this.decayTimeNumeric.Location = new System.Drawing.Point(372, 948);
             this.decayTimeNumeric.Maximum = new decimal(new int[] {
             60,
             0,
@@ -372,7 +375,7 @@
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(228, 36);
             this.label7.TabIndex = 13;
-            this.label7.Text = "bar relative width (1/x)";
+            this.label7.Text = "bar relative width (1/x of w)";
             this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // noteRangeStartNumeric
@@ -451,7 +454,7 @@
             // 
             // label12
             // 
-            this.label12.Location = new System.Drawing.Point(12, 564);
+            this.label12.Location = new System.Drawing.Point(12, 612);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(108, 36);
             this.label12.TabIndex = 12;
@@ -461,7 +464,7 @@
             // preview2
             // 
             this.preview2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.preview2.Location = new System.Drawing.Point(132, 564);
+            this.preview2.Location = new System.Drawing.Point(132, 612);
             this.preview2.Name = "preview2";
             this.preview2.Size = new System.Drawing.Size(588, 324);
             this.preview2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -682,6 +685,8 @@
             // 
             // groupBox4
             // 
+            this.groupBox4.Controls.Add(this.barMaxAngleNumeric);
+            this.groupBox4.Controls.Add(this.label3);
             this.groupBox4.Controls.Add(this.applyPropertiesButton);
             this.groupBox4.Controls.Add(this.barWidthNumeric);
             this.groupBox4.Controls.Add(this.label11);
@@ -703,7 +708,7 @@
             this.groupBox4.Enabled = false;
             this.groupBox4.Location = new System.Drawing.Point(756, 48);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(732, 996);
+            this.groupBox4.Size = new System.Drawing.Size(732, 1044);
             this.groupBox4.TabIndex = 29;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Parameters";
@@ -711,7 +716,7 @@
             // applyPropertiesButton
             // 
             this.applyPropertiesButton.Enabled = false;
-            this.applyPropertiesButton.Location = new System.Drawing.Point(12, 948);
+            this.applyPropertiesButton.Location = new System.Drawing.Point(12, 996);
             this.applyPropertiesButton.Name = "applyPropertiesButton";
             this.applyPropertiesButton.Size = new System.Drawing.Size(708, 36);
             this.applyPropertiesButton.TabIndex = 12;
@@ -719,11 +724,42 @@
             this.applyPropertiesButton.UseVisualStyleBackColor = true;
             this.applyPropertiesButton.Click += new System.EventHandler(this.applyPropertiesButton_Click);
             // 
+            // barMaxAngleNumeric
+            // 
+            this.barMaxAngleNumeric.Location = new System.Drawing.Point(252, 564);
+            this.barMaxAngleNumeric.Maximum = new decimal(new int[] {
+            9000,
+            0,
+            0,
+            0});
+            this.barMaxAngleNumeric.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.barMaxAngleNumeric.Name = "barMaxAngleNumeric";
+            this.barMaxAngleNumeric.Size = new System.Drawing.Size(228, 31);
+            this.barMaxAngleNumeric.TabIndex = 28;
+            this.barMaxAngleNumeric.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            // 
+            // label3
+            // 
+            this.label3.Location = new System.Drawing.Point(12, 564);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(228, 36);
+            this.label3.TabIndex = 27;
+            this.label3.Text = "bar max angle (90/x deg)";
+            this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1501, 1056);
+            this.ClientSize = new System.Drawing.Size(1501, 1099);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox2);
@@ -752,6 +788,7 @@
             this.menuStrip1.PerformLayout();
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.barMaxAngleNumeric)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -811,5 +848,7 @@
         private Label label14;
         private GroupBox groupBox4;
         private Button applyPropertiesButton;
+        private NumericUpDown barMaxAngleNumeric;
+        private Label label3;
     }
 }

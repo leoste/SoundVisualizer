@@ -38,6 +38,7 @@ namespace Megasonic
         public int ColorStart { get; set; }
         public int ColorLength { get; set; }
         public int BarWidth { get; set; }
+        public int BarMaxAngle { get; set; }
         public string Title { get; set; } = "";
     }
 }

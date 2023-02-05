@@ -30,6 +30,7 @@ namespace Tools
         private SoundAnalyzer sound;
         private Size frameSize;
         private int barRelation;
+        private int barMaxAngle;
         private float colorStartDegree;
         private float colorLengthDegree;
         private int decayExponent;
@@ -46,6 +47,7 @@ namespace Tools
 
         public VideoRenderer(SoundAnalyzer sound, string filepath, string svgFilepath, string imageFilepath, string title, Size frameSize,
             int barRelation = 128,
+            int barMaxAngle = 0,
             float colorStartDegree = 0, // 216, 160
             float colorLengthDegree = 180, // 60, 60
             int decayExponent = 10,
@@ -60,6 +62,7 @@ namespace Tools
             this.sound = sound;
             this.frameSize = frameSize;
             this.barRelation = barRelation;
+            this.barMaxAngle = barMaxAngle;
             this.colorStartDegree = colorStartDegree;
             this.colorLengthDegree = colorLengthDegree;
             this.decayExponent = decayExponent;
@@ -282,7 +285,7 @@ namespace Tools
         {
             PointF[] uniformPoints = CurveOperations.SpecifyHorizontally(sourcePoints, definition);
 
-            CurveMorpher curve = new CurveMorpher(curvePoints, uniformPoints, curveLength, curveLengths, false);
+            CurveMorpher curve = new CurveMorpher(curvePoints, uniformPoints, curveLength, curveLengths, false, barMaxAngle);
 
             // i dont use "using" cause bitmap needs to stay for a while until its really used, then i dispose it
             Bitmap bitmap;

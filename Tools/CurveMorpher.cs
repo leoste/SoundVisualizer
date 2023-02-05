@@ -19,18 +19,20 @@ namespace Tools
         private PointF[] curve;
         private double curveLength;
         private double[] curveLengths;
+        private double maxAngleChange;
         //private Vector[] dividedVectors;
         private VectorMatrix matrix;
 
         public VectorMatrix Matrix { get { return matrix; } }
         public PointF[] BaseCurve { get { return curve; } }
 
-        public CurveMorpher(PointF[] sourcePoints, PointF[] morphedPoints, double curveLength, double[] curveLengths, bool isCurve = true)
+        public CurveMorpher(PointF[] sourcePoints, PointF[] morphedPoints, double curveLength, double[] curveLengths, bool isCurve = true, double maxAngleChange = 1)
         {
             this.sourcePoints = sourcePoints;
             this.morphingPoints = morphedPoints;
             this.curveLength = curveLength;
             this.curveLengths = curveLengths;
+            this.maxAngleChange = maxAngleChange;
 
             if (isCurve)
             {
@@ -113,7 +115,7 @@ namespace Tools
             // very crude angle limiter. but true version would do it gracefully not a hard limit block.
             for (int i = 1 + 1; i < angles.Length; i++)
             {
-                double maxDiff = rad90deg / 720;
+                double maxDiff = rad90deg / maxAngleChange;
                 if (angles[i] - angles[i - 1] > maxDiff)
                 {
                     angles[i] = angles[i - 1] + maxDiff;

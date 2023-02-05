@@ -124,6 +124,12 @@ namespace Megasonic
             set { barWidthNumeric.Value = value; }
         }
 
+        int BarMaxAngle
+        {
+            get { return (int)barMaxAngleNumeric.Value; }
+            set { barMaxAngleNumeric.Value = value; }
+        }
+
         string Title
         {
             get { return titleTextbox.Text; }
@@ -159,6 +165,7 @@ namespace Megasonic
                         ColorStart = ColorStart,
                         ColorLength = ColorLength,
                         BarWidth = BarWidth,
+                        BarMaxAngle = BarMaxAngle,
                         Title = Title
                     }
                 };
@@ -236,6 +243,7 @@ namespace Megasonic
 
             video = new VideoRenderer(sound, VideoFile, LineFile, ImageFile, Title, FrameSize,
                 BarWidth,
+                BarMaxAngle,
                 ColorStart,
                 ColorLength,
                 DecayExponent,

@@ -237,7 +237,7 @@ namespace Tools
                 Brush fore = Brushes.White;
                 Brush back = Brushes.Black;
                 float textX = frameSize.Width / 2 - size.Width / 2;
-                float textY = frameSize.Height / 2 - size.Height / 2;
+                float textY = frameSize.Height / 3 * 2 - size.Height / 2;
 
                 g.DrawString(title, font, back, textX + em / 14f, textY + em / 14f);
                 g.DrawString(title, font, fore, textX, textY);

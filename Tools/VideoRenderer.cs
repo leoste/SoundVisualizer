@@ -37,6 +37,8 @@ namespace Tools
         private int decayTime;
         private int maxNoteBorder;
         private int minNoteBorder;
+        private int titleHeightA;
+        private int titleHeightB;
 
         public event EventHandler<ProgressEventArgs>? OnProgress;
         public event EventHandler? OnComplete;
@@ -53,7 +55,9 @@ namespace Tools
             int decayExponent = 10,
             int decayTime = 5,
             int minNoteBorder = -36,
-            int maxNoteBorder = 48)
+            int maxNoteBorder = 48,
+            int titleHeightA = 2,
+            int titleHeightB = 3)
         {
             this.filepath = filepath;
             this.svgFilepath = svgFilepath;
@@ -69,6 +73,8 @@ namespace Tools
             this.decayTime = decayTime;
             this.minNoteBorder = minNoteBorder;
             this.maxNoteBorder = maxNoteBorder;
+            this.titleHeightA = titleHeightA;
+            this.titleHeightB = titleHeightB;
 
             MaxIndex = sound.Frames.Length;
 
@@ -237,7 +243,7 @@ namespace Tools
                 Brush fore = Brushes.White;
                 Brush back = Brushes.Black;
                 float textX = frameSize.Width / 2 - size.Width / 2;
-                float textY = frameSize.Height / 3 * 2 - size.Height / 2;
+                float textY = frameSize.Height / titleHeightB * titleHeightA - size.Height / 2;
 
                 g.DrawString(title, font, back, textX + em / 14f, textY + em / 14f);
                 g.DrawString(title, font, fore, textX, textY);
@@ -284,6 +290,10 @@ namespace Tools
         public BitmapVideoFrameWrapper GetFrame(PointF[] sourcePoints)
         {
             PointF[] uniformPoints = CurveOperations.SpecifyHorizontally(sourcePoints, definition);
+
+            // curvePoints - svg path
+            // uniform points - audio visualization on a straight line
+            // curve - visualized onto 
 
             CurveMorpher curve = new CurveMorpher(curvePoints, uniformPoints, curveLength, curveLengths, false, barMaxAngle);
 
@@ -422,6 +432,8 @@ namespace Tools
                         .WithVideoFilters(filterOptions => filterOptions
                             .Scale(frameSize)
                         )
+                        // ffmpeg picks default highest, yuv444p. but most players cant use it, so have to pick lower
+                        .ForcePixelFormat("yuv420p")
                     )
                     .NotifyOnProgress(new Action<TimeSpan>((TimeSpan t) => {
                         OnProgress?.Invoke(this,

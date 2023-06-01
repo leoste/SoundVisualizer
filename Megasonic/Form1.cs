@@ -136,6 +136,18 @@ namespace Megasonic
             set { titleTextbox.Text = value; }
         }
 
+        int TitleHeightA
+        {
+            get { return (int)titleHeightANumeric.Value; }
+            set { titleHeightANumeric.Value = value; }
+        }
+
+        int TitleHeightB
+        {
+            get { return (int)titleHeightBNumeric.Value; }
+            set { titleHeightBNumeric.Value = value; }
+        }
+
         ProjectSettings CurrentProjectSettings
         {
             get
@@ -249,7 +261,9 @@ namespace Megasonic
                 DecayExponent,
                 DecayTime,
                 NoteRangeStart,
-                NoteRangeEnd);
+                NoteRangeEnd,
+                TitleHeightA,
+                TitleHeightB);
 
             UpdateVideoPreview();
         }

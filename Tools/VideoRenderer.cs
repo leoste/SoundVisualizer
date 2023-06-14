@@ -129,11 +129,13 @@ namespace Tools
 
             using (GraphicsPath path = SvgConverter.ToGraphicsPath(document))
             {
-                Matrix mx = new Matrix(path.GetBounds(), new PointF[] {
-                    new PointF(document.Bounds.X * xRatio, document.Bounds.Y * yRatio),
-                    new PointF((document.Bounds.X + document.Bounds.Width) * xRatio, document.Bounds.Y * yRatio),
-                    new PointF(document.Bounds.X * xRatio, (document.Bounds.Y + document.Bounds.Height) * yRatio)
-                });
+                var matrixPointA = new PointF(document.Bounds.X * xRatio, document.Bounds.Y * yRatio);
+                var matrixPointB = new PointF((document.Bounds.X + document.Bounds.Width) * xRatio, document.Bounds.Y * yRatio);
+                var matrixPointC = new PointF(document.Bounds.X * xRatio, (document.Bounds.Y + document.Bounds.Height) * yRatio);
+
+                var pathBounds = path.GetBounds();
+
+                Matrix mx = new Matrix(pathBounds, new PointF[] { matrixPointA, matrixPointB, matrixPointC });
                 path.Transform(mx);
 
                 using (Matrix flatteningMx = new Matrix(1, 0, 0, 1, 0, 0))

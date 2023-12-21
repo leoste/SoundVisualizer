@@ -15,8 +15,24 @@
             TryInvoke();
         }
 
+        public void SetVideoNotRenderedFalse()
+        {
+            videoRendered = true;
+            TryInvokeGone();
+        }
+
         private bool imageSelected = false;
         private bool lineSelected = false;
+
+        private bool videoRendered = false;
+
+        private void TryInvokeGone()
+        {
+            if (videoRendered)
+            {
+                InvokeConditionsGone();
+            }
+        }
 
         private void TryInvoke()
         {

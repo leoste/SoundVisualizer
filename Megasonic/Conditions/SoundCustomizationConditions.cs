@@ -2,10 +2,7 @@
 {
     class SoundCustomizationConditions : Conditions
     {
-        public SoundCustomizationConditions(Control controlledControl, ForegroundCustomizationConditions foregroundCustomizationConditions) : base(controlledControl)
-        {
-            foregroundCustomizationConditions.ConditionsMetEvent += ForegroundCustomizationConditions_ConditionsMetEvent;
-        }
+        public SoundCustomizationConditions(Control controlledControl) : base(controlledControl, true) { }
 
         public void SetSoundNotAnalyzedFalse()
         {
@@ -13,22 +10,7 @@
             TryInvokeGone();
         }
 
-        private bool foregroundCustomizationConditionsMet = false;
         private bool soundAnalyzed = false;
-
-        private void ForegroundCustomizationConditions_ConditionsMetEvent(object? sender, EventArgs e)
-        {
-            foregroundCustomizationConditionsMet = true;
-            TryInvokeMet();
-        }
-
-        private void TryInvokeMet()
-        {
-            if (foregroundCustomizationConditionsMet)
-            {
-                InvokeConditionsMet();
-            }
-        }
 
         private void TryInvokeGone()
         {

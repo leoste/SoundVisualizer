@@ -18,7 +18,7 @@ namespace Megasonic.Conditions
 
         private bool videoRendered = false;
 
-        public void TryInvokeGone()
+        private void TryInvokeGone()
         {
             if (videoRendered)
             {

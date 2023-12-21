@@ -1,10 +1,12 @@
-﻿namespace Megasonic.Conditions
+﻿using Tools;
+
+namespace Megasonic.Conditions
 {
     class VideoCustomizationConditions : Conditions
     {
-        public VideoCustomizationConditions(Control controlledControl, SoundCustomizationConditions soundCustomizationConditions, SoundAnalyzeConditions soundAnalyzeConditions) : base(controlledControl)
+        public VideoCustomizationConditions(Control controlledControl, ForegroundCustomizationConditions foregroundCustomizationConditions, SoundAnalyzeConditions soundAnalyzeConditions) : base(controlledControl)
         {
-            soundCustomizationConditions.ConditionsMetEvent += SoundCustomizationConditions_ConditionsMetEvent;
+            foregroundCustomizationConditions.ConditionsMetEvent += ForegroundCustomizationConditions_ConditionsMetEvent;
             soundAnalyzeConditions.ConditionsMetEvent += SoundAnalyzeConditions_ConditionsMetEvent;
         }
 
@@ -14,21 +16,36 @@
             TryInvoke();
         }
 
+        public void SetVideoNotRenderedFalse()
+        {
+            videoRendered = true;
+            TryInvokeGone();
+        }
+
         private bool soundAnalyzed = false;
-        private bool soundCustomizationConditionsMet = false;
+        private bool foregroundCustomizationConditionsMet = false;
         private bool soundAnalyzeConditionsMet = false;
+        private bool videoRendered = false;
+
+        private void TryInvokeGone()
+        {
+            if (videoRendered)
+            {
+                InvokeConditionsGone();
+            }
+        }
 
         private void TryInvoke()
         {
-            if (soundAnalyzed && soundCustomizationConditionsMet && soundAnalyzeConditionsMet)
+            if (soundAnalyzed && foregroundCustomizationConditionsMet && soundAnalyzeConditionsMet)
             {
                 InvokeConditionsMet();
             }
         }
 
-        private void SoundCustomizationConditions_ConditionsMetEvent(object? sender, EventArgs e)
+        private void ForegroundCustomizationConditions_ConditionsMetEvent(object? sender, EventArgs e)
         {
-            soundCustomizationConditionsMet = true;
+            foregroundCustomizationConditionsMet = true;
             TryInvoke();
         }
 

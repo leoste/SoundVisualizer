@@ -222,9 +222,9 @@ namespace Megasonic
 
             backgroundCustomizationConditions = new BackgroundCustomizationConditions(backgroundCustomizationControl);
             foregroundCustomizationConditions = new ForegroundCustomizationConditions(foregroundCustomizationControl);            
-            soundCustomizationConditions = new SoundCustomizationConditions(soundCustomizationControl, foregroundCustomizationConditions);
-            soundAnalyzeConditions = new SoundAnalyzeConditions(soundAnalyzeControl, soundCustomizationConditions);
-            videoCustomizationConditions = new VideoCustomizationConditions(videoCustomizationControl, soundCustomizationConditions, soundAnalyzeConditions);
+            soundCustomizationConditions = new SoundCustomizationConditions(soundCustomizationControl);
+            soundAnalyzeConditions = new SoundAnalyzeConditions(soundAnalyzeControl);
+            videoCustomizationConditions = new VideoCustomizationConditions(videoCustomizationControl, foregroundCustomizationConditions, soundAnalyzeConditions);
             videoRenderConditions = new VideoRenderConditions(videoRenderControl, videoCustomizationConditions);
 
             windowCombobox.BeginUpdate();
@@ -337,7 +337,11 @@ namespace Megasonic
 
         private void videoRenderButton_Click(object sender, EventArgs e)
         {
+            RefreshVideoRenderer();
+
             backgroundCustomizationConditions.SetVideoNotRenderedFalse();
+            videoCustomizationConditions.SetVideoNotRenderedFalse();
+            foregroundCustomizationConditions.SetVideoNotRenderedFalse();
 
             video.OnProgress += Video_OnProgress;
             video.OnComplete += Video_OnComplete;

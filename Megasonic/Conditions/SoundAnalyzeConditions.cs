@@ -4,10 +4,7 @@ namespace Megasonic.Conditions
 {
     internal class SoundAnalyzeConditions : Conditions
     {
-        public SoundAnalyzeConditions(Control controlledControl, SoundCustomizationConditions soundCustomizationConditions) : base(controlledControl)
-        {
-            soundCustomizationConditions.ConditionsMetEvent += SoundCustomizationConditions_ConditionsMetEvent;
-        }
+        public SoundAnalyzeConditions(Control controlledControl) : base(controlledControl) { }
 
         public void SetSoundSelectedTrue()
         {
@@ -22,21 +19,14 @@ namespace Megasonic.Conditions
         }
 
         private bool soundSelected = false;
-        private bool soundCustomizationConditionsMet = false;
         private bool soundAnalyzed = false;
 
         private void TryInvokeMet()
         {
-            if (soundSelected && soundCustomizationConditionsMet)
+            if (soundSelected)
             {
                 InvokeConditionsMet();
             }
-        }
-
-        private void SoundCustomizationConditions_ConditionsMetEvent(object? sender, EventArgs e)
-        {
-            soundCustomizationConditionsMet = true;
-            TryInvokeMet();
         }
 
         private void TryInvokeGone()

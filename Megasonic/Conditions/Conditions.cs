@@ -4,7 +4,7 @@
     // b) add event args with bool: conditions met or not
 
     abstract class Conditions
-    {        
+    {
         protected Conditions(Control controlledControl, bool controlEnabled = false)
         {
             this.controlledControl = controlledControl;

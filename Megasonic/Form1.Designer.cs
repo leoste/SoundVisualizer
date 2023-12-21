@@ -39,7 +39,7 @@
             this.lineDialog = new System.Windows.Forms.OpenFileDialog();
             this.backgroundCustomizationControl = new System.Windows.Forms.GroupBox();
             this.label15 = new System.Windows.Forms.Label();
-            this.applyPropertiesButton = new System.Windows.Forms.Button();
+            this.button1 = new System.Windows.Forms.Button();
             this.preview1 = new System.Windows.Forms.PictureBox();
             this.label14 = new System.Windows.Forms.Label();
             this.frameWidthNumeric = new System.Windows.Forms.NumericUpDown();
@@ -62,7 +62,7 @@
             this.label12 = new System.Windows.Forms.Label();
             this.preview3 = new System.Windows.Forms.PictureBox();
             this.videoCustomizationControl = new System.Windows.Forms.GroupBox();
-            this.button2 = new System.Windows.Forms.Button();
+            this.button3 = new System.Windows.Forms.Button();
             this.progressBar2 = new System.Windows.Forms.ProgressBar();
             this.label5 = new System.Windows.Forms.Label();
             this.videoRenderControl = new System.Windows.Forms.Button();
@@ -88,7 +88,7 @@
             this.barMaxAngleNumeric = new System.Windows.Forms.NumericUpDown();
             this.label3 = new System.Windows.Forms.Label();
             this.foregroundCustomizationControl = new System.Windows.Forms.GroupBox();
-            this.button1 = new System.Windows.Forms.Button();
+            this.button2 = new System.Windows.Forms.Button();
             this.soundCustomizationControl = new System.Windows.Forms.GroupBox();
             this.backgroundCustomizationControl.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.preview1)).BeginInit();
@@ -186,7 +186,7 @@
             // backgroundCustomizationControl
             // 
             this.backgroundCustomizationControl.Controls.Add(this.label15);
-            this.backgroundCustomizationControl.Controls.Add(this.applyPropertiesButton);
+            this.backgroundCustomizationControl.Controls.Add(this.button1);
             this.backgroundCustomizationControl.Controls.Add(this.preview1);
             this.backgroundCustomizationControl.Controls.Add(this.label14);
             this.backgroundCustomizationControl.Controls.Add(this.imageButton);
@@ -211,16 +211,16 @@
             this.label15.Text = "preview 1";
             this.label15.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // applyPropertiesButton
+            // button1
             // 
-            this.applyPropertiesButton.Enabled = false;
-            this.applyPropertiesButton.Location = new System.Drawing.Point(12, 228);
-            this.applyPropertiesButton.Name = "applyPropertiesButton";
-            this.applyPropertiesButton.Size = new System.Drawing.Size(108, 84);
-            this.applyPropertiesButton.TabIndex = 12;
-            this.applyPropertiesButton.Text = "Apply Changes";
-            this.applyPropertiesButton.UseVisualStyleBackColor = true;
-            this.applyPropertiesButton.Click += new System.EventHandler(this.applyPropertiesButton_Click);
+            this.button1.Enabled = false;
+            this.button1.Location = new System.Drawing.Point(12, 228);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(108, 84);
+            this.button1.TabIndex = 12;
+            this.button1.Text = "Apply Changes";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // preview1
             // 
@@ -516,7 +516,7 @@
             // 
             // videoCustomizationControl
             // 
-            this.videoCustomizationControl.Controls.Add(this.button2);
+            this.videoCustomizationControl.Controls.Add(this.button3);
             this.videoCustomizationControl.Controls.Add(this.preview3);
             this.videoCustomizationControl.Controls.Add(this.label12);
             this.videoCustomizationControl.Controls.Add(this.progressBar2);
@@ -537,15 +537,15 @@
             this.videoCustomizationControl.TabStop = false;
             this.videoCustomizationControl.Text = "Video Customization";
             // 
-            // button2
+            // button3
             // 
-            this.button2.Enabled = false;
-            this.button2.Location = new System.Drawing.Point(12, 228);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(108, 84);
-            this.button2.TabIndex = 35;
-            this.button2.Text = "Apply Changes";
-            this.button2.UseVisualStyleBackColor = true;
+            this.button3.Enabled = false;
+            this.button3.Location = new System.Drawing.Point(12, 228);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(108, 84);
+            this.button3.TabIndex = 35;
+            this.button3.Text = "Apply Changes";
+            this.button3.UseVisualStyleBackColor = true;
             // 
             // progressBar2
             // 
@@ -802,7 +802,7 @@
             // 
             // foregroundCustomizationControl
             // 
-            this.foregroundCustomizationControl.Controls.Add(this.button1);
+            this.foregroundCustomizationControl.Controls.Add(this.button2);
             this.foregroundCustomizationControl.Controls.Add(this.barMaxAngleNumeric);
             this.foregroundCustomizationControl.Controls.Add(this.label11);
             this.foregroundCustomizationControl.Controls.Add(this.titleHeightBNumeric);
@@ -825,15 +825,16 @@
             this.foregroundCustomizationControl.TabStop = false;
             this.foregroundCustomizationControl.Text = "Foreground Customization";
             // 
-            // button1
+            // button2
             // 
-            this.button1.Enabled = false;
-            this.button1.Location = new System.Drawing.Point(12, 324);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(108, 84);
-            this.button1.TabIndex = 34;
-            this.button1.Text = "Apply Changes";
-            this.button1.UseVisualStyleBackColor = true;
+            this.button2.Enabled = false;
+            this.button2.Location = new System.Drawing.Point(12, 324);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(108, 84);
+            this.button2.TabIndex = 34;
+            this.button2.Text = "Apply Changes";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // soundCustomizationControl
             // 
@@ -948,7 +949,7 @@
         private SaveFileDialog saveProjectDialog;
         private Label label13;
         private Label label14;
-        private Button applyPropertiesButton;
+        private Button button1;
         private NumericUpDown barMaxAngleNumeric;
         private Label label3;
         private NumericUpDown titleHeightBNumeric;
@@ -958,7 +959,7 @@
         private PictureBox preview1;
         private GroupBox foregroundCustomizationControl;
         private GroupBox soundCustomizationControl;
+        private Button button3;
         private Button button2;
-        private Button button1;
     }
 }

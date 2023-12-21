@@ -24,6 +24,8 @@ namespace Megasonic
             {
                 imageButton.Text = value;
                 foregroundCustomizationConditions.SetImageSelectedTrue();
+                backgroundPreviewConditions.SetImageSelectedTrue();
+                foregroundPreviewConditions.SetImageSelectedTrue();
             }
         }
 
@@ -44,6 +46,8 @@ namespace Megasonic
             {
                 lineButton.Text = value;
                 foregroundCustomizationConditions.SetLineSelectedTrue();
+                backgroundPreviewConditions.SetLineSelectedTrue();
+                foregroundPreviewConditions.SetLineSelectedTrue();
             }
         }
 
@@ -212,6 +216,8 @@ namespace Megasonic
         VideoCustomizationConditions videoCustomizationConditions;
         VideoRenderConditions videoRenderConditions;
         SoundAnalyzeConditions soundAnalyzeConditions;
+        BackgroundPreviewConditions backgroundPreviewConditions;
+        ForegroundPreviewConditions foregroundPreviewConditions;
 
         SoundAnalyzer sound;
         VideoRenderer video;
@@ -226,6 +232,8 @@ namespace Megasonic
             soundAnalyzeConditions = new SoundAnalyzeConditions(soundAnalyzeControl);
             videoCustomizationConditions = new VideoCustomizationConditions(videoCustomizationControl, foregroundCustomizationConditions, soundAnalyzeConditions);
             videoRenderConditions = new VideoRenderConditions(videoRenderControl, videoCustomizationConditions);
+            backgroundPreviewConditions = new BackgroundPreviewConditions(button1);
+            foregroundPreviewConditions = new ForegroundPreviewConditions(button2);
 
             windowCombobox.BeginUpdate();
             foreach (string window in SoundAnalyzer.GetWindows())
@@ -234,26 +242,6 @@ namespace Megasonic
             }
             windowCombobox.SelectedIndex = 3;
             windowCombobox.EndUpdate();
-        }
-
-        private void UpdateVideoPreview()
-        {
-            preview2.Image?.Dispose();
-            preview3.Image?.Dispose();
-
-            Bitmap bitmap = video.Background;
-            PointF[] curvePoints = video.CurvePoints;
-
-            using (Graphics g = Graphics.FromImage(bitmap))
-            {
-                g.DrawLines(new Pen(Brushes.Red, 5), curvePoints);
-            }
-
-            preview2.Image = bitmap;
-
-            Bitmap bitmap2 = video.GetFrame(video.GetSourcePoints(video.MaxIndex / 2)).Source;
-            preview3.Image = bitmap2;
-
         }
 
         void RefreshVideoRenderer()
@@ -271,8 +259,6 @@ namespace Megasonic
                 NoteRangeEnd,
                 TitleHeightA,
                 TitleHeightB);
-
-            UpdateVideoPreview();
         }
 
         private void audioButton_Click(object sender, EventArgs e)
@@ -400,14 +386,46 @@ namespace Megasonic
 
         void ParametersChanged(object? sender, EventArgs e)
         {
-            applyPropertiesButton.Enabled = true;
+            button1.Enabled = true;
         }
 
-        private void applyPropertiesButton_Click(object sender, EventArgs e)
+        private void button1_Click(object sender, EventArgs e)
         {
-            applyPropertiesButton.Enabled = false;
+            preview1.Image?.Dispose();
 
-            RefreshVideoRenderer();
+            Bitmap bitmap = DrawingAids.GenerateBackground(ImageFile, FrameSize.Width, FrameSize.Height);
+            PointF[] curvePoints = DrawingAids.GenerateCurvePoints(LineFile, FrameSize.Width, FrameSize.Height);
+
+            using (Graphics g = Graphics.FromImage(bitmap))
+            {
+                g.DrawLines(new Pen(Brushes.Red, 5), curvePoints);
+            }
+
+            preview1.Image = bitmap;
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            preview2.Image?.Dispose();
+
+            Bitmap bitmap = DrawingAids.GenerateBackgroundWithTitle(ImageFile, FrameSize.Width, FrameSize.Height, Title, TitleHeightA, TitleHeightB);
+            PointF[] curvePoints = DrawingAids.GenerateCurvePoints(LineFile, FrameSize.Width, FrameSize.Height);
+
+            using (Graphics g = Graphics.FromImage(bitmap))
+            {
+                g.DrawLines(new Pen(Brushes.Red, 5), curvePoints);
+            }
+
+            preview2.Image = bitmap;
+        }
+
+        private void UpdateVideoPreview()
+        {
+            preview3.Image?.Dispose();
+
+            Bitmap bitmap2 = video.GetFrame(video.GetSourcePoints(video.MaxIndex / 2)).Source;
+            preview3.Image = bitmap2;
+
         }
     }
 }

@@ -115,36 +115,7 @@ namespace Tools
         double definition;
 
         Bitmap background;
-        private bool disposedValue;
-
-        public PointF[] GenerateCurvePoints()
-        {            
-            // maybe want to do curve fluxuations or something cool            
-            SvgDocument document = SvgDocument.Open(svgFilepath);
-
-            int w = frameSize.Width;
-            int h = frameSize.Height;
-            float xRatio = w / document.Width;
-            float yRatio = h / document.Height;
-
-            using (GraphicsPath path = SvgConverter.ToGraphicsPath(document))
-            {
-                var matrixPointA = new PointF(document.Bounds.X * xRatio, document.Bounds.Y * yRatio);
-                var matrixPointB = new PointF((document.Bounds.X + document.Bounds.Width) * xRatio, document.Bounds.Y * yRatio);
-                var matrixPointC = new PointF(document.Bounds.X * xRatio, (document.Bounds.Y + document.Bounds.Height) * yRatio);
-
-                var pathBounds = path.GetBounds();
-
-                Matrix mx = new Matrix(pathBounds, new PointF[] { matrixPointA, matrixPointB, matrixPointC });
-                path.Transform(mx);
-
-                using (Matrix flatteningMx = new Matrix(1, 0, 0, 1, 0, 0))
-                {
-                    path.Flatten(flatteningMx, 0.1f);
-                    return path.PathPoints;
-                }
-            }
-        }
+        private bool disposedValue;        
         
         // TODO: split into soft and hard prepare. soft prepare is really lightweight and runs on initialization, hard prepare runs only when render button clicked.
         // sound processing related stuff is hard preparations. taking them away from initialization means that need to make different intermediate picture rendering
@@ -219,37 +190,13 @@ namespace Tools
             // anti-spaz measures
             decayCountMargin = (float)decayExponent / decayTime;
 
-            curvePoints = GenerateCurvePoints();
+            curvePoints = DrawingAids.GenerateCurvePoints(svgFilepath, frameSize.Width, frameSize.Height);
 
             // calculate length of the curve
             CurveOperations.CalculateLength(curvePoints, out curveLength, out curveLengths);
             definition = frameSize.Width / barRelation * frameSize.Width / curveLength;
 
-            background = new Bitmap(frameSize.Width, frameSize.Height);
-
-            using (Graphics g = Graphics.FromImage(background))
-            {
-                using (System.Drawing.Image image = System.Drawing.Image.FromFile(imageFilepath))
-                {
-                    double scale = Math.Min((double)frameSize.Width / image.Width, (double)frameSize.Height / image.Height);
-                    int scaleWidth = (int)(image.Width * scale);
-                    int scaleHeight = (int)(image.Height * scale);
-
-                    g.Clear(Color.Black);
-                    g.DrawImage(image, (frameSize.Width - scaleWidth) / 2, (frameSize.Height - scaleHeight) / 2, scaleWidth, scaleHeight);
-                }
-
-                float em = frameSize.Width / 35;
-                Font font = new Font(FontFamily.GenericSansSerif, em, FontStyle.Bold);
-                SizeF size = g.MeasureString(title, font);
-                Brush fore = Brushes.White;
-                Brush back = Brushes.Black;
-                float textX = frameSize.Width / 2 - size.Width / 2;
-                float textY = frameSize.Height / titleHeightB * titleHeightA - size.Height / 2;
-
-                g.DrawString(title, font, back, textX + em / 14f, textY + em / 14f);
-                g.DrawString(title, font, fore, textX, textY);
-            }
+            background = DrawingAids.GenerateBackgroundWithTitle(imageFilepath, frameSize.Width, frameSize.Height, title, titleHeightA, titleHeightB);
         }
 
         // this function IS also threadsafe now!!! doesnt modify anything anymore

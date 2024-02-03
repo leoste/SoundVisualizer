@@ -123,7 +123,7 @@ namespace Megasonic
             set { colorLengthNumeric.Value = value; }
         }
 
-        int BarWidth
+        int BarRelation
         {
             get { return (int)barWidthNumeric.Value; }
             set { barWidthNumeric.Value = value; }
@@ -181,7 +181,7 @@ namespace Megasonic
                         DecayTime = DecayTime,
                         ColorStart = ColorStart,
                         ColorLength = ColorLength,
-                        BarWidth = BarWidth,
+                        BarWidth = BarRelation,
                         BarMaxAngle = BarMaxAngle,
                         Title = Title
                     }
@@ -205,7 +205,7 @@ namespace Megasonic
                 DecayTime = value.VideoOutputSettings.DecayTime;
                 ColorStart = value.VideoOutputSettings.ColorStart;
                 ColorLength = value.VideoOutputSettings.ColorLength;
-                BarWidth = value.VideoOutputSettings.BarWidth;
+                BarRelation = value.VideoOutputSettings.BarWidth;
                 Title = value.VideoOutputSettings.Title;
             }
         }
@@ -249,7 +249,7 @@ namespace Megasonic
             video?.Dispose();
 
             video = new VideoRenderer(sound, VideoFile, LineFile, ImageFile, Title, FrameSize,
-                BarWidth,
+                BarRelation,
                 BarMaxAngle,
                 ColorStart,
                 ColorLength,
@@ -393,8 +393,8 @@ namespace Megasonic
         {
             preview1.Image?.Dispose();
 
-            Bitmap bitmap = DrawingAids.GenerateBackground(ImageFile, FrameSize.Width, FrameSize.Height);
-            PointF[] curvePoints = DrawingAids.GenerateCurvePoints(LineFile, FrameSize.Width, FrameSize.Height);
+            Bitmap bitmap = DrawingAids.GetBackground(ImageFile, FrameSize.Width, FrameSize.Height);
+            PointF[] curvePoints = DrawingAids.GetCurvePoints(LineFile, FrameSize.Width, FrameSize.Height);
 
             using (Graphics g = Graphics.FromImage(bitmap))
             {
@@ -408,24 +408,26 @@ namespace Megasonic
         {
             preview2.Image?.Dispose();
 
-            Bitmap bitmap = DrawingAids.GenerateBackgroundWithTitle(ImageFile, FrameSize.Width, FrameSize.Height, Title, TitleHeightA, TitleHeightB);
-            PointF[] curvePoints = DrawingAids.GenerateCurvePoints(LineFile, FrameSize.Width, FrameSize.Height);
+            Bitmap background = DrawingAids.GetBackgroundWithTitle(ImageFile, FrameSize.Width, FrameSize.Height, Title, TitleHeightA, TitleHeightB);
 
-            using (Graphics g = Graphics.FromImage(bitmap))
-            {
-                g.DrawLines(new Pen(Brushes.Red, 5), curvePoints);
-            }
+            PointF[] curvePoints = DrawingAids.GetCurvePoints(LineFile, FrameSize.Width, FrameSize.Height);
+            float columnWidth = DrawingAids.GetColumnWidth(FrameSize.Width, BarRelation);
+
+            // Assume framerate and lookaround cause at this point we don't have them yet + they don't matter here
+            (PointF[] sourcePoints, float visibleNoteSpan, float noteMinoffset) = DrawingAids.GetSimulatedSourcePoints(FrameSize.Width, NoteRangeStart, NoteRangeEnd, BarRelation, 30, 0);
+
+            (double curveLength, double[] curveLengths, double definition) = DrawingAids.GetCurveProperties(curvePoints, FrameSize.Width, BarRelation);
+            float scaleThingy = DrawingAids.GetScaleThingy(ColorLength);
+            Color[] colors = DrawingAids.GetColors(FrameSize.Width, scaleThingy, visibleNoteSpan, noteMinoffset, ColorStart);
+
+            Bitmap bitmap = DrawingAids.GetFrame(sourcePoints, curvePoints, curveLength, curveLengths, background, colors, BarMaxAngle, definition, columnWidth);
 
             preview2.Image = bitmap;
         }
 
-        private void UpdateVideoPreview()
+        private void button3_Click(object sender, EventArgs e)
         {
-            preview3.Image?.Dispose();
-
-            Bitmap bitmap2 = video.GetFrame(video.GetSourcePoints(video.MaxIndex / 2)).Source;
-            preview3.Image = bitmap2;
-
+            
         }
     }
 }

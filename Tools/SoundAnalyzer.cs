@@ -15,8 +15,6 @@ namespace Tools
 {
     public class SoundAnalyzer : Processer
     {
-        private static double baseFrequency = 440;
-
         public static IEnumerable<string> GetWindows()
         {
             MethodInfo[] methodInfos = typeof(MathNet.Numerics.Window).GetMethods();
@@ -127,10 +125,10 @@ namespace Tools
 
             // all note distance stuff
             distances = new float[count + 1];
-            distances[0] = GetNoteDistance(1); //hackfix cause cant calculate distance to 0 frequencies
+            distances[0] = NoteHelper.GetNoteDistance(1); //hackfix cause cant calculate distance to 0 frequencies
             for (int i = 1; i < distances.Length; i++)
             {
-                distances[i] = GetNoteDistance((int)(i * FrequencyFidelity));
+                distances[i] = NoteHelper.GetNoteDistance((int)(i * FrequencyFidelity));
             }
             MaximumNote = distances[distances.Length - 1];
             MinimumNote = distances[0];
@@ -239,28 +237,6 @@ namespace Tools
         private void DeclareComplete()
         {
             OnComplete?.Invoke(this, EventArgs.Empty);
-        }
-
-        private float GetNoteDistance(int comparedFrequency)
-        {
-            float result;
-
-            double divided = comparedFrequency / baseFrequency;
-            double logged = Math.Log(divided, 2);
-            result = (float)(logged * 12);
-
-            return result;
-        }
-
-        private int GetNoteFrequency(float noteDistance)
-        {
-            int result;
-
-            double divided = noteDistance / 12f;
-            double exponented = Math.Pow(divided, 2);
-            result = (int)(exponented * baseFrequency);
-
-            return result;
         }
 
         protected virtual void Dispose(bool disposing)

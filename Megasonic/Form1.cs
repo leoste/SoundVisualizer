@@ -1,4 +1,5 @@
 using MathNet.Numerics.Statistics;
+using Megasonic.Conditions;
 using Microsoft.VisualBasic.Devices;
 using Svg;
 using System.Drawing.Drawing2D;
@@ -22,7 +23,9 @@ namespace Megasonic
             set
             {
                 imageButton.Text = value;
-                videoConditions.ImageSelected = true;
+                foregroundCustomizationConditions.SetImageSelectedTrue();
+                backgroundPreviewConditions.SetImageSelectedTrue();
+                foregroundPreviewConditions.SetImageSelectedTrue();
             }
         }
 
@@ -32,7 +35,7 @@ namespace Megasonic
             set
             {
                 soundButton.Text = value;
-                soundAnalyzeConditions.SoundSelected = true;
+                soundAnalyzeConditions.SetSoundSelectedTrue();
             }
         }
 
@@ -42,7 +45,9 @@ namespace Megasonic
             set
             {
                 lineButton.Text = value;
-                videoConditions.LineSelected = true;
+                foregroundCustomizationConditions.SetLineSelectedTrue();
+                backgroundPreviewConditions.SetLineSelectedTrue();
+                foregroundPreviewConditions.SetLineSelectedTrue();
             }
         }
 
@@ -52,7 +57,7 @@ namespace Megasonic
             set
             {
                 videoButton.Text = value;
-                videoRenderConditions.VideoSelected = true;
+                videoRenderConditions.SetVideoSelectedTrue();
             }
         }
 
@@ -118,7 +123,7 @@ namespace Megasonic
             set { colorLengthNumeric.Value = value; }
         }
 
-        int BarWidth
+        int BarRelation
         {
             get { return (int)barWidthNumeric.Value; }
             set { barWidthNumeric.Value = value; }
@@ -176,7 +181,7 @@ namespace Megasonic
                         DecayTime = DecayTime,
                         ColorStart = ColorStart,
                         ColorLength = ColorLength,
-                        BarWidth = BarWidth,
+                        BarWidth = BarRelation,
                         BarMaxAngle = BarMaxAngle,
                         Title = Title
                     }
@@ -200,14 +205,19 @@ namespace Megasonic
                 DecayTime = value.VideoOutputSettings.DecayTime;
                 ColorStart = value.VideoOutputSettings.ColorStart;
                 ColorLength = value.VideoOutputSettings.ColorLength;
-                BarWidth = value.VideoOutputSettings.BarWidth;
+                BarRelation = value.VideoOutputSettings.BarWidth;
                 Title = value.VideoOutputSettings.Title;
             }
         }
 
-        SoundAnalyzeConditions soundAnalyzeConditions = new SoundAnalyzeConditions();
-        VideoConditions videoConditions = new VideoConditions();
-        VideoRenderConditions videoRenderConditions = new VideoRenderConditions();
+        BackgroundCustomizationConditions backgroundCustomizationConditions;
+        ForegroundCustomizationConditions foregroundCustomizationConditions;
+        SoundCustomizationConditions soundCustomizationConditions;
+        VideoCustomizationConditions videoCustomizationConditions;
+        VideoRenderConditions videoRenderConditions;
+        SoundAnalyzeConditions soundAnalyzeConditions;
+        BackgroundPreviewConditions backgroundPreviewConditions;
+        ForegroundPreviewConditions foregroundPreviewConditions;
 
         SoundAnalyzer sound;
         VideoRenderer video;
@@ -216,9 +226,14 @@ namespace Megasonic
         {
             InitializeComponent();
 
-            soundAnalyzeConditions.ConditionsMetEvent += SoundAnalyzeConditions_ConditionsMetEvent;
-            videoConditions.ConditionsMetEvent += VideoConditions_ConditionsMetEvent;
-            videoRenderConditions.ConditionsMetEvent += VideoRenderConditions_ConditionsMetEvent;
+            backgroundCustomizationConditions = new BackgroundCustomizationConditions(backgroundCustomizationControl);
+            foregroundCustomizationConditions = new ForegroundCustomizationConditions(foregroundCustomizationControl);            
+            soundCustomizationConditions = new SoundCustomizationConditions(soundCustomizationControl);
+            soundAnalyzeConditions = new SoundAnalyzeConditions(soundAnalyzeControl);
+            videoCustomizationConditions = new VideoCustomizationConditions(videoCustomizationControl, foregroundCustomizationConditions, soundAnalyzeConditions);
+            videoRenderConditions = new VideoRenderConditions(videoRenderControl, videoCustomizationConditions);
+            backgroundPreviewConditions = new BackgroundPreviewConditions(button1);
+            foregroundPreviewConditions = new ForegroundPreviewConditions(button2);
 
             windowCombobox.BeginUpdate();
             foreach (string window in SoundAnalyzer.GetWindows())
@@ -229,32 +244,12 @@ namespace Megasonic
             windowCombobox.EndUpdate();
         }
 
-        private void UpdateVideoPreview()
-        {
-            preview1.Image?.Dispose();
-            preview2.Image?.Dispose();
-
-            Bitmap bitmap = video.Background;
-            PointF[] curvePoints = video.CurvePoints;
-
-            using (Graphics g = Graphics.FromImage(bitmap))
-            {
-                g.DrawLines(new Pen(Brushes.Red, 5), curvePoints);
-            }
-
-            preview1.Image = bitmap;
-
-            Bitmap bitmap2 = video.GetFrame(video.GetSourcePoints(video.MaxIndex / 2)).Source;
-            preview2.Image = bitmap2;
-
-        }
-
         void RefreshVideoRenderer()
         {
             video?.Dispose();
 
             video = new VideoRenderer(sound, VideoFile, LineFile, ImageFile, Title, FrameSize,
-                BarWidth,
+                BarRelation,
                 BarMaxAngle,
                 ColorStart,
                 ColorLength,
@@ -264,40 +259,6 @@ namespace Megasonic
                 NoteRangeEnd,
                 TitleHeightA,
                 TitleHeightB);
-
-            UpdateVideoPreview();
-        }
-
-        private void SoundAnalyzeConditions_ConditionsMetEvent(object? sender, EventArgs e)
-        {
-            soundAnalyzeButton.Enabled = true;
-        }
-
-        private void VideoConditions_ConditionsMetEvent(object? sender, EventArgs e)
-        {
-            groupBox4.Enabled = true;
-            groupBox3.Enabled = true;
-            groupBox1.Enabled = false;
-            groupBox2.Enabled = false;
-
-            foreach (Control control in groupBox4.Controls)
-            {
-                if (control is NumericUpDown numericUpDown)
-                {
-                    numericUpDown.ValueChanged += ParametersChanged;
-                }
-                else if (control is TextBox textBox)
-                {
-                    textBox.TextChanged += ParametersChanged;
-                }
-            }
-
-            RefreshVideoRenderer();
-        }
-
-        private void VideoRenderConditions_ConditionsMetEvent(object? sender, EventArgs e)
-        {
-            videoRenderButton.Enabled = true;
         }
 
         private void audioButton_Click(object sender, EventArgs e)
@@ -326,8 +287,7 @@ namespace Megasonic
 
         private void soundAnalyze_Click(object sender, EventArgs e)
         {
-            groupBox2.Enabled = false;
-            soundAnalyzeButton.Enabled = false;
+            soundCustomizationConditions.SetSoundNotAnalyzedFalse();
 
             sound = new SoundAnalyzer(SoundFile, FrameRate, Lookahead, Window);
             sound.OnProgress += Audio_OnProgress;
@@ -339,7 +299,7 @@ namespace Megasonic
         {
             Invoke((MethodInvoker)delegate
             {
-                videoConditions.SoundAnalyzed = true;
+                videoCustomizationConditions.SetSoundAnalyzedTrue();
             });
         }
 
@@ -358,14 +318,16 @@ namespace Megasonic
             if (videoDialog.ShowDialog() == DialogResult.OK)
             {
                 VideoFile = videoDialog.FileName;
-                videoRenderConditions.VideoSelected = true;
             }            
         }
 
         private void videoRenderButton_Click(object sender, EventArgs e)
         {
-            groupBox3.Enabled = false;
-            videoRenderButton.Enabled = false;
+            RefreshVideoRenderer();
+
+            backgroundCustomizationConditions.SetVideoNotRenderedFalse();
+            videoCustomizationConditions.SetVideoNotRenderedFalse();
+            foregroundCustomizationConditions.SetVideoNotRenderedFalse();
 
             video.OnProgress += Video_OnProgress;
             video.OnComplete += Video_OnComplete;
@@ -424,14 +386,48 @@ namespace Megasonic
 
         void ParametersChanged(object? sender, EventArgs e)
         {
-            applyPropertiesButton.Enabled = true;
+            button1.Enabled = true;
         }
 
-        private void applyPropertiesButton_Click(object sender, EventArgs e)
+        private void button1_Click(object sender, EventArgs e)
         {
-            applyPropertiesButton.Enabled = false;
+            preview1.Image?.Dispose();
 
-            RefreshVideoRenderer();
+            Bitmap bitmap = DrawingAids.GetBackground(ImageFile, FrameSize.Width, FrameSize.Height);
+            PointF[] curvePoints = DrawingAids.GetCurvePoints(LineFile, FrameSize.Width, FrameSize.Height);
+
+            using (Graphics g = Graphics.FromImage(bitmap))
+            {
+                g.DrawLines(new Pen(Brushes.Red, 5), curvePoints);
+            }
+
+            preview1.Image = bitmap;
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            preview2.Image?.Dispose();
+
+            Bitmap background = DrawingAids.GetBackgroundWithTitle(ImageFile, FrameSize.Width, FrameSize.Height, Title, TitleHeightA, TitleHeightB);
+
+            PointF[] curvePoints = DrawingAids.GetCurvePoints(LineFile, FrameSize.Width, FrameSize.Height);
+            float columnWidth = DrawingAids.GetColumnWidth(FrameSize.Width, BarRelation);
+
+            // Assume framerate and lookaround cause at this point we don't have them yet + they don't matter here
+            (PointF[] sourcePoints, float visibleNoteSpan, float noteMinoffset) = DrawingAids.GetSimulatedSourcePoints(FrameSize.Width, NoteRangeStart, NoteRangeEnd, BarRelation, 30, 0);
+
+            (double curveLength, double[] curveLengths, double definition) = DrawingAids.GetCurveProperties(curvePoints, FrameSize.Width, BarRelation);
+            float scaleThingy = DrawingAids.GetScaleThingy(ColorLength);
+            Color[] colors = DrawingAids.GetColors(FrameSize.Width, scaleThingy, visibleNoteSpan, noteMinoffset, ColorStart);
+
+            Bitmap bitmap = DrawingAids.GetFrame(sourcePoints, curvePoints, curveLength, curveLengths, background, colors, BarMaxAngle, definition, columnWidth);
+
+            preview2.Image = bitmap;
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Not implemented yet");
         }
     }
 }

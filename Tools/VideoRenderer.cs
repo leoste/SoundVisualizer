@@ -1,23 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using FFMpegCore;
+﻿using FFMpegCore;
 using FFMpegCore.Pipes;
 using FFMpegCore.Extend;
-using System.Drawing;
-using System.IO;
 using ColorMine.ColorSpaces;
-using System.Drawing.Drawing2D;
 using System.Collections.Concurrent;
 using System.ComponentModel;
-using System.Threading;
-using Svg;
 using FFMpegCore.Enums;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrayNotify;
-using System.Reflection.Metadata;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Tools
 {
@@ -81,10 +68,8 @@ namespace Tools
             Prepare();
         }
 
-        float columnRelation;
         float scaleThingy;
 
-        float halfHeight;
         float columnWidth;
         float columnHalfWidth;
         float noteMinoffset;
@@ -99,7 +84,6 @@ namespace Tools
         //float scalealpha;
 
         Color[] colors;
-        float colorRelation;
 
         float[] x;
         int startIndex;
@@ -115,47 +99,16 @@ namespace Tools
         double definition;
 
         Bitmap background;
-        private bool disposedValue;
-
-        public PointF[] GenerateCurvePoints()
-        {            
-            // maybe want to do curve fluxuations or something cool            
-            SvgDocument document = SvgDocument.Open(svgFilepath);
-
-            int w = frameSize.Width;
-            int h = frameSize.Height;
-            float xRatio = w / document.Width;
-            float yRatio = h / document.Height;
-
-            using (GraphicsPath path = SvgConverter.ToGraphicsPath(document))
-            {
-                var matrixPointA = new PointF(document.Bounds.X * xRatio, document.Bounds.Y * yRatio);
-                var matrixPointB = new PointF((document.Bounds.X + document.Bounds.Width) * xRatio, document.Bounds.Y * yRatio);
-                var matrixPointC = new PointF(document.Bounds.X * xRatio, (document.Bounds.Y + document.Bounds.Height) * yRatio);
-
-                var pathBounds = path.GetBounds();
-
-                Matrix mx = new Matrix(pathBounds, new PointF[] { matrixPointA, matrixPointB, matrixPointC });
-                path.Transform(mx);
-
-                using (Matrix flatteningMx = new Matrix(1, 0, 0, 1, 0, 0))
-                {
-                    path.Flatten(flatteningMx, 0.1f);
-                    return path.PathPoints;
-                }
-            }
-        }
+        private bool disposedValue;        
         
         // TODO: split into soft and hard prepare. soft prepare is really lightweight and runs on initialization, hard prepare runs only when render button clicked.
         // sound processing related stuff is hard preparations. taking them away from initialization means that need to make different intermediate picture rendering
         // methods to still allow for previews.
         void Prepare()
         {
-            columnRelation = 1f / barRelation;
-            scaleThingy = colorLengthDegree / 6;
+            scaleThingy = DrawingAids.GetScaleThingy(colorLengthDegree);
 
-            halfHeight = frameSize.Height / 2f;
-            columnWidth = frameSize.Width * columnRelation;
+            columnWidth = DrawingAids.GetColumnWidth(frameSize.Width, barRelation);
             columnHalfWidth = columnWidth / 2;
             noteMinoffset = -(sound.MinimumNote - minNoteBorder);
             noteMaxOffset = (sound.MaximumNote - maxNoteBorder);
@@ -168,26 +121,7 @@ namespace Tools
             scaley = frameSize.Width / 7f / basey; //width is 7x height ...
             //scalealpha = 255 / basey;
 
-            //color preparation for image calculation            
-            colors = new Color[frameSize.Width]; //theres only really point in calculating color for each pixel
-            colorRelation = visibleNoteSpan / colors.Length;
-            Hsv hsv = new Hsv
-            {
-                S = 1,
-                V = 1
-            };
-            for (int i = 0; i < colors.Length; i++)
-            {
-                double thingy = (i * colorRelation + noteMinoffset) % 12;
-                if (thingy < 0) thingy = 12 + thingy; // correct negative numbers
-                if (thingy > 6) thingy = 12 - thingy; // make it go backwards
-                thingy = thingy * scaleThingy; //divide only by 6 cause thats the max number can go to thanks to backwards
-                thingy = (thingy + colorStartDegree) % 360;
-                hsv.H = thingy;
-                IRgb rgb = hsv.ToRgb();
-                Color c = Color.FromArgb(255, (int)rgb.R, (int)rgb.G, (int)rgb.B);
-                colors[i] = c;
-            }
+            colors = DrawingAids.GetColors(frameSize.Width, scaleThingy, visibleNoteSpan, noteMinoffset, colorStartDegree);
 
             //calculate x, find edges for notes that are actually visible
             x = new float[sound.FrequencyCount];
@@ -219,37 +153,11 @@ namespace Tools
             // anti-spaz measures
             decayCountMargin = (float)decayExponent / decayTime;
 
-            curvePoints = GenerateCurvePoints();
+            curvePoints = DrawingAids.GetCurvePoints(svgFilepath, frameSize.Width, frameSize.Height);
 
-            // calculate length of the curve
-            CurveOperations.CalculateLength(curvePoints, out curveLength, out curveLengths);
-            definition = frameSize.Width / barRelation * frameSize.Width / curveLength;
+            (curveLength, curveLengths, definition) = DrawingAids.GetCurveProperties(curvePoints, frameSize.Width, barRelation);
 
-            background = new Bitmap(frameSize.Width, frameSize.Height);
-
-            using (Graphics g = Graphics.FromImage(background))
-            {
-                using (System.Drawing.Image image = System.Drawing.Image.FromFile(imageFilepath))
-                {
-                    double scale = Math.Min((double)frameSize.Width / image.Width, (double)frameSize.Height / image.Height);
-                    int scaleWidth = (int)(image.Width * scale);
-                    int scaleHeight = (int)(image.Height * scale);
-
-                    g.Clear(Color.Black);
-                    g.DrawImage(image, (frameSize.Width - scaleWidth) / 2, (frameSize.Height - scaleHeight) / 2, scaleWidth, scaleHeight);
-                }
-
-                float em = frameSize.Width / 35;
-                Font font = new Font(FontFamily.GenericSansSerif, em, FontStyle.Bold);
-                SizeF size = g.MeasureString(title, font);
-                Brush fore = Brushes.White;
-                Brush back = Brushes.Black;
-                float textX = frameSize.Width / 2 - size.Width / 2;
-                float textY = frameSize.Height / titleHeightB * titleHeightA - size.Height / 2;
-
-                g.DrawString(title, font, back, textX + em / 14f, textY + em / 14f);
-                g.DrawString(title, font, fore, textX, textY);
-            }
+            background = DrawingAids.GetBackgroundWithTitle(imageFilepath, frameSize.Width, frameSize.Height, title, titleHeightA, titleHeightB);
         }
 
         // this function IS also threadsafe now!!! doesnt modify anything anymore
@@ -291,33 +199,8 @@ namespace Tools
         // this function IS threadsafe!!! doesnt modify anything
         public BitmapVideoFrameWrapper GetFrame(PointF[] sourcePoints)
         {
-            PointF[] uniformPoints = CurveOperations.SpecifyHorizontally(sourcePoints, definition);
-
-            // curvePoints - svg path
-            // uniform points - audio visualization on a straight line
-            // curve - visualized onto 
-
-            CurveMorpher curve = new CurveMorpher(curvePoints, uniformPoints, curveLength, curveLengths, false, barMaxAngle);
-
-            // i dont use "using" cause bitmap needs to stay for a while until its really used, then i dispose it
-            Bitmap bitmap;
-            lock (background)
-            {
-                bitmap = (Bitmap)background.Clone();
-            }
-            using (Graphics g = Graphics.FromImage(bitmap))
-            {
-                for (int k = 0; k < uniformPoints.Length; k++)
-                {
-                    Color c = colors[(int)uniformPoints[k].X];
-                    Brush brush = new SolidBrush(c);
-
-                    PointF a = curve.Matrix.Points[k];
-                    PointF b = curve.Matrix.GetSecondPoint(k, uniformPoints[k].Y);
-                    g.DrawLine(new Pen(brush, columnWidth), a, b);
-                }
-            }
-            BitmapVideoFrameWrapper wrapper = new BitmapVideoFrameWrapper(bitmap);
+            Bitmap bitmap = DrawingAids.GetFrame(sourcePoints, curvePoints, curveLength, curveLengths, background, colors, barMaxAngle, definition, columnWidth);            
+            BitmapVideoFrameWrapper wrapper = new(bitmap);
             return wrapper;
         }
 

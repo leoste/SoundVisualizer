@@ -397,7 +397,7 @@ namespace Megasonic
             PointF[] curvePoints = DrawingAids.GetCurvePoints(LineFile, FrameSize.Width, FrameSize.Height);
 
             using (Graphics g = Graphics.FromImage(bitmap))
-            {
+            {                
                 g.DrawLines(new Pen(Brushes.Red, 5), curvePoints);
             }
 

@@ -7,28 +7,33 @@ namespace Tools
     {
         public static GraphicsPath ToGraphicsPath(SvgDocument document)
         {
-            GraphicsPath path;
+            GraphicsPath mainPath = new GraphicsPath();
 
             RectangleF rect = document.Path.GetBounds();
 
             using (GraphicsPathIterator iterator = new GraphicsPathIterator(document.Path))
             {
-                iterator.NextSubpath(out int startIndex, out int endIndex, out bool isClosed);
-                int takeCount = endIndex + 1;
+                for (int i = 0; i < iterator.SubpathCount - 2; i++)
+                {                    
+                    iterator.NextSubpath(out int startIndex, out int endIndex, out bool isClosed);
+                    int takeCount = endIndex - startIndex + 1;
 
-                PointF[] newPathPoints = document.Path.PathPoints.Take(takeCount).ToArray();
-                byte[] newPathTypes = document.Path.PathTypes.Take(takeCount).ToArray();
+                    PointF[] newPathPoints = document.Path.PathPoints.Skip(startIndex).Take(takeCount).ToArray();
+                    byte[] newPathTypes = document.Path.PathTypes.Skip(startIndex).Take(takeCount).ToArray();
 
-                path = new GraphicsPath(newPathPoints, newPathTypes, document.Path.FillMode);
+                    GraphicsPath path = new GraphicsPath(newPathPoints.ToArray(), newPathTypes.ToArray(), FillMode.Winding);
 
-                path.Transform(new Matrix(rect, new PointF[] {
-                    new PointF(0, 0),
-                    new PointF(rect.Width, 0),
-                    new PointF(0, rect.Height)
-                }));
+                    path.Transform(new Matrix(rect, new PointF[] {
+                        new PointF(0, 0),
+                        new PointF(rect.Width, 0),
+                        new PointF(0, rect.Height)
+                    }));
+
+                    mainPath.AddPath(path, false);
+                }
             }
 
-            return path;
+            return mainPath;
         }
     }
 }

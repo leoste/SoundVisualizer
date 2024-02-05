@@ -86,7 +86,7 @@ namespace Tools
         Color[] colors;
 
         float[] x;
-        int startIndex;
+        int frequencyStartIndex;
         int endIndex;
 
         int visibleLength;
@@ -94,6 +94,7 @@ namespace Tools
         float decayCountMargin;
 
         PointF[] curvePoints;
+        byte[] curveTypes;
         double curveLength;
         double[] curveLengths;
         double definition;
@@ -125,7 +126,7 @@ namespace Tools
 
             //calculate x, find edges for notes that are actually visible
             x = new float[sound.FrequencyCount];
-            startIndex = 0; //index of first note we can start on
+            frequencyStartIndex = 0; //index of first note we can start on
             endIndex = sound.FrequencyCount; // index of last note used
             for (int i = 0; i < sound.FrequencyCount; i++)
             {
@@ -134,7 +135,7 @@ namespace Tools
                 {
                     if (sound.NoteSpans[i].start >= minNoteBorder)
                     {
-                        startIndex = i;
+                        frequencyStartIndex = i;
                         startIsntSet = false;
                     }
                 }
@@ -148,12 +149,12 @@ namespace Tools
                 }
             }
 
-            visibleLength = endIndex - startIndex;
+            visibleLength = endIndex - frequencyStartIndex;
 
             // anti-spaz measures
             decayCountMargin = (float)decayExponent / decayTime;
 
-            curvePoints = DrawingAids.GetCurvePoints(svgFilepath, frameSize.Width, frameSize.Height);
+            (curvePoints, curveTypes) = DrawingAids.GetCurve(svgFilepath, frameSize.Width, frameSize.Height);
 
             (curveLength, curveLengths, definition) = DrawingAids.GetCurveProperties(curvePoints, frameSize.Width, barRelation);
 
@@ -161,18 +162,18 @@ namespace Tools
         }
 
         // this function IS also threadsafe now!!! doesnt modify anything anymore
-        public PointF[] GetSourcePoints(int index)
+        public PointF[] getProcessedFrequencyPoints(int frameIndex)
         {
             // first get the points that we do know
-            PointF[] sourcePoints = new PointF[visibleLength];
+            PointF[] frequencyPoints = new PointF[visibleLength];
             for (int k = 0; k < visibleLength; k++)
             {
-                int correctedIndex = k + startIndex;
-                float baseh = sound.Frames[index].frequencies[correctedIndex];
+                int correctedFrequencyIndex = k + frequencyStartIndex;
+                float baseh = sound.Frames[frameIndex].frequencies[correctedFrequencyIndex];
 
-                for (int l = 1; l < Math.Min(index, decayTime); l++)
+                for (int l = 1; l < Math.Min(frameIndex, decayTime); l++)
                 {
-                    float oldBaseh = sound.Frames[index - l].frequencies[correctedIndex];
+                    float oldBaseh = sound.Frames[frameIndex - l].frequencies[correctedFrequencyIndex];
                     if (oldBaseh >= baseh)
                     {
                         float decayCounts_k = decayExponent - l * decayCountMargin;
@@ -186,20 +187,20 @@ namespace Tools
                 }
 
                 float h = baseh * scaley;
-                sourcePoints[k] = new PointF(x[correctedIndex], h);
+                frequencyPoints[k] = new PointF(x[correctedFrequencyIndex], h);
             }
 
             // really bad hackfix that loses very slight definition and is inaccurate, but....
             // visually isnt that different + its easier than reworking everything to not have this issue
-            sourcePoints[0].X = 0;
+            frequencyPoints[0].X = 0;
 
-            return sourcePoints;
+            return frequencyPoints;
         }
 
         // this function IS threadsafe!!! doesnt modify anything
-        public BitmapVideoFrameWrapper GetFrame(PointF[] sourcePoints)
+        public BitmapVideoFrameWrapper GetFrame(PointF[] frequencyPoints)
         {
-            Bitmap bitmap = DrawingAids.GetFrame(sourcePoints, curvePoints, curveLength, curveLengths, background, colors, barMaxAngle, definition, columnWidth);            
+            Bitmap bitmap = DrawingAids.GetFrame(frequencyPoints, curvePoints, curveTypes, curveLength, curveLengths, background, colors, barMaxAngle, definition, columnWidth);            
             BitmapVideoFrameWrapper wrapper = new(bitmap);
             return wrapper;
         }
@@ -246,8 +247,8 @@ namespace Tools
                     workLocks[index].WaitOne();
                     workLocks[index].Dispose();
 
-                    PointF[] sourcePoints = GetSourcePoints(index);
-                    BitmapVideoFrameWrapper wrapper = GetFrame(sourcePoints);
+                    PointF[] frequencyPoints = getProcessedFrequencyPoints(index);
+                    BitmapVideoFrameWrapper wrapper = GetFrame(frequencyPoints);
 
                     bool success = dictionary.TryAdd(index, wrapper);
                     AnalyzeSuccess(success);

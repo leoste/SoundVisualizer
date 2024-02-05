@@ -13,10 +13,10 @@ namespace Tools
     {
         private readonly double rad90deg = 1.5707963267948966192313216916398; // 90 degrees in radians
 
-        private PointF[] sourcePoints;
-        private PointF[] morphingPoints;
+        private PointF[] morphedPoints;        
 
-        private PointF[] curve;
+        private PointF[] curvePoints;
+        private byte[] curveTypes;
         private double curveLength;
         private double[] curveLengths;
         private double maxAngleChange;
@@ -24,12 +24,11 @@ namespace Tools
         private VectorMatrix matrix;
 
         public VectorMatrix Matrix { get { return matrix; } }
-        public PointF[] BaseCurve { get { return curve; } }
+        public PointF[] BaseCurve { get { return curvePoints; } }
 
-        public CurveMorpher(PointF[] sourcePoints, PointF[] morphedPoints, double curveLength, double[] curveLengths, bool isCurve = true, double maxAngleChange = 1)
+        public CurveMorpher(PointF[] sourcePoints, byte[] sourceTypes, PointF[] morphedPoints, double curveLength, double[] curveLengths, bool isCurve = true, double maxAngleChange = 1)
         {
-            this.sourcePoints = sourcePoints;
-            this.morphingPoints = morphedPoints;
+            this.morphedPoints = morphedPoints;
             this.curveLength = curveLength;
             this.curveLengths = curveLengths;
             this.maxAngleChange = maxAngleChange;
@@ -37,28 +36,37 @@ namespace Tools
             if (isCurve)
             {
                 // calculate base curve from source points
-                using (GraphicsPath path = new GraphicsPath())
+                using (GraphicsPath path = new GraphicsPath(sourcePoints, sourceTypes))
                 {
-                    path.AddLines(this.sourcePoints);
                     using (Matrix mx = new Matrix(1, 0, 0, 1, 0, 0))
                     {
                         path.Flatten(mx, 0.1f);
-                        curve = path.PathPoints;
+                        curvePoints = path.PathPoints;
+                        curveTypes = path.PathTypes;
                     }
                 }
             }
             else
             {
-                curve = sourcePoints;
+                curvePoints = sourcePoints;
+                curveTypes = sourceTypes;
             }
 
             // calculate equal distance points on the curve
             DivideCurve();
         }
 
+        double Get3PointAngle(PointF left, PointF middle, PointF right)
+        {
+            double leftAngle = Math.Atan2(middle.Y - left.Y, middle.X - left.X);
+            double rightAngle = Math.Atan2(right.Y - middle.Y, right.X - middle.X);
+            double angle = (leftAngle + rightAngle) / 2 - rad90deg;
+            return angle;
+        }
+
         void DivideCurve()
         {
-            int segmentPointCount = morphingPoints.Length;
+            int segmentPointCount = morphedPoints.Length;
 
             PointF[] points = new PointF[segmentPointCount];
             double[] angles = new double[segmentPointCount];
@@ -69,17 +77,9 @@ namespace Tools
             int dividedIndex = 0;
             int lastCurveIndex = 0;
 
-            double Get3PointAngle(PointF left, PointF middle, PointF right)
-            {
-                double leftAngle = Math.Atan2(middle.Y - left.Y, middle.X - left.X);
-                double rightAngle = Math.Atan2(right.Y - middle.Y, right.X - middle.X);
-                double angle = (leftAngle + rightAngle) / 2 - rad90deg;
-                return angle;
-            }
-
             while (dividedIndex < segmentPointCount)
             {
-                double currentGoal = (double)morphingPoints[dividedIndex].X / morphingPoints[morphingPoints.Length - 1].X * curveLength;
+                double currentGoal = (double)morphedPoints[dividedIndex].X / morphedPoints[morphedPoints.Length - 1].X * curveLength;
 
                 if (currentPos < currentGoal - 0.0000001)
                 {
@@ -92,8 +92,8 @@ namespace Tools
                 {
                     double diff = currentPos - currentGoal;
                     double relation = 1 - diff / lastLength;
-                    PointF a = curve[lastCurveIndex];
-                    PointF b = curve[curveIndex];
+                    PointF a = curvePoints[lastCurveIndex];
+                    PointF b = curvePoints[curveIndex];
                     PointF c = new PointF(
                         (float)(a.X + (b.X - a.X) * relation),
                         (float)(a.Y + (b.Y - a.Y) * relation)
@@ -108,7 +108,7 @@ namespace Tools
 
             // corners dont get calculated in algorithm, for points its pointless for angles cant do 3 point calculation, only 2
             // TODO: Need to think of good way to make first point relate to last point, same way like all points usually relate
-            points[0] = curve[0];
+            points[0] = curvePoints[0];
             // This would theoretically make the connection between two parts seamless
             angles[0] = Get3PointAngle(points[segmentPointCount - 1], points[0], points[1]);
 

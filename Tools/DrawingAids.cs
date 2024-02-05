@@ -50,7 +50,7 @@ namespace Tools
             return background;
         }
 
-        public static PointF[] GetCurvePoints(string svgFilepath, int width, int height)
+        public static (PointF[] points, byte[] types) GetCurve(string svgFilepath, int width, int height)
         {
             // maybe want to do curve fluxuations or something cool            
             SvgDocument document = SvgDocument.Open(svgFilepath);
@@ -73,21 +73,22 @@ namespace Tools
 
                 using (Matrix flatteningMx = new Matrix(1, 0, 0, 1, 0, 0))
                 {
-                    path.Flatten(flatteningMx, 0.1f);
-                    return path.PathPoints;
+                    path.Flatten(flatteningMx, 0.1f);                    
                 }
+
+                return (path.PathPoints, path.PathTypes);
             }
         }
 
-        public static Bitmap GetFrame(PointF[] sourcePoints, PointF[] curvePoints, double curveLength, double[] curveLengths, Bitmap background, Color[] colors, int barMaxAngle, double definition, float columnWidth)
+        public static Bitmap GetFrame(PointF[] frequencyPoints, PointF[] curvePoints, byte[] curveTypes, double curveLength, double[] curveLengths, Bitmap background, Color[] colors, int barMaxAngle, double definition, float columnWidth)
         {
-            PointF[] uniformPoints = CurveOperations.SpecifyHorizontally(sourcePoints, definition);
+            PointF[] uniformPoints = CurveOperations.SpecifyHorizontally(frequencyPoints, definition);
 
             // curvePoints - svg path
             // uniform points - audio visualization on a straight line
             // curve - visualized onto 
 
-            CurveMorpher curve = new CurveMorpher(curvePoints, uniformPoints, curveLength, curveLengths, false, barMaxAngle);
+            CurveMorpher curve = new CurveMorpher(curvePoints, curveTypes, uniformPoints, curveLength, curveLengths, false, barMaxAngle);
 
             // i dont use "using" cause bitmap needs to stay for a while until its really used, then i dispose it
             Bitmap bitmap;
@@ -155,7 +156,7 @@ namespace Tools
             return (curveLength, curveLengths, definition);
         }
 
-        public static (PointF[] sourcePoints, float visibleNoteSpan, float noteMinoffset) GetSimulatedSourcePoints(int width, int minNoteBorder, int maxNoteBorder, int barRelation, int frameRate, int lookaround)
+        public static (PointF[] frequencyPoints, float visibleNoteSpan, float noteMinoffset) GetSimulatedProcessedFrequencyPoints(int width, int minNoteBorder, int maxNoteBorder, int barRelation, int frameRate, int lookaround)
         {
             // Part 1: sound. save for minor changes, this is heavy copy-paste from SoundAnalyzer with the assumption it won't change much
             // + it was too hard to refactor into reusable simulatable pieces for me to bother
@@ -231,21 +232,21 @@ namespace Tools
             int visibleLength = endIndex - startIndex;
 
             // first get the points that we do know
-            PointF[] sourcePoints = new PointF[visibleLength];
+            PointF[] frequencyPoints = new PointF[visibleLength];
             for (int k = 0; k < visibleLength; k++)
             {
                 int correctedIndex = k + startIndex;
                 float baseh = 1;
 
                 float h = baseh * width / 7f;
-                sourcePoints[k] = new PointF(x[correctedIndex], h);
+                frequencyPoints[k] = new PointF(x[correctedIndex], h);
             }
 
             // really bad hackfix that loses very slight definition and is inaccurate, but....
             // visually isnt that different + its easier than reworking everything to not have this issue
-            sourcePoints[0].X = 0;
+            frequencyPoints[0].X = 0;
 
-            return (sourcePoints, visibleNoteSpan, noteMinoffset);
+            return (frequencyPoints, visibleNoteSpan, noteMinoffset);
         }
     }
 }

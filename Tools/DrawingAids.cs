@@ -149,9 +149,9 @@ namespace Tools
             return scaleThingy;
         }
 
-        public static (double curveLength, double[] curveLengths, double definition) GetCurveProperties(PointF[] curvePoints, int width, int barRelation)
+        public static (double curveLength, double[] curveLengths, double definition) GetCurveProperties(PointF[] curvePoints, byte[] curveTypes, int width, int barRelation)
         {
-            CurveOperations.CalculateLength(curvePoints, out double curveLength, out double[] curveLengths);
+            CurveOperations.CalculateLength(curvePoints, curveTypes, out double curveLength, out double[] curveLengths);
             double definition = width / barRelation * width / curveLength;
             return (curveLength, curveLengths, definition);
         }

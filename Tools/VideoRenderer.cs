@@ -156,7 +156,7 @@ namespace Tools
 
             (curvePoints, curveTypes) = DrawingAids.GetCurve(svgFilepath, frameSize.Width, frameSize.Height);
 
-            (curveLength, curveLengths, definition) = DrawingAids.GetCurveProperties(curvePoints, frameSize.Width, barRelation);
+            (curveLength, curveLengths, definition) = DrawingAids.GetCurveProperties(curvePoints, curveTypes, frameSize.Width, barRelation);
 
             background = DrawingAids.GetBackgroundWithTitle(imageFilepath, frameSize.Width, frameSize.Height, title, titleHeightA, titleHeightB);
         }

@@ -63,8 +63,11 @@ namespace Tools
 
         // the reverse loop with --i integrated into calculations saves really tiny bit of efficiency.
         // if it was the right way, would have to subtract again when writing into curveLengths
-        public static void CalculateLength(PointF[] curvePoints, out double curveLength, out double[] curveLengths)
+        public static void CalculateLength(PointF[] curvePoints, byte[] curveTypes, out double curveLength, out double[] curveLengths)
         {
+            // right now when theres distance between two segments, that gets counted as curve length.
+            // that should not be counted at all, as there is no curve in there. that breaks curve morphing later.
+
             curveLength = 0;
             curveLengths = new double[curvePoints.Length - 1];
 
@@ -73,7 +76,17 @@ namespace Tools
                 PointF b = curvePoints[i];
                 PointF a = curvePoints[--i];
 
-                curveLengths[i] = Math.Sqrt(Math.Pow(b.X - a.X, 2) + Math.Pow(b.Y - a.Y, 2));
+                double length;
+                if (curveTypes[i + 1] == 0)
+                {
+                    length = 0;
+                }
+                else
+                {
+                    length = Math.Sqrt(Math.Pow(b.X - a.X, 2) + Math.Pow(b.Y - a.Y, 2));
+                }
+
+                curveLengths[i] = length;
                 curveLength += curveLengths[i];
             }
         }

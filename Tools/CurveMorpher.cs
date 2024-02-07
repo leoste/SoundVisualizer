@@ -76,31 +76,68 @@ namespace Tools
             int curveIndex = 0;
             int dividedIndex = 0;
             int lastCurveIndex = 0;
+            double currentGoal;
+            PointF middle;
+            double angle;
+
+            void bumpCurveIndex()
+            {
+                currentPos += curveLengths[curveIndex];
+                lastLength = curveLengths[curveIndex];
+                lastCurveIndex = curveIndex;
+                curveIndex++;
+            }
+
+            void setPointAndAngle()
+            {
+                double diff = currentPos - currentGoal;
+                double relation = 1 - diff / lastLength;
+                PointF left = curvePoints[lastCurveIndex];
+                PointF right = curvePoints[curveIndex];
+                middle = new PointF(
+                    (float)(left.X + (right.X - left.X) * relation),
+                    (float)(left.Y + (right.Y - left.Y) * relation)
+                );
+                angle = Get3PointAngle(left, middle, right);
+            }
+
+            void setCurrentGoal()
+            {
+                currentGoal = (double)morphedPoints[dividedIndex].X / morphedPoints[morphedPoints.Length - 1].X * curveLength;
+            }
 
             while (dividedIndex < segmentPointCount)
             {
-                double currentGoal = (double)morphedPoints[dividedIndex].X / morphedPoints[morphedPoints.Length - 1].X * curveLength;
+                setCurrentGoal();
 
-                if (currentPos < currentGoal - 0.0000001)
+                while (currentPos < currentGoal - 0.0000001)
                 {
-                    currentPos += curveLengths[curveIndex];
-                    lastLength = curveLengths[curveIndex];
-                    lastCurveIndex = curveIndex;
-                    curveIndex++;
+                    bumpCurveIndex();
+                }
+
+                if (curveTypes[curveIndex] == 0 && curveIndex > 0)
+                {
+                    bumpCurveIndex();
+
+                    dividedIndex++;
+                    setCurrentGoal();
+
+                    points[dividedIndex - 1] = curvePoints[lastCurveIndex];
+                    points[dividedIndex] = curvePoints[curveIndex];
+
+                    setPointAndAngle();
+
+                    angles[dividedIndex] = angle;
+                    angles[dividedIndex - 1] = angle;
+
+                    dividedIndex++;
                 }
                 else
                 {
-                    double diff = currentPos - currentGoal;
-                    double relation = 1 - diff / lastLength;
-                    PointF a = curvePoints[lastCurveIndex];
-                    PointF b = curvePoints[curveIndex];
-                    PointF c = new PointF(
-                        (float)(a.X + (b.X - a.X) * relation),
-                        (float)(a.Y + (b.Y - a.Y) * relation)
-                    );
-                    points[dividedIndex] = c;
+                    setPointAndAngle();
 
-                    angles[dividedIndex] = Get3PointAngle(a, c, b);
+                    points[dividedIndex] = middle;
+                    angles[dividedIndex] = angle;
 
                     dividedIndex++;
                 }

@@ -416,7 +416,7 @@ namespace Megasonic
             // Assume framerate and lookaround cause at this point we don't have them yet + they don't matter here
             (PointF[] frequencyPoints, float visibleNoteSpan, float noteMinoffset) = DrawingAids.GetSimulatedProcessedFrequencyPoints(FrameSize.Width, NoteRangeStart, NoteRangeEnd, BarRelation, 30, 0);
 
-            (double curveLength, double[] curveLengths, double definition) = DrawingAids.GetCurveProperties(curvePoints, FrameSize.Width, BarRelation);
+            (double curveLength, double[] curveLengths, double definition) = DrawingAids.GetCurveProperties(curvePoints, curveTypes, FrameSize.Width, BarRelation);
             float scaleThingy = DrawingAids.GetScaleThingy(ColorLength);
             Color[] colors = DrawingAids.GetColors(FrameSize.Width, scaleThingy, visibleNoteSpan, noteMinoffset, ColorStart);
 

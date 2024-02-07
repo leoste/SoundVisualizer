@@ -183,7 +183,9 @@ namespace Megasonic
                         ColorLength = ColorLength,
                         BarWidth = BarRelation,
                         BarMaxAngle = BarMaxAngle,
-                        Title = Title
+                        Title = Title,
+                        TitleHeightA = TitleHeightA,
+                        TitleHeightB = TitleHeightB
                     }
                 };
             }
@@ -206,7 +208,10 @@ namespace Megasonic
                 ColorStart = value.VideoOutputSettings.ColorStart;
                 ColorLength = value.VideoOutputSettings.ColorLength;
                 BarRelation = value.VideoOutputSettings.BarWidth;
+                BarMaxAngle = value.VideoOutputSettings.BarMaxAngle;
                 Title = value.VideoOutputSettings.Title;
+                TitleHeightA = value.VideoOutputSettings.TitleHeightA;
+                TitleHeightB = value.VideoOutputSettings.TitleHeightB;
             }
         }
 

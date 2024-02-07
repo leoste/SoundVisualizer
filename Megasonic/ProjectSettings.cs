@@ -40,5 +40,7 @@ namespace Megasonic
         public int BarWidth { get; set; }
         public int BarMaxAngle { get; set; }
         public string Title { get; set; } = "";
+        public int TitleHeightA { get; set; }
+        public int TitleHeightB { get; set; }
     }
 }
